@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom';
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-950 min-h-[90vh] flex items-center">
+    <section className="relative overflow-hidden bg-white min-h-[90vh] flex items-center">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-500/15 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-900/30 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gray-200/40 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-gray-200/30 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gray-200/20 rounded-full blur-3xl" />
         {/* Grid pattern */}
         <div
           className="absolute inset-0 opacity-5"
@@ -21,20 +21,20 @@ export default function Hero() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid lg:grid-cols-2 gap-12 items-center">
         {/* Left content */}
         <div className="text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm text-indigo-200 font-medium mb-6">
+          <div className="inline-flex items-center gap-2 bg-gray-100 backdrop-blur-sm border border-gray-300 rounded-full px-4 py-1.5 text-sm text-gray-700 font-medium mb-6">
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
             Expert Academic Assistance Available Now
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
             Get Help From{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-blue-300">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">
               Academic
             </span>{' '}
             Experts
           </h1>
 
-          <p className="text-indigo-100/80 text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
+          <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
             Get academic assistance from Zenedify to earn the grades you desire. We have top professionals in academic assignment writing, essay writing, dissertation proposals, homework, exam preparation and lab task practical services.
           </p>
 
@@ -50,7 +50,7 @@ export default function Hero() {
             </Link>
             <Link
               to="/samples"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl font-semibold text-white bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl font-semibold text-gray-700 bg-gray-100 backdrop-blur-sm border border-gray-300 hover:bg-gray-200 transition-all"
             >
               View Samples
             </Link>
@@ -64,8 +64,8 @@ export default function Hero() {
               { value: '10K+', label: 'Projects Done' },
             ].map((stat) => (
               <div key={stat.label}>
-                <div className="text-2xl font-bold text-white font-display">{stat.value}</div>
-                <div className="text-sm text-indigo-300 mt-0.5">{stat.label}</div>
+                <div className="text-2xl font-bold text-gray-900 font-display">{stat.value}</div>
+                <div className="text-sm text-gray-600 mt-0.5">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -75,11 +75,11 @@ export default function Hero() {
         <div className="flex justify-center lg:justify-end">
           <div className="relative">
             {/* Main card */}
-            <div className="w-72 h-72 lg:w-96 lg:h-96 bg-gradient-to-br from-indigo-500/30 to-blue-600/30 backdrop-blur-sm border border-white/20 rounded-3xl flex items-center justify-center shadow-2xl">
+            <div className="w-72 h-72 lg:w-96 lg:h-96 bg-gradient-to-br from-indigo-50 to-blue-50 backdrop-blur-sm border border-gray-300 rounded-3xl flex items-center justify-center shadow-2xl">
               <div className="text-center">
                 <div className="text-8xl mb-4">🎓</div>
-                <div className="font-display font-bold text-white text-2xl">Zenedify</div>
-                <div className="text-indigo-200 text-sm mt-1">Place of Experts</div>
+                <div className="font-display font-bold text-gray-900 text-2xl">Zenedify</div>
+                <div className="text-gray-600 text-sm mt-1">Place of Experts</div>
               </div>
             </div>
 

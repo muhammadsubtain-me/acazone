@@ -9,6 +9,7 @@ const services = [
 ];
 
 const navLinks = [
+  { name: 'Home', path: '/' },
   { name: 'Services', path: '/services', hasDropdown: true },
   { name: 'Samples', path: '/samples' },
   { name: 'About', path: '/about' },
@@ -63,12 +64,6 @@ export default function Navbar() {
                     }`}
                   >
                     Services
-                    <svg
-                      className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
-                      fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
                   </button>
 
                   {/* Dropdown */}
@@ -92,18 +87,6 @@ export default function Navbar() {
                           </svg>
                         </Link>
                       ))}
-                    </div>
-                    <div className="border-t border-gray-100 p-2">
-                      <Link
-                        to="/services"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-indigo-600 hover:bg-indigo-50 transition-all"
-                      >
-                        View All Services
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
                     </div>
                   </div>
                 </div>
