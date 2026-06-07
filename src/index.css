@@ -1,6 +1,74 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+/* ─── GLOBAL DESIGN TOKENS ────────────────────────────────────────────────────
+   Change these variables to retheme the entire site instantly.
+   ──────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Core palette */
+  --color-bg:           #0a0a0a;   /* page background */
+  --color-surface:      #111111;   /* cards, panels */
+  --color-surface-2:    #1a1a1a;   /* elevated cards, hover bg */
+  --color-surface-3:    #222222;   /* subtle badge / chip bg */
+
+  /* Borders */
+  --color-border:       #2a2a2a;   /* default border */
+  --color-border-hover: #444444;   /* border on hover */
+  --color-border-focus: #888888;   /* input focus ring */
+
+  /* Text */
+  --color-text:         #e8e8e8;   /* body copy */
+  --color-text-muted:   #888888;   /* secondary/muted text */
+  --color-text-faint:   #555555;   /* very muted / meta */
+  --color-text-heading: #ffffff;   /* headings */
+
+  /* Accent (the one allowed punch of colour – white on black) */
+  --color-accent:       #ffffff;   /* primary accent */
+  --color-accent-muted: #cccccc;   /* softer accent text */
+  --color-accent-bg:    #1f1f1f;   /* accent chip/badge bg */
+
+  /* Interactive */
+  --color-btn-primary-bg:   #ffffff;
+  --color-btn-primary-text: #0a0a0a;
+  --color-btn-ghost-bg:     transparent;
+  --color-btn-ghost-border: #333333;
+  --color-btn-ghost-text:   #cccccc;
+
+  /* Hero / section backgrounds */
+  --color-hero-bg:      #000000;   /* hero section bg */
+  --color-section-alt:  #111111;   /* alternating sections */
+
+  /* Footer */
+  --color-footer-bg:    #000000;
+  --color-footer-text:  #666666;
+  --color-footer-head:  #ffffff;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.6);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.8);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.9);
+
+  /* Blob glows (background decoration) */
+  --glow-1: rgba(255,255,255,0.03);
+  --glow-2: rgba(255,255,255,0.02);
+
+  /* Grid dot color */
+  --dot-color: rgba(255,255,255,0.06);
+
+  /* Stars / rating color */
+  --color-star: #d4af37;
+}
+
 * { box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; margin: 0; }
-.font-display { font-family: 'Inter', sans-serif; }
+
+body {
+  font-family: Inter, sans-serif;
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.font-display { font-family: Inter, sans-serif; }
+
+/* Sharp corners globally on all buttons and CTAs */
+button, a { border-radius: 0 !important; }

@@ -9,27 +9,32 @@ const subjects = [
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-900 text-slate-400">
+    <footer style={{ backgroundColor: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4 group w-fit">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center shadow-md">
-                <span className="text-white font-display font-bold text-lg leading-none">Z</span>
+            <Link to="/" className="flex items-center gap-2 mb-4 group w-fit" style={{ textDecoration: 'none' }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 10,
+                backgroundColor: 'var(--color-surface-2)',
+                border: '1px solid var(--color-border)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <span style={{ color: 'var(--color-footer-head)', fontWeight: 800, fontSize: 18 }}>Z</span>
               </div>
-              <span className="font-display font-bold text-xl text-white tracking-tight">Zenedify</span>
+              <span style={{ color: 'var(--color-footer-head)', fontWeight: 700, fontSize: 20, letterSpacing: '-0.02em' }}>ZenEdify</span>
             </Link>
-            <p className="text-sm leading-relaxed mb-6">
+            <p style={{ fontSize: 14, lineHeight: 1.7, marginBottom: 24 }}>
               Expert academic assistance to help students achieve the grades they deserve. Available 24/7.
             </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex gap-2">
-                <span className="text-indigo-400 mt-0.5">🇬🇧</span>
+            <div style={{ fontSize: 14, lineHeight: 2 }}>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <span>🇬🇧</span>
                 <span>124 City Road, London, England, EC1V 2NX</span>
               </div>
-              <div className="flex gap-2">
-                <span className="text-indigo-400 mt-0.5">🇵🇰</span>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <span>🇵🇰</span>
                 <span>602 A, Meher Apartments, H-13 Islamabad</span>
               </div>
             </div>
@@ -37,8 +42,8 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-white mb-5 text-sm uppercase tracking-wider">Quick Links</h4>
-            <ul className="space-y-2.5">
+            <h4 style={{ fontWeight: 600, color: 'var(--color-footer-head)', marginBottom: 20, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Quick Links</h4>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {[
                 { name: 'FAQs', path: '/faqs' },
                 { name: 'About Us', path: '/about' },
@@ -47,13 +52,14 @@ export default function Footer() {
                 { name: 'Portfolio', path: '/portfolio' },
                 { name: 'Hire Expert', path: '/contact' },
               ].map((link) => (
-                <li key={link.name}>
-                  <Link to={link.path} className="text-sm hover:text-indigo-400 transition-colors flex items-center gap-1.5 group">
-                    <svg className="w-3 h-3 opacity-0 group-hover:opacity-100 text-indigo-400 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                    {link.name}
-                  </Link>
+                <li key={link.name} style={{ marginBottom: 10 }}>
+                  <Link to={link.path} style={{
+                    fontSize: 14, color: 'var(--color-footer-text)',
+                    textDecoration: 'none', transition: 'color 0.15s',
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--color-text)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--color-footer-text)'}
+                  >{link.name}</Link>
                 </li>
               ))}
             </ul>
@@ -61,21 +67,22 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="font-semibold text-white mb-5 text-sm uppercase tracking-wider">Our Services</h4>
-            <ul className="space-y-2.5">
+            <h4 style={{ fontWeight: 600, color: 'var(--color-footer-head)', marginBottom: 20, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Our Services</h4>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {[
                 { name: 'Mechanical Engineering', path: '/services/mechanical' },
                 { name: 'Electrical Engineering', path: '/services/electrical' },
                 { name: 'Chemical Engineering', path: '/services/chemical' },
                 { name: 'Computer Science', path: '/services/computer-science' },
               ].map((s) => (
-                <li key={s.name}>
-                  <Link to={s.path} className="text-sm hover:text-indigo-400 transition-colors flex items-center gap-1.5 group">
-                    <svg className="w-3 h-3 opacity-0 group-hover:opacity-100 text-indigo-400 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                    {s.name}
-                  </Link>
+                <li key={s.name} style={{ marginBottom: 10 }}>
+                  <Link to={s.path} style={{
+                    fontSize: 14, color: 'var(--color-footer-text)',
+                    textDecoration: 'none', transition: 'color 0.15s',
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--color-text)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--color-footer-text)'}
+                  >{s.name}</Link>
                 </li>
               ))}
             </ul>
@@ -83,23 +90,31 @@ export default function Footer() {
 
           {/* Subjects */}
           <div>
-            <h4 className="font-semibold text-white mb-5 text-sm uppercase tracking-wider">Subjects We Cover</h4>
-            <div className="flex flex-wrap gap-2">
+            <h4 style={{ fontWeight: 600, color: 'var(--color-footer-head)', marginBottom: 20, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Subjects We Cover</h4>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {subjects.map((sub) => (
-                <span
-                  key={sub}
-                  className="text-xs bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1 hover:border-indigo-500 hover:text-indigo-300 transition-colors cursor-default"
-                >
-                  {sub}
-                </span>
+                <span key={sub} style={{
+                  fontSize: 11,
+                  backgroundColor: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 8, padding: '4px 10px',
+                  color: 'var(--color-footer-text)',
+                  cursor: 'default', transition: 'all 0.15s',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-border-hover)'; e.currentTarget.style.color = 'var(--color-text)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.color = 'var(--color-footer-text)'; }}
+                >{sub}</span>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm">© 2024 Zenedify. All Rights Reserved.</p>
-          <div className="flex items-center gap-4">
+        <div style={{
+          borderTop: '1px solid var(--color-border)', marginTop: 48, paddingTop: 32,
+          display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+        }}>
+          <p style={{ fontSize: 14, margin: 0 }}>© 2024 ZenEdify. All Rights Reserved.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {[
               { name: 'Facebook', icon: 'f', href: '#' },
               { name: 'Instagram', icon: '📷', href: '#' },
@@ -107,11 +122,16 @@ export default function Footer() {
               { name: 'LinkedIn', icon: 'in', href: '#' },
               { name: 'YouTube', icon: '▶', href: '#' },
             ].map((social) => (
-              <a
-                key={social.name}
-                href={social.href}
-                aria-label={social.name}
-                className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold hover:bg-indigo-600 hover:border-indigo-600 hover:text-white transition-all"
+              <a key={social.name} href={social.href} aria-label={social.name} style={{
+                width: 32, height: 32, borderRadius: 8,
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 12, fontWeight: 700, color: 'var(--color-footer-text)',
+                textDecoration: 'none', transition: 'all 0.2s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--color-surface-3)'; e.currentTarget.style.borderColor = 'var(--color-border-hover)'; e.currentTarget.style.color = 'var(--color-text-heading)'; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--color-surface)'; e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.color = 'var(--color-footer-text)'; }}
               >
                 {social.icon}
               </a>

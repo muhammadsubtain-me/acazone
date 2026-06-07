@@ -35,28 +35,40 @@ const stats = [
 
 export default function StatsSection() {
   return (
-    <section className="py-20 bg-gradient-to-br from-indigo-600 to-blue-700 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`,
-          backgroundSize: '30px 30px',
-        }}
-      />
+    <section style={{
+      padding: '80px 0',
+      backgroundColor: 'var(--color-surface)',
+      position: 'relative', overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        backgroundImage: `radial-gradient(var(--dot-color) 1px, transparent 1px)`,
+        backgroundSize: '30px 30px',
+      }} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-14">
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-3">
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <h2 className="font-display text-3xl sm:text-4xl font-bold mb-3" style={{ color: 'var(--color-text-heading)' }}>
             Better Strategy With Quality Business
           </h2>
-          <p className="text-indigo-200 text-lg">Numbers that speak to our commitment and excellence</p>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 17 }}>Numbers that speak to our commitment and excellence</p>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
-            <div key={stat.label} className="text-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/20 transition-all">
-              <div className="text-3xl mb-2">{stat.icon}</div>
-              <div className="font-display text-4xl font-bold text-white mb-1">
+            <div key={stat.label} style={{
+              textAlign: 'center',
+              backgroundColor: 'var(--color-surface-2)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 16, padding: 24,
+              transition: 'all 0.2s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-border-hover)'; e.currentTarget.style.backgroundColor = 'var(--color-surface-3)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; }}
+            >
+              <div style={{ fontSize: 28, marginBottom: 8 }}>{stat.icon}</div>
+              <div className="font-display text-4xl font-bold mb-1" style={{ color: 'var(--color-text-heading)' }}>
                 <CountUp target={stat.value} suffix={stat.suffix} />
               </div>
-              <div className="text-indigo-200 text-sm font-medium">{stat.label}</div>
+              <div style={{ color: 'var(--color-text-muted)', fontSize: 13, fontWeight: 500 }}>{stat.label}</div>
             </div>
           ))}
         </div>

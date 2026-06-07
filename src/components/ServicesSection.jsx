@@ -15,39 +15,69 @@ const services = [
 
 export default function ServicesSection() {
   return (
-    <section className="py-20 bg-gray-50">
+    <section style={{ padding: '80px 0', backgroundColor: 'var(--color-section-alt)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-14">
-          <span className="inline-block text-xs font-bold uppercase tracking-widest text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-full px-4 py-1.5 mb-4">
-            What We Offer
-          </span>
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <span style={{
+            display: 'inline-block', fontSize: 11, fontWeight: 700,
+            textTransform: 'uppercase', letterSpacing: '0.1em',
+            color: 'var(--color-text-muted)',
+            background: 'var(--color-accent-bg)',
+            border: '1px solid var(--color-border)',
+            borderRadius: 100, padding: '6px 16px', marginBottom: 16,
+          }}>What We Offer</span>
+          <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4" style={{ color: 'var(--color-text-heading)' }}>
             Our Popular Services
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-            From essays to dissertations, coding to lab reports — Zenedify covers every academic need with expert precision.
+          <p style={{ color: 'var(--color-text-muted)', maxWidth: 560, margin: '0 auto', fontSize: 17 }}>
+            From essays to dissertations, coding to lab reports — ZenEdify covers every academic need with expert precision.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {services.map((service, i) => (
-            <div
-              key={service.title}
-              className="bg-white rounded-2xl p-5 border border-gray-100 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-50 hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+          {services.map((service) => (
+            <div key={service.title} style={{
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 16, padding: 20,
+              transition: 'all 0.25s', cursor: 'pointer',
+            }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = 'var(--color-border-hover)';
+                e.currentTarget.style.backgroundColor = 'var(--color-surface-2)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'var(--color-border)';
+                e.currentTarget.style.backgroundColor = 'var(--color-surface)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
             >
-              <div className="w-11 h-11 rounded-xl bg-indigo-50 flex items-center justify-center text-xl mb-4 group-hover:bg-indigo-100 transition-colors">
+              <div style={{
+                width: 44, height: 44, borderRadius: 12,
+                backgroundColor: 'var(--color-surface-3)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 20, marginBottom: 16,
+              }}>
                 {service.icon}
               </div>
-              <h3 className="font-semibold text-gray-900 text-sm mb-2 leading-snug">{service.title}</h3>
-              <p className="text-gray-500 text-xs leading-relaxed">{service.desc}</p>
+              <h3 style={{ fontWeight: 600, color: 'var(--color-text-heading)', fontSize: 13, marginBottom: 8, lineHeight: 1.4 }}>{service.title}</h3>
+              <p style={{ color: 'var(--color-text-faint)', fontSize: 12, lineHeight: 1.6 }}>{service.desc}</p>
             </div>
           ))}
         </div>
 
-        <div className="text-center mt-10">
-          <Link
-            to="/services"
-            className="inline-flex items-center gap-2 px-7 py-3 rounded-xl font-semibold text-indigo-600 bg-white border-2 border-indigo-200 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all"
+        <div style={{ textAlign: 'center', marginTop: 40 }}>
+          <Link to="/services" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '12px 28px', borderRadius: 12, fontWeight: 600, fontSize: 14,
+            color: 'var(--color-text-heading)',
+            backgroundColor: 'transparent',
+            border: '1px solid var(--color-border-hover)',
+            textDecoration: 'none', transition: 'all 0.2s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; e.currentTarget.style.borderColor = 'var(--color-accent)'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = 'var(--color-border-hover)'; }}
           >
             Explore All Services
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

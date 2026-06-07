@@ -1,32 +1,53 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-// ─── ABOUT PAGE ────────────────────────────────────────────────
+/* ── Shared hero banner ─────────────────────────────────────────────────────── */
+function PageHero({ title, subtitle }) {
+  return (
+    <section style={{
+      padding: '80px 0',
+      backgroundColor: 'var(--color-surface)',
+      textAlign: 'center',
+      position: 'relative', overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        backgroundImage: `radial-gradient(var(--dot-color) 1px, transparent 1px)`,
+        backgroundSize: '30px 30px',
+      }} />
+      <div className="relative max-w-3xl mx-auto px-4">
+        <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4" style={{ color: 'var(--color-text-heading)' }}>{title}</h1>
+        <p style={{ color: 'var(--color-text-muted)', fontSize: 17 }}>{subtitle}</p>
+      </div>
+    </section>
+  );
+}
+
+/* ── ABOUT ──────────────────────────────────────────────────────────────────── */
 export function AboutPage() {
   return (
-    <div className="min-h-screen">
-      <section className="py-20 bg-gradient-to-br from-indigo-600 to-blue-700 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`, backgroundSize: '30px 30px' }} />
-        <div className="relative max-w-3xl mx-auto px-4">
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-4">About Zenedify</h1>
-          <p className="text-indigo-200 text-lg">Your trusted academic partner, built on expertise and integrity.</p>
-        </div>
-      </section>
+    <div style={{ minHeight: '100vh' }}>
+      <PageHero title="About ZenEdify" subtitle="Your trusted academic partner, built on expertise and integrity." />
 
-      <section className="py-16 bg-white">
+      <section style={{ padding: '64px 0', backgroundColor: 'var(--color-bg)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-14 items-center">
           <div>
-            <span className="inline-block text-xs font-bold uppercase tracking-widest text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-full px-4 py-1.5 mb-5">Our Story</span>
-            <h2 className="font-display text-3xl font-bold text-gray-900 mb-5">Who We Are</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
-              Zenedify was founded with a single mission: to provide students worldwide with access to world-class academic expertise. We believe every student deserves the support they need to reach their full potential.
-            </p>
-            <p className="text-gray-600 leading-relaxed mb-4">
-              Our platform connects students with verified subject matter experts who provide personalized, high-quality academic assistance. Whether you're struggling with a complex engineering problem or need help polishing a dissertation, Zenedify has you covered.
-            </p>
-            <p className="text-gray-600 leading-relaxed">
-              With tutors from top universities across the globe and a commitment to academic excellence, we've helped thousands of students achieve the grades they deserve — on time, every time.
-            </p>
+            <span style={{
+              display: 'inline-block', fontSize: 11, fontWeight: 700,
+              textTransform: 'uppercase', letterSpacing: '0.1em',
+              color: 'var(--color-text-muted)',
+              background: 'var(--color-accent-bg)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 100, padding: '6px 16px', marginBottom: 20,
+            }}>Our Story</span>
+            <h2 className="font-display text-3xl font-bold mb-5" style={{ color: 'var(--color-text-heading)' }}>Who We Are</h2>
+            {[
+              'ZenEdify was founded with a single mission: to provide students worldwide with access to world-class academic expertise. We believe every student deserves the support they need to reach their full potential.',
+              'Our platform connects students with verified subject matter experts who provide personalized, high-quality academic assistance. Whether you\'re struggling with a complex engineering problem or need help polishing a dissertation, ZenEdify has you covered.',
+              'With tutors from top universities across the globe and a commitment to academic excellence, we\'ve helped thousands of students achieve the grades they deserve — on time, every time.',
+            ].map((p, i) => (
+              <p key={i} style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, marginBottom: 16 }}>{p}</p>
+            ))}
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
@@ -35,25 +56,37 @@ export function AboutPage() {
               { icon: '💎', title: 'Our Values', desc: 'Integrity, quality, confidentiality, and student-first thinking in everything we do.' },
               { icon: '🌍', title: 'Global Reach', desc: 'Serving students across 50+ countries with localized expertise and 24/7 support.' },
             ].map((item) => (
-              <div key={item.title} className="bg-indigo-50 rounded-2xl p-5 border border-indigo-100">
-                <div className="text-2xl mb-3">{item.icon}</div>
-                <h4 className="font-semibold text-gray-900 mb-2">{item.title}</h4>
-                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+              <div key={item.title} style={{
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 16, padding: 20,
+              }}>
+                <div style={{ fontSize: 24, marginBottom: 12 }}>{item.icon}</div>
+                <h4 style={{ fontWeight: 600, color: 'var(--color-text-heading)', marginBottom: 8 }}>{item.title}</h4>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 13, lineHeight: 1.6 }}>{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50">
+      <section style={{ padding: '64px 0', backgroundColor: 'var(--color-section-alt)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-display text-3xl font-bold text-gray-900 mb-10">Our Expert Team</h2>
+          <h2 className="font-display text-3xl font-bold mb-10" style={{ color: 'var(--color-text-heading)' }}>Our Expert Team</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {['⚙️ Mechanical', '⚡ Electrical', '🧪 Chemical', '💻 CS & IT'].map((dept) => (
-              <div key={dept} className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-indigo-200 hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">{dept.split(' ')[0]}</div>
-                <div className="font-semibold text-gray-900">{dept.split(' ').slice(1).join(' ')}</div>
-                <div className="text-sm text-gray-500 mt-1">Department</div>
+              <div key={dept} style={{
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 16, padding: 24,
+                transition: 'all 0.2s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-border-hover)'; e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.backgroundColor = 'var(--color-surface)'; }}
+              >
+                <div style={{ fontSize: 40, marginBottom: 12 }}>{dept.split(' ')[0]}</div>
+                <div style={{ fontWeight: 600, color: 'var(--color-text-heading)' }}>{dept.split(' ').slice(1).join(' ')}</div>
+                <div style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 4 }}>Department</div>
               </div>
             ))}
           </div>
@@ -63,7 +96,7 @@ export function AboutPage() {
   );
 }
 
-// ─── SAMPLES PAGE ──────────────────────────────────────────────
+/* ── SAMPLES ────────────────────────────────────────────────────────────────── */
 const samples = [
   { title: 'Thermodynamics Assignment', subject: 'Mechanical Eng.', pages: 12, grade: 'A+', icon: '⚙️' },
   { title: 'Circuit Analysis Lab Report', subject: 'Electrical Eng.', pages: 8, grade: 'A', icon: '⚡' },
@@ -78,28 +111,39 @@ const samples = [
 
 export function SamplesPage() {
   return (
-    <div className="min-h-screen">
-      <section className="py-20 bg-gradient-to-br from-indigo-600 to-blue-700 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`, backgroundSize: '30px 30px' }} />
-        <div className="relative max-w-3xl mx-auto px-4">
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-4">Work Samples</h1>
-          <p className="text-indigo-200 text-lg">Browse examples of the high-quality academic work our experts deliver.</p>
-        </div>
-      </section>
-      <section className="py-16 bg-gray-50">
+    <div style={{ minHeight: '100vh' }}>
+      <PageHero title="Work Samples" subtitle="Browse examples of the high-quality academic work our experts deliver." />
+      <section style={{ padding: '64px 0', backgroundColor: 'var(--color-bg)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {samples.map((s) => (
-              <div key={s.title} className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-indigo-200 hover:shadow-lg transition-all group">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-2xl">{s.icon}</div>
-                  <span className="text-xs font-bold text-green-600 bg-green-50 border border-green-100 rounded-full px-3 py-1">{s.grade}</span>
+              <div key={s.title} style={{
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 16, padding: 24,
+                transition: 'all 0.2s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-border-hover)'; e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.backgroundColor = 'var(--color-surface)'; }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                  <div style={{
+                    width: 48, height: 48, borderRadius: 12,
+                    backgroundColor: 'var(--color-surface-3)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24,
+                  }}>{s.icon}</div>
+                  <span style={{
+                    fontSize: 12, fontWeight: 700, color: '#4ade80',
+                    backgroundColor: 'rgba(74,222,128,0.1)',
+                    border: '1px solid rgba(74,222,128,0.2)',
+                    borderRadius: 100, padding: '4px 12px',
+                  }}>{s.grade}</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1.5 group-hover:text-indigo-700 transition-colors">{s.title}</h3>
-                <p className="text-sm text-gray-500 mb-3">{s.subject}</p>
-                <div className="flex items-center justify-between text-xs text-gray-400">
+                <h3 style={{ fontWeight: 600, color: 'var(--color-text-heading)', marginBottom: 6 }}>{s.title}</h3>
+                <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 12 }}>{s.subject}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--color-text-faint)' }}>
                   <span>{s.pages} pages</span>
-                  <Link to="/contact" className="text-indigo-600 font-semibold hover:underline">Get Similar →</Link>
+                  <Link to="/contact" style={{ color: 'var(--color-accent-muted)', fontWeight: 600, textDecoration: 'none' }}>Get Similar →</Link>
                 </div>
               </div>
             ))}
@@ -110,91 +154,94 @@ export function SamplesPage() {
   );
 }
 
-// ─── CONTACT PAGE ──────────────────────────────────────────────
+/* ── CONTACT ────────────────────────────────────────────────────────────────── */
 export function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSent(true);
+  const inputStyle = {
+    width: '100%', padding: '12px 16px', borderRadius: 12,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-surface-2)',
+    color: 'var(--color-text)', fontSize: 14,
+    outline: 'none', transition: 'all 0.2s',
+    boxSizing: 'border-box',
   };
 
   return (
-    <div className="min-h-screen">
-      <section className="py-20 bg-gradient-to-br from-indigo-600 to-blue-700 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`, backgroundSize: '30px 30px' }} />
-        <div className="relative max-w-3xl mx-auto px-4">
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-4">Contact Us</h1>
-          <p className="text-indigo-200 text-lg">Get in touch and let our experts help you succeed.</p>
-        </div>
-      </section>
-
-      <section className="py-16 bg-gray-50">
+    <div style={{ minHeight: '100vh' }}>
+      <PageHero title="Contact Us" subtitle="Get in touch and let our experts help you succeed." />
+      <section style={{ padding: '64px 0', backgroundColor: 'var(--color-bg)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12">
           {/* Form */}
-          <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
-            <h2 className="font-display text-2xl font-bold text-gray-900 mb-6">Send a Message</h2>
+          <div style={{
+            backgroundColor: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+            borderRadius: 24, padding: 32,
+          }}>
+            <h2 className="font-display text-2xl font-bold mb-6" style={{ color: 'var(--color-text-heading)' }}>Send a Message</h2>
             {sent ? (
-              <div className="text-center py-12">
-                <div className="text-5xl mb-4">✅</div>
-                <h3 className="font-semibold text-gray-900 text-xl mb-2">Message Sent!</h3>
-                <p className="text-gray-500">Our team will get back to you within 24 hours.</p>
-                <button onClick={() => setSent(false)} className="mt-6 text-indigo-600 font-semibold hover:underline">Send another message</button>
+              <div style={{ textAlign: 'center', padding: '48px 0' }}>
+                <div style={{ fontSize: 56, marginBottom: 16 }}>✅</div>
+                <h3 style={{ fontWeight: 600, color: 'var(--color-text-heading)', fontSize: 20, marginBottom: 8 }}>Message Sent!</h3>
+                <p style={{ color: 'var(--color-text-muted)' }}>Our team will get back to you within 24 hours.</p>
+                <button onClick={() => setSent(false)} style={{
+                  marginTop: 24, color: 'var(--color-accent-muted)', fontWeight: 600,
+                  background: 'none', border: 'none', cursor: 'pointer', fontSize: 14,
+                }}>Send another message</button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
-                    <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm transition-all"
-                      placeholder="Your full name" />
+                    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--color-text-muted)', marginBottom: 6 }}>Full Name</label>
+                    <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={inputStyle} placeholder="Your full name" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
-                    <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm transition-all"
-                      placeholder="you@example.com" />
+                    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--color-text-muted)', marginBottom: 6 }}>Email Address</label>
+                    <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} style={inputStyle} placeholder="you@example.com" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Subject</label>
-                  <input value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm transition-all"
-                    placeholder="How can we help?" />
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--color-text-muted)', marginBottom: 6 }}>Subject</label>
+                  <input value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} style={inputStyle} placeholder="How can we help?" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
-                  <textarea rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-sm transition-all resize-none"
-                    placeholder="Describe your assignment or question..." />
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--color-text-muted)', marginBottom: 6 }}>Message</label>
+                  <textarea rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} style={{ ...inputStyle, resize: 'none' }} placeholder="Describe your assignment or question..." />
                 </div>
-                <button onClick={handleSubmit}
-                  className="w-full py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:shadow-lg hover:shadow-indigo-200 hover:-translate-y-0.5 transition-all">
-                  Send Message
-                </button>
+                <button onClick={() => setSent(true)} style={{
+                  padding: '14px', borderRadius: 12, fontWeight: 600, fontSize: 14,
+                  backgroundColor: 'var(--color-btn-primary-bg)',
+                  color: 'var(--color-btn-primary-text)',
+                  border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+                }}>Send Message</button>
               </div>
             )}
           </div>
 
           {/* Info */}
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <div>
-              <h2 className="font-display text-2xl font-bold text-gray-900 mb-4">Get in Touch</h2>
-              <p className="text-gray-600 leading-relaxed">Our team is available 24/7 to assist you with any academic query. Reach out through any channel below.</p>
+              <h2 className="font-display text-2xl font-bold mb-4" style={{ color: 'var(--color-text-heading)' }}>Get in Touch</h2>
+              <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7 }}>Our team is available 24/7 to assist you with any academic query. Reach out through any channel below.</p>
             </div>
             {[
               { icon: '📍', title: 'UK Office', info: '124 City Road, London, England, EC1V 2NX' },
               { icon: '📍', title: 'Pakistan Office', info: '602 A, Meher Apartments, H-13 Islamabad' },
-              { icon: '📧', title: 'Email Us', info: 'support@zenedify.com' },
+              { icon: '📧', title: 'Email Us', info: 'support@ZenEdify.com' },
               { icon: '💬', title: 'WhatsApp', info: 'Available 24/7 for instant help' },
             ].map((item) => (
-              <div key={item.title} className="flex gap-4 bg-white rounded-2xl p-5 border border-gray-100">
-                <div className="text-2xl">{item.icon}</div>
+              <div key={item.title} style={{
+                display: 'flex', gap: 16,
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 16, padding: 20,
+              }}>
+                <div style={{ fontSize: 24 }}>{item.icon}</div>
                 <div>
-                  <div className="font-semibold text-gray-900 text-sm mb-0.5">{item.title}</div>
-                  <div className="text-gray-500 text-sm">{item.info}</div>
+                  <div style={{ fontWeight: 600, color: 'var(--color-text-heading)', fontSize: 14, marginBottom: 2 }}>{item.title}</div>
+                  <div style={{ color: 'var(--color-text-muted)', fontSize: 13 }}>{item.info}</div>
                 </div>
               </div>
             ))}
@@ -205,7 +252,7 @@ export function ContactPage() {
   );
 }
 
-// ─── PORTFOLIO PAGE ────────────────────────────────────────────
+/* ── PORTFOLIO ──────────────────────────────────────────────────────────────── */
 const portfolioItems = [
   { title: 'FEA Analysis of Beam Structures', category: 'Mechanical', icon: '⚙️', stars: 5 },
   { title: 'Smart Grid Power Distribution System', category: 'Electrical', icon: '⚡', stars: 5 },
@@ -225,39 +272,52 @@ export function PortfolioPage() {
   const filtered = active === 'All' ? portfolioItems : portfolioItems.filter(p => p.category === active);
 
   return (
-    <div className="min-h-screen">
-      <section className="py-20 bg-gradient-to-br from-indigo-600 to-blue-700 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`, backgroundSize: '30px 30px' }} />
-        <div className="relative max-w-3xl mx-auto px-4">
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-4">Our Portfolio</h1>
-          <p className="text-indigo-200 text-lg">A showcase of the exceptional academic work delivered by our experts.</p>
-        </div>
-      </section>
-
-      <section className="py-16 bg-gray-50">
+    <div style={{ minHeight: '100vh' }}>
+      <PageHero title="Our Portfolio" subtitle="A showcase of the exceptional academic work delivered by our experts." />
+      <section style={{ padding: '64px 0', backgroundColor: 'var(--color-bg)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Filter tabs */}
-          <div className="flex flex-wrap gap-2 justify-center mb-10">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginBottom: 40 }}>
             {categories.map((cat) => (
-              <button key={cat} onClick={() => setActive(cat)}
-                className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${active === cat ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white text-gray-600 border border-gray-200 hover:border-indigo-300 hover:text-indigo-600'}`}>
-                {cat}
-              </button>
+              <button key={cat} onClick={() => setActive(cat)} style={{
+                padding: '8px 20px', borderRadius: 100, fontSize: 13, fontWeight: 600,
+                border: '1px solid',
+                cursor: 'pointer', transition: 'all 0.2s',
+                backgroundColor: active === cat ? 'var(--color-btn-primary-bg)' : 'var(--color-surface)',
+                color: active === cat ? 'var(--color-btn-primary-text)' : 'var(--color-text-muted)',
+                borderColor: active === cat ? 'transparent' : 'var(--color-border)',
+              }}>{cat}</button>
             ))}
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((item) => (
-              <div key={item.title} className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-indigo-200 hover:shadow-lg hover:-translate-y-1 transition-all group">
-                <div className="h-36 bg-gradient-to-br from-indigo-50 to-blue-50 flex items-center justify-center text-5xl">
+              <div key={item.title} style={{
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 16, overflow: 'hidden',
+                transition: 'all 0.3s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-border-hover)'; e.currentTarget.style.transform = 'translateY(-4px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+              >
+                <div style={{
+                  height: 144, backgroundColor: 'var(--color-surface-2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48,
+                }}>
                   {item.icon}
                 </div>
-                <div className="p-5">
-                  <span className="text-xs font-bold text-indigo-600 bg-indigo-50 rounded-full px-2.5 py-1">{item.category}</span>
-                  <h3 className="font-semibold text-gray-900 mt-3 mb-2 group-hover:text-indigo-700 transition-colors">{item.title}</h3>
-                  <div className="flex gap-0.5">
+                <div style={{ padding: 20 }}>
+                  <span style={{
+                    fontSize: 11, fontWeight: 700,
+                    color: 'var(--color-text-muted)',
+                    backgroundColor: 'var(--color-surface-3)',
+                    borderRadius: 100, padding: '4px 10px',
+                  }}>{item.category}</span>
+                  <h3 style={{ fontWeight: 600, color: 'var(--color-text-heading)', marginTop: 12, marginBottom: 8 }}>{item.title}</h3>
+                  <div style={{ display: 'flex', gap: 2 }}>
                     {Array.from({ length: item.stars }).map((_, i) => (
-                      <svg key={i} className="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                      <svg key={i} className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'var(--color-star)' }}>
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                     ))}
@@ -272,7 +332,7 @@ export function PortfolioPage() {
   );
 }
 
-// ─── FAQS PAGE ─────────────────────────────────────────────────
+/* ── FAQs ───────────────────────────────────────────────────────────────────── */
 const faqs = [
   { q: 'How do I place an order?', a: 'Simply click "Hire Expert", fill in your assignment details, and we will match you with the most qualified tutor for your subject.' },
   { q: 'Is my information kept confidential?', a: 'Absolutely. We follow strict data privacy policies. Your personal information and assignment details are never shared with third parties.' },
@@ -289,34 +349,32 @@ const faqs = [
 export function FAQsPage() {
   const [open, setOpen] = useState(null);
   return (
-    <div className="min-h-screen">
-      <section className="py-20 bg-gradient-to-br from-indigo-600 to-blue-700 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`, backgroundSize: '30px 30px' }} />
-        <div className="relative max-w-3xl mx-auto px-4">
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-4">Frequently Asked Questions</h1>
-          <p className="text-indigo-200 text-lg">Everything you need to know about Zenedify's services.</p>
-        </div>
-      </section>
-
-      <section className="py-16 bg-gray-50">
+    <div style={{ minHeight: '100vh' }}>
+      <PageHero title="Frequently Asked Questions" subtitle="Everything you need to know about ZenEdify's services." />
+      <section style={{ padding: '64px 0', backgroundColor: 'var(--color-bg)' }}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <div className="space-y-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {faqs.map((faq, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 hover:border-indigo-200 overflow-hidden transition-all">
-                <button
-                  className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left"
-                  onClick={() => setOpen(open === i ? null : i)}
-                >
-                  <span className="font-semibold text-gray-900 text-sm">{faq.q}</span>
-                  <svg
-                    className={`w-4 h-4 text-indigo-500 shrink-0 transition-transform duration-300 ${open === i ? 'rotate-180' : ''}`}
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
-                  >
+              <div key={i} style={{
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 16, overflow: 'hidden',
+                transition: 'all 0.2s',
+              }}>
+                <button onClick={() => setOpen(open === i ? null : i)} style={{
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+                  padding: '16px 24px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer',
+                }}>
+                  <span style={{ fontWeight: 600, color: 'var(--color-text-heading)', fontSize: 14 }}>{faq.q}</span>
+                  <svg style={{
+                    width: 16, height: 16, color: 'var(--color-text-muted)', flexShrink: 0,
+                    transition: 'transform 0.3s', transform: open === i ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 {open === i && (
-                  <div className="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-50 pt-3">
+                  <div style={{ padding: '0 24px 20px', color: 'var(--color-text-muted)', fontSize: 14, lineHeight: 1.7, borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
                     {faq.a}
                   </div>
                 )}
@@ -324,12 +382,21 @@ export function FAQsPage() {
             ))}
           </div>
 
-          <div className="mt-12 bg-indigo-50 rounded-3xl p-8 text-center border border-indigo-100">
-            <h3 className="font-display text-xl font-bold text-gray-900 mb-2">Still have questions?</h3>
-            <p className="text-gray-600 text-sm mb-5">Our support team is available 24/7 to help with any queries.</p>
-            <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
-              Contact Support
-            </Link>
+          <div style={{
+            marginTop: 48,
+            backgroundColor: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+            borderRadius: 24, padding: 32, textAlign: 'center',
+          }}>
+            <h3 className="font-display text-xl font-bold mb-2" style={{ color: 'var(--color-text-heading)' }}>Still have questions?</h3>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: 20 }}>Our support team is available 24/7 to help with any queries.</p>
+            <Link to="/contact" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '12px 24px', borderRadius: 12, fontWeight: 600, fontSize: 14,
+              backgroundColor: 'var(--color-btn-primary-bg)',
+              color: 'var(--color-btn-primary-text)',
+              textDecoration: 'none',
+            }}>Contact Support</Link>
           </div>
         </div>
       </section>
