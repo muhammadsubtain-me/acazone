@@ -55,16 +55,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 no-underline">
-            <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 ${
-              scrolled
-                ? 'bg-white/10 border border-white/20'
-                : 'bg-[var(--color-surface-2)] border border-[var(--color-border-hover)]'
-            }`}>
-              <span className="text-[var(--color-text-heading)] font-extrabold text-lg">Z</span>
-            </div>
+          <Link to="/" className="flex items-center no-underline">
             <span className="text-[var(--color-text-heading)] font-bold text-xl tracking-[-0.02em]">
-              ZenEdify
+              Zen<span className="text-[var(--color-accent-muted)]">Edify</span>
             </span>
           </Link>
 

@@ -15,11 +15,10 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4 w-fit no-underline">
-              <div className="w-9 h-9 bg-[var(--color-surface-2)] border border-[var(--color-border)] rounded-lg flex items-center justify-center">
-                <span className="text-[var(--color-footer-head)] font-extrabold text-lg">Z</span>
-              </div>
-              <span className="text-[var(--color-footer-head)] font-bold text-xl tracking-[-0.02em]">ZenEdify</span>
+            <Link to="/" className="flex items-center mb-4 w-fit no-underline">
+              <span className="text-[var(--color-footer-head)] font-bold text-xl tracking-[-0.02em]">
+                Zen<span className="text-[var(--color-accent-muted)]">Edify</span>
+              </span>
             </Link>
             <p className="text-sm leading-[1.7] mb-6">
               Expert academic assistance to help students achieve the grades they deserve. Available 24/7.
