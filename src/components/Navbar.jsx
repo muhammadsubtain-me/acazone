@@ -28,21 +28,44 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
+    const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => { setMobileOpen(false); setDropdownOpen(false); }, [location.pathname]);
 
   const handleMouseEnter = () => { clearTimeout(timeoutRef.current); setDropdownOpen(true); };
   const handleMouseLeave = () => { timeoutRef.current = setTimeout(() => setDropdownOpen(false), 150); };
 
   return (
-    <header className={`sticky top-0 z-50 bg-black transition-shadow duration-300 ${scrolled ? 'shadow-[0_4px_24px_rgba(0,0,0,0.4)]' : 'shadow-none'}`}>
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
+        scrolled
+          ? 'bg-black/30 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
+          : 'bg-transparent border-b border-transparent shadow-none'
+      }`}
+      style={scrolled ? {
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+      } : {}}
+    >
+      {/* Liquid glass shimmer line — visible only when scrolled */}
+      <div
+        className={`absolute top-0 left-0 right-0 h-px transition-opacity duration-500 ${scrolled ? 'opacity-100' : 'opacity-0'}`}
+        style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 30%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.2) 70%, transparent 100%)' }}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 no-underline">
-            <div className="w-9 h-9 bg-[var(--color-surface-2)] border border-[var(--color-border-hover)] flex items-center justify-center">
+            <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 ${
+              scrolled
+                ? 'bg-white/10 border border-white/20'
+                : 'bg-[var(--color-surface-2)] border border-[var(--color-border-hover)]'
+            }`}>
               <span className="text-[var(--color-text-heading)] font-extrabold text-lg">Z</span>
             </div>
             <span className="text-[var(--color-text-heading)] font-bold text-xl tracking-[-0.02em]">
@@ -55,20 +78,28 @@ export default function Navbar() {
             {navLinks.map((link) =>
               link.hasDropdown ? (
                 <div key={link.name} className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                  <button className={`flex items-center gap-1 px-4 py-2 text-sm font-medium border-none cursor-pointer transition-all duration-150 ${
+                  <button className={`flex items-center px-4 py-2 text-sm font-medium border-none cursor-pointer transition-all duration-150 bg-transparent ${
                     location.pathname.startsWith('/services')
-                      ? 'bg-[var(--color-surface-2)] text-[var(--color-text-heading)]'
-                      : 'bg-transparent text-[var(--color-text-muted)]'
+                      ? 'text-white'
+                      : 'text-[var(--color-text-muted)] hover:text-white'
                   }`}>
-                    Services <ChevronDown className="w-3 h-3" />
+                    Services
                   </button>
-                  <div className={`absolute top-full left-0 mt-1 w-56 bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-lg)] transition-all duration-200 ${
+                  <div className={`absolute top-full left-0 mt-2 w-56 rounded-xl overflow-hidden transition-all duration-200 ${
                     dropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
-                  }`}>
+                  }`}
+                    style={{
+                      background: 'rgba(10,10,10,0.75)',
+                      backdropFilter: 'blur(20px) saturate(160%)',
+                      WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      boxShadow: '0 16px 48px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)',
+                    }}
+                  >
                     <div className="p-2">
                       {services.map((service) => (
                         <Link key={service.name} to={service.path} onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-3 py-2.5 text-sm text-[var(--color-text)] no-underline transition-all duration-150 hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text-heading)]"
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-text)] no-underline transition-all duration-150 hover:bg-white/10 hover:text-white"
                         >
                           <span>{service.icon}</span>
                           <span className="font-medium">{service.name}</span>
@@ -81,8 +112,8 @@ export default function Navbar() {
                 <Link key={link.name} to={link.path}
                   className={`px-4 py-2 text-sm font-medium no-underline transition-all duration-150 ${
                     location.pathname === link.path
-                      ? 'bg-[var(--color-surface-2)] text-[var(--color-text-heading)]'
-                      : 'bg-transparent text-[var(--color-text-muted)]'
+                      ? 'text-white'
+                      : 'text-[var(--color-text-muted)] hover:text-white'
                   }`}
                 >
                   {link.name}
@@ -95,24 +126,35 @@ export default function Navbar() {
           </div>
 
           {/* Mobile toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden ml-auto"
+          <button
+            className={`lg:hidden ml-auto w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${
+              scrolled ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
+            }`}
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
+            {mobileOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
+          </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-white/[0.08] px-4 pb-4 pt-2 bg-black/60 backdrop-blur-2xl">
+        <div
+          className="border-t border-white/[0.08] px-4 pb-4 pt-2"
+          style={{
+            background: 'rgba(5,5,5,0.85)',
+            backdropFilter: 'blur(24px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          }}
+        >
           {navLinks.map((link) => (
             <div key={link.name}>
               <Link to={link.path} onClick={() => setMobileOpen(false)}
-                className="block px-4 py-2.5 text-sm font-medium text-[var(--color-text)] no-underline"
+                className={`block px-4 py-2.5 text-sm font-medium no-underline transition-all duration-150 ${
+                  location.pathname === link.path
+                    ? 'text-white'
+                    : 'text-[var(--color-text-muted)] hover:text-white'
+                }`}
               >
                 {link.name}
               </Link>
@@ -120,7 +162,7 @@ export default function Navbar() {
                 <div className="ml-4 mt-1">
                   {services.map((s) => (
                     <Link key={s.name} to={s.path} onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-[var(--color-text-muted)] no-underline"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-[var(--color-text-muted)] no-underline hover:text-white hover:bg-white/[0.07] transition-all duration-150"
                     >
                       <span>{s.icon}</span>{s.name}
                     </Link>

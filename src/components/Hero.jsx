@@ -102,14 +102,14 @@ function HeroDots() {
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[var(--color-hero-bg)] min-h-[90vh] flex items-center">
+    <section className="relative overflow-hidden bg-[var(--color-hero-bg)] min-h-screen flex items-center -mt-16">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-24 w-[440px] h-[440px] bg-white/[0.03] rounded-full blur-[90px]" />
         <div className="absolute -bottom-24 -left-20 w-[360px] h-[360px] bg-white/[0.02] rounded-full blur-[80px]" />
         <HeroDots />
       </div>
 
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-32 flex flex-col items-center text-center">
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-32 flex flex-col items-center text-center">
         <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-[var(--color-text-heading)]">
           Get Help From{' '}
           <span className="text-[var(--color-accent-muted)]">Academic</span>{' '}
@@ -131,20 +131,16 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="absolute bottom-[-1px] left-0 right-0 leading-[0]">
-        <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
-          className="block w-full h-[100px]">
-          <defs>
-            <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-          </defs>
-          <path d="M0,100 C360,50 1080,50 1440,100 L1440,100 L0,100 Z" fill="#111111" />
-          <path d="M0,100 C360,50 1080,50 1440,100" fill="none"
-            stroke="rgba(255,255,255,0.45)" strokeWidth="3" filter="url(#glowFilter)" />
-        </svg>
-      </div>
+      <div
+  className="absolute bottom-0 left-0 right-0"
+  style={{
+    height: '1.5px', // increased from 1px
+    background:
+      'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 15%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0.15) 85%, transparent 100%)',
+    boxShadow:
+      '0 0 8px 1px rgba(255,255,255,0.35), 0 0 24px 4px rgba(255,255,255,0.15)',
+  }}
+/>
     </section>
   );
 }

@@ -16,7 +16,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4 w-fit no-underline">
-              <div className="w-9 h-9 bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center">
+              <div className="w-9 h-9 bg-[var(--color-surface-2)] border border-[var(--color-border)] rounded-lg flex items-center justify-center">
                 <span className="text-[var(--color-footer-head)] font-extrabold text-lg">Z</span>
               </div>
               <span className="text-[var(--color-footer-head)] font-bold text-xl tracking-[-0.02em]">ZenEdify</span>
@@ -76,7 +76,7 @@ export default function Footer() {
             <div className="flex flex-wrap gap-2">
               {subjects.map((sub) => (
                 <span key={sub}
-                  className="text-[11px] bg-[var(--color-surface)] border border-[var(--color-border)] px-2.5 py-1 text-[var(--color-footer-text)] cursor-default transition-all duration-150 hover:border-[var(--color-border-hover)] hover:text-[var(--color-text)]"
+                  className="text-[11px] bg-[var(--color-surface)] border border-[var(--color-border)] px-2.5 py-1 rounded-lg text-[var(--color-footer-text)] cursor-default transition-all duration-150 hover:border-[var(--color-border-hover)] hover:text-[var(--color-text)]"
                 >{sub}</span>
               ))}
             </div>
@@ -96,7 +96,7 @@ export default function Footer() {
               { name: 'YouTube', icon: '▶', href: '#' },
             ].map((social) => (
               <a key={social.name} href={social.href} aria-label={social.name}
-                className="w-8 h-8 bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center text-xs font-bold text-[var(--color-footer-text)] no-underline transition-all duration-200 hover:bg-[var(--color-surface-3)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-text-heading)]"
+                className="w-8 h-8 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg flex items-center justify-center text-xs font-bold text-[var(--color-footer-text)] no-underline transition-all duration-200 hover:bg-[var(--color-surface-3)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-text-heading)]"
               >
                 {social.icon}
               </a>

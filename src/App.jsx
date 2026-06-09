@@ -13,7 +13,7 @@ export default function App() {
       <ScrollToTop />
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-1">
+        <main className="flex-1 pt-16">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<ServicesOverview />} />

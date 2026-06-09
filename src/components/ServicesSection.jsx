@@ -36,7 +36,7 @@ export default function ServicesSection() {
             <Card key={service.title}
               className="p-5 cursor-pointer hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-2)] hover:-translate-y-1"
             >
-              <div className="w-11 h-11 bg-[var(--color-surface-3)] flex items-center justify-center text-xl mb-4">
+              <div className="w-11 h-11 bg-[var(--color-surface-3)] rounded-lg flex items-center justify-center text-xl mb-4">
                 {service.icon}
               </div>
               <CardTitle className="text-[13px] mb-2 leading-snug">{service.title}</CardTitle>

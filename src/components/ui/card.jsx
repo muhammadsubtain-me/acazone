@@ -5,7 +5,7 @@ function Card({ className, ...props }) {
   return (
     <div
       className={cn(
-        "bg-[var(--color-surface)] border border-[var(--color-border)] transition-all duration-200",
+        "bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl transition-all duration-200",
         className
       )}
       {...props}
