@@ -132,15 +132,8 @@ export default function Hero() {
       </div>
 
       <div
-  className="absolute bottom-0 left-0 right-0"
-  style={{
-    height: '1.5px', // increased from 1px
-    background:
-      'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 15%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0.15) 85%, transparent 100%)',
-    boxShadow:
-      '0 0 8px 1px rgba(255,255,255,0.35), 0 0 24px 4px rgba(255,255,255,0.15)',
-  }}
-/>
+        className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.15)_15%,rgba(255,255,255,0.7)_40%,rgba(255,255,255,1)_50%,rgba(255,255,255,0.7)_60%,rgba(255,255,255,0.15)_85%,transparent_100%)] shadow-[0_0_8px_1px_rgba(255,255,255,0.35),0_0_24px_4px_rgba(255,255,255,0.15)]"
+      />
     </section>
   );
 }

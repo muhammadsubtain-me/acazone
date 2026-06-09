@@ -43,18 +43,13 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
         scrolled
-          ? 'bg-black/30 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
+          ? 'bg-black/30 backdrop-blur-[24px] backdrop-saturate-[180%] border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
           : 'bg-transparent border-b border-transparent shadow-none'
       }`}
-      style={scrolled ? {
-        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-        backdropFilter: 'blur(24px) saturate(180%)',
-      } : {}}
     >
       {/* Liquid glass shimmer line — visible only when scrolled */}
       <div
-        className={`absolute top-0 left-0 right-0 h-px transition-opacity duration-500 ${scrolled ? 'opacity-100' : 'opacity-0'}`}
-        style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 30%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.2) 70%, transparent 100%)' }}
+        className={`absolute top-0 left-0 right-0 h-px transition-opacity duration-500 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.2)_30%,rgba(255,255,255,0.35)_50%,rgba(255,255,255,0.2)_70%,transparent_100%)] ${scrolled ? 'opacity-100' : 'opacity-0'}`}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -85,16 +80,9 @@ export default function Navbar() {
                   }`}>
                     Services
                   </button>
-                  <div className={`absolute top-full left-0 mt-2 w-56 rounded-xl overflow-hidden transition-all duration-200 ${
+                  <div className={`absolute top-full left-0 mt-2 w-56 rounded-xl overflow-hidden transition-all duration-200 bg-[rgba(10,10,10,0.75)] backdrop-blur-[20px] backdrop-saturate-[160%] border border-[rgba(255,255,255,0.1)] shadow-[0_16px_48px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] ${
                     dropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
                   }`}
-                    style={{
-                      background: 'rgba(10,10,10,0.75)',
-                      backdropFilter: 'blur(20px) saturate(160%)',
-                      WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      boxShadow: '0 16px 48px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)',
-                    }}
                   >
                     <div className="p-2">
                       {services.map((service) => (
@@ -140,12 +128,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div
-          className="border-t border-white/[0.08] px-4 pb-4 pt-2"
-          style={{
-            background: 'rgba(5,5,5,0.85)',
-            backdropFilter: 'blur(24px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-          }}
+          className="border-t border-white/[0.08] px-4 pb-4 pt-2 bg-[rgba(5,5,5,0.85)] backdrop-blur-[24px] backdrop-saturate-[180%]"
         >
           {navLinks.map((link) => (
             <div key={link.name}>

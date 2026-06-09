@@ -19,12 +19,8 @@ import {
 function PageHero({ title, subtitle }) {
   return (
     <section className="-mt-16 pt-36 pb-20 bg-[var(--color-surface)] text-center relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: 'radial-gradient(var(--dot-color) 1px, transparent 1px)', backgroundSize: '30px 30px' }}
-      />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full blur-[100px] pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%)' }}
-      />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(var(--dot-color)_1px,transparent_1px)] bg-[size:30px_30px]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full blur-[100px] pointer-events-none bg-[radial-gradient(ellipse,rgba(255,255,255,0.04)_0%,transparent_70%)]" />
       <div className="relative max-w-3xl mx-auto px-4">
         <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4 text-[var(--color-text-heading)]">{title}</h1>
         <p className="text-[var(--color-text-muted)] text-[17px]">{subtitle}</p>
@@ -111,7 +107,7 @@ export function SamplesPage() {
             {samples.map((s) => (
               <Card key={s.title} className="p-6 hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-2)]">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="w-12 h-12 bg-[var(--color-surface-3)] flex items-center justify-center text-2xl">
+                  <div className="w-12 h-12 bg-[var(--color-surface-3)] rounded-xl flex items-center justify-center text-2xl">
                     {s.icon}
                   </div>
                   <Badge variant="grade">{s.grade}</Badge>

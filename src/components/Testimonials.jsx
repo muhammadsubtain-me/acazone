@@ -74,7 +74,7 @@ export default function Testimonials() {
           <div className="flex justify-center gap-4 mt-6">
             {testimonials.map((t, i) => (
               <button key={i} onClick={() => setActive(i)}
-                className={`w-12 h-12 flex items-center justify-center text-xl border-none cursor-pointer transition-all duration-200 ${
+                className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl border-none cursor-pointer transition-all duration-200 ${
                   i === active
                     ? 'bg-[var(--color-surface-3)] outline outline-2 outline-[var(--color-accent)] outline-offset-2 scale-110 opacity-100'
                     : 'bg-[var(--color-surface)] scale-100 opacity-50'

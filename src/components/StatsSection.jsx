@@ -37,9 +37,7 @@ const stats = [
 export default function StatsSection() {
   return (
     <section className="py-20 bg-[var(--color-surface)] relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: 'radial-gradient(var(--dot-color) 1px, transparent 1px)', backgroundSize: '30px 30px' }}
-      />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(var(--dot-color)_1px,transparent_1px)] bg-[size:30px_30px]" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="font-display text-3xl sm:text-4xl font-bold mb-3 text-[var(--color-text-heading)]">

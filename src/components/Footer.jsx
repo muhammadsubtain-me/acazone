@@ -96,7 +96,7 @@ export default function Footer() {
               { name: 'YouTube', icon: '▶', href: '#' },
             ].map((social) => (
               <a key={social.name} href={social.href} aria-label={social.name}
-                className="w-8 h-8 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg flex items-center justify-center text-xs font-bold text-[var(--color-footer-text)] no-underline transition-all duration-200 hover:bg-[var(--color-surface-3)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-text-heading)]"
+                className="w-8 h-8 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl flex items-center justify-center text-xs font-bold text-[var(--color-footer-text)] no-underline transition-all duration-200 hover:bg-[var(--color-surface-3)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-text-heading)]"
               >
                 {social.icon}
               </a>
