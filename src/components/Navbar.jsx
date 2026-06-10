@@ -39,6 +39,18 @@ export default function Navbar() {
     setMobileDropdown(null);
   }, [location.pathname]);
 
+  // Prevent background scrolling when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
   const handleMouseEnter = (type) => { clearTimeout(timeoutRef.current); setActiveDropdown(type); };
   const handleMouseLeave = () => { timeoutRef.current = setTimeout(() => setActiveDropdown(null), 150); };
 
