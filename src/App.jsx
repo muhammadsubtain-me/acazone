@@ -5,7 +5,6 @@ import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import { AboutPage, SamplesPage, ContactPage, PortfolioPage, FAQsPage } from './pages/OtherPages';
-import ServicesOverview from './pages/ServicesOverview';
 import DomainPageDetail from './pages/DomainPageDetail';
 import ServicePageDetail from './pages/ServicePageDetail';
 
@@ -19,7 +18,7 @@ export default function App() {
             {(location) => (
               <Routes location={location}>
                 <Route path="/" element={<Home />} />
-                <Route path="/services" element={<ServicesOverview />} />
+
                 <Route path="/services/mechanical" element={<DomainPageDetail domainId="mechanical" />} />
                 <Route path="/services/electrical" element={<DomainPageDetail domainId="electrical" />} />
                 <Route path="/services/chemical" element={<DomainPageDetail domainId="chemical" />} />

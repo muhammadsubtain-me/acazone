@@ -11,7 +11,7 @@ import { domains, services, contentData } from '../lib/contentData';
 export default function DomainPageDetail({ domainId: propDomainId }) {
   const { domainId: paramDomainId } = useParams();
   const domainId = propDomainId || paramDomainId;
-  const [activeServiceId, setActiveServiceId] = useState('assignment-help');
+  const [activeServiceId, setActiveServiceId] = useState('homeworks-assignments');
   const [fade, setFade] = useState(true);
 
   // Find the selected domain
@@ -28,7 +28,7 @@ export default function DomainPageDetail({ domainId: propDomainId }) {
 
   // Reset to first tab on domain change
   useEffect(() => {
-    setActiveServiceId('assignment-help');
+    setActiveServiceId('homeworks-assignments');
   }, [domainId]);
 
   const currentContent = contentData[domain.id]?.[activeServiceId] || {

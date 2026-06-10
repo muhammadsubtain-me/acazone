@@ -1,21 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
+import { domains as rawDomains, services as rawServices } from '../lib/contentData';
 
-const services = [
-  { name: 'Assignment Help', path: '/services/assignment-help', icon: '📋' },
-  { name: 'Dissertation Help', path: '/services/dissertation-help', icon: '🎓' },
-  { name: 'Exam Preparation', path: '/services/exam-prep', icon: '📚' },
-  { name: 'Lab & Projects Help', path: '/services/lab-projects', icon: '🛠️' },
-];
-
-const domains = [
-  { name: 'Mechanical Engineering', path: '/domains/mechanical', icon: '⚙️' },
-  { name: 'Electrical Engineering', path: '/domains/electrical', icon: '⚡' },
-  { name: 'Chemical Engineering', path: '/domains/chemical', icon: '🧪' },
-  { name: 'Computer Science', path: '/domains/computer-science', icon: '💻' },
-];
+const services = rawServices.map(s => ({ ...s, path: `/services/${s.id}` }));
+const domains = rawDomains.map(d => ({ ...d, path: `/domains/${d.id}` }));
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -31,6 +21,7 @@ const navLinks = [
 export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileDropdown, setMobileDropdown] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const timeoutRef = useRef(null);
   const location = useLocation();
@@ -42,7 +33,11 @@ export default function Navbar() {
   }, []);
 
   // Close mobile menu on route change
-  useEffect(() => { setMobileOpen(false); setActiveDropdown(null); }, [location.pathname]);
+  useEffect(() => {
+    setMobileOpen(false);
+    setActiveDropdown(null);
+    setMobileDropdown(null);
+  }, [location.pathname]);
 
   const handleMouseEnter = (type) => { clearTimeout(timeoutRef.current); setActiveDropdown(type); };
   const handleMouseLeave = () => { timeoutRef.current = setTimeout(() => setActiveDropdown(null), 150); };
@@ -148,26 +143,42 @@ export default function Navbar() {
         >
           {navLinks.map((link) => (
             <div key={link.name}>
-              <Link to={link.path} onClick={() => setMobileOpen(false)}
-                className={`block px-4 py-2.5 text-sm font-medium no-underline transition-all duration-150 ${
-                  location.pathname === link.path
-                    ? 'text-white'
-                    : 'text-[var(--color-text-muted)] hover:text-white'
-                }`}
-              >
-                {link.name}
-              </Link>
-              {link.hasDropdown && (
-                <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-white/10 pl-3 mb-2">
-                  {(link.dropdownType === 'domains' ? domains : services).map((s) => (
-                    <Link key={s.name} to={s.path} onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--color-text-muted)] no-underline hover:text-white hover:bg-white/[0.07] transition-all duration-150"
-                    >
-                      <span>{s.icon}</span>
-                      <span>{s.name}</span>
-                    </Link>
-                  ))}
-                </div>
+              {link.hasDropdown ? (
+                <>
+                  <button
+                    onClick={() => setMobileDropdown(mobileDropdown === link.dropdownType ? null : link.dropdownType)}
+                    className={`flex items-center justify-between w-full px-4 py-2.5 text-sm font-medium border-none bg-transparent cursor-pointer transition-all duration-150 ${
+                      location.pathname.startsWith(link.dropdownType === 'services' ? '/services' : '/domains')
+                        ? 'text-white'
+                        : 'text-[var(--color-text-muted)] hover:text-white'
+                    }`}
+                  >
+                    <span>{link.name}</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileDropdown === link.dropdownType ? 'rotate-180' : ''}`} />
+                  </button>
+                  {mobileDropdown === link.dropdownType && (
+                    <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-white/10 pl-3 mb-2">
+                      {(link.dropdownType === 'domains' ? domains : services).map((s) => (
+                        <Link key={s.name} to={s.path} onClick={() => setMobileOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--color-text-muted)] no-underline hover:text-white hover:bg-white/[0.07] transition-all duration-150"
+                        >
+                          <span>{s.icon}</span>
+                          <span>{s.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Link to={link.path} onClick={() => setMobileOpen(false)}
+                  className={`block px-4 py-2.5 text-sm font-medium no-underline transition-all duration-150 ${
+                    location.pathname === link.path
+                      ? 'text-white'
+                      : 'text-[var(--color-text-muted)] hover:text-white'
+                  }`}
+                >
+                  {link.name}
+                </Link>
               )}
             </div>
           ))}
