@@ -151,7 +151,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div
-          className="border-t border-white/[0.08] px-4 pb-4 pt-2 bg-[rgba(5,5,5,0.85)] backdrop-blur-[24px] backdrop-saturate-[180%] max-h-[calc(100vh-4rem)] overflow-y-auto"
+          className="fixed top-16 left-0 right-0 bottom-0 z-40 px-4 pb-24 pt-2 bg-[rgba(5,5,5,0.92)] backdrop-blur-[24px] backdrop-saturate-[180%] overflow-y-auto border-t border-white/[0.08]"
         >
           {navLinks.map((link) => (
             <div key={link.name}>
