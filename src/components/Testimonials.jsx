@@ -36,20 +36,22 @@ export default function Testimonials() {
         </div>
 
         <div className="max-w-3xl mx-auto">
-          <Card className="p-10 mb-8">
+          <Card className="p-6 sm:p-10 mb-8">
             <div className="text-[56px] text-[var(--color-border-hover)] font-extrabold leading-none mb-4">"</div>
             <p className="text-[var(--color-text)] text-[17px] leading-[1.75] mb-6">
               {testimonials[active].text}
             </p>
-            <div className="flex items-center gap-4">
-              <Avatar>
-                <AvatarFallback>{testimonials[active].avatar}</AvatarFallback>
-              </Avatar>
-              <div>
-                <div className="font-semibold text-[var(--color-text-heading)]">{testimonials[active].name}</div>
-                <div className="text-[13px] text-[var(--color-text-muted)]">{testimonials[active].role}</div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex items-center gap-4">
+                <Avatar>
+                  <AvatarFallback>{testimonials[active].avatar}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="font-semibold text-[var(--color-text-heading)]">{testimonials[active].name}</div>
+                  <div className="text-[13px] text-[var(--color-text-muted)]">{testimonials[active].role}</div>
+                </div>
               </div>
-              <div className="ml-auto flex gap-0.5">
+              <div className="sm:ml-auto flex gap-0.5">
                 {Array.from({ length: testimonials[active].rating }).map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-current text-[var(--color-star)]" />
                 ))}

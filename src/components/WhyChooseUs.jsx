@@ -37,7 +37,7 @@ export default function WhyChooseUs() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {features.map((f) => (
               <Card key={f.title} className="p-5 hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-2)]">
                 <div className="w-10 h-10 bg-[var(--color-surface-3)] rounded-xl flex items-center justify-center text-xl mb-3">

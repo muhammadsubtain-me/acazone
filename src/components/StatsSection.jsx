@@ -45,7 +45,7 @@ export default function StatsSection() {
           </h2>
           <p className="text-[var(--color-text-muted)] text-[17px]">Numbers that speak to our commitment and excellence</p>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
             <Card key={stat.label}
               className="p-6 text-center bg-[var(--color-surface-2)] hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-3)]"
