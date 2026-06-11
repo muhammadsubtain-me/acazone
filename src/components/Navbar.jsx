@@ -64,18 +64,24 @@ export default function Navbar() {
     return location.pathname === link.path;
   };
 
+  const isHomePage = location.pathname === '/';
+
   return (
     <>
       <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
-        scrolled || mobileOpen
-          ? 'bg-black/30 backdrop-blur-[24px] backdrop-saturate-[180%] border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
-          : 'bg-transparent border-b border-transparent shadow-none'
+        isHomePage
+          ? scrolled || mobileOpen
+            ? 'bg-black/30 backdrop-blur-[24px] backdrop-saturate-[180%] border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
+            : 'bg-transparent border-b border-transparent shadow-none'
+          : 'bg-[#161616]/90 backdrop-blur-[24px] backdrop-saturate-[180%] border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
       }`}
     >
-      {/* Liquid glass shimmer line — visible only when scrolled */}
+      {/* Liquid glass shimmer line — visible when scrolled or when on other pages */}
       <div
-        className={`absolute top-0 left-0 right-0 h-px transition-opacity duration-500 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.2)_30%,rgba(255,255,255,0.35)_50%,rgba(255,255,255,0.2)_70%,transparent_100%)] ${scrolled ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute top-0 left-0 right-0 h-px transition-opacity duration-500 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.2)_30%,rgba(255,255,255,0.35)_50%,rgba(255,255,255,0.2)_70%,transparent_100%)] ${
+          !isHomePage || scrolled ? 'opacity-100' : 'opacity-0'
+        }`}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
