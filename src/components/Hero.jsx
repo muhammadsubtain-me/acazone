@@ -122,7 +122,7 @@ export default function Hero() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" asChild>
             <Link to="/contact" className="inline-flex items-center gap-2">
-              Hire Expert <ArrowRight className="w-4 h-4" />
+              Order Now <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>

@@ -57,7 +57,7 @@ export default function DomainPageDetail({ domainId: propDomainId }) {
           <div className="flex justify-center">
             <Button size="lg" asChild>
               <Link to="/contact" className="inline-flex items-center gap-2">
-                Hire {domain.name} Expert
+                Order {domain.name} Now
               </Link>
             </Button>
           </div>

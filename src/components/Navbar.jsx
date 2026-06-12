@@ -139,7 +139,7 @@ export default function Navbar() {
               )
             )}
             <Button asChild size="sm" className="ml-3">
-              <Link to="/contact">Hire Expert</Link>
+              <Link to="/contact">Order Now</Link>
             </Button>
           </div>
 
@@ -204,7 +204,7 @@ export default function Navbar() {
           ))}
           <div className="pt-2">
             <Button asChild className="w-full">
-              <Link to="/contact" onClick={() => setMobileOpen(false)}>Hire Expert</Link>
+              <Link to="/contact" onClick={() => setMobileOpen(false)}>Order Now</Link>
             </Button>
           </div>
         </div>

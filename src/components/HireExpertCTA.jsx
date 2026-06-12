@@ -23,7 +23,7 @@ export default function HireExpertCTA() {
             </p>
             <Button asChild>
               <Link to="/contact" className="inline-flex items-center gap-2">
-                Hire Expert Now <ArrowRight className="w-4 h-4" />
+                Order Now <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
           </div>

@@ -263,7 +263,7 @@ export function PortfolioPage() {
 
 /* ── FAQs ───────────────────────────────────────────────────────────────────── */
 const faqs = [
-  { q: 'How do I place an order?', a: 'Simply click "Hire Expert", fill in your assignment details, and we will match you with the most qualified tutor for your subject.' },
+  { q: 'How do I place an order?', a: 'Simply click "Order Now", fill in your assignment details, and we will match you with the most qualified tutor for your subject.' },
   { q: 'Is my information kept confidential?', a: 'Absolutely. We follow strict data privacy policies. Your personal information and assignment details are never shared with third parties.' },
   { q: 'How fast can you complete my assignment?', a: 'We offer turnarounds from a few hours to several weeks depending on complexity. Express delivery is available for urgent deadlines.' },
   { q: 'What if I am not satisfied with the work?', a: 'We offer unlimited free revisions until you are completely satisfied. Your satisfaction is our top priority.' },

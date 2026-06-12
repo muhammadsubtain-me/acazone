@@ -39,7 +39,7 @@ export default function Footer() {
                 { name: 'Contact Us', path: '/contact' },
                 { name: 'Samples', path: '/samples' },
                 { name: 'Portfolio', path: '/portfolio' },
-                { name: 'Hire Expert', path: '/contact' },
+                { name: 'Order Now', path: '/contact' },
               ].map((link) => (
                 <li key={link.name} className="mb-2.5">
                   <Link to={link.path}
