@@ -1,6 +1,6 @@
-import { Badge } from '../components/ui/badge';
-import { Card, CardTitle, CardDescription } from '../components/ui/card';
-import PageHero from '../components/PageHero';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardTitle, CardDescription } from '@/components/ui/card';
+import PageHero from '@/components/PageHero';
 
 export default function AboutPage() {
   return (

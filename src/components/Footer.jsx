@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Separator } from './ui/separator';
+import { Separator } from '@/components/ui/separator';
 
 const subjects = [
   'Computer Science', 'Applied Sciences', 'Social Sciences', 'Mathematics', 'Programming',

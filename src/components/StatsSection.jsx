@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Card } from './ui/card';
+import { Card } from '@/components/ui/card';
 
 function CountUp({ target, suffix = '' }) {
   const [count, setCount] = useState(0);

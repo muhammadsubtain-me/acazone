@@ -1,9 +1,9 @@
 import { useParams, Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { Card, CardTitle, CardDescription } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
-import { domains, services, contentData } from '../lib/contentData';
+import { Card, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { domains, services, contentData } from '@/lib/contentData';
 
 export default function ServicePageDetail({ serviceId: propServiceId }) {
   const { serviceId: paramServiceId } = useParams();

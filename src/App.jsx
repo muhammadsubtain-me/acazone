@@ -1,16 +1,17 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import PageTransition from './components/PageTransition';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import WhatsAppButton from './components/WhatsAppButton';
-import Home from './pages/Home';
-import AboutPage from './pages/AboutPage';
-import SamplesPage from './pages/SamplesPage';
-import ContactPage from './pages/ContactPage';
-import PortfolioPage from './pages/PortfolioPage';
-import FAQsPage from './pages/FAQsPage';
-import OrderPage from './pages/OrderPage';
-import ServicePageDetail from './pages/ServicePageDetail';
+import PageTransition from '@/components/PageTransition';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import WhatsAppButton from '@/components/WhatsAppButton';
+import Home from '@/pages/Home';
+import AboutPage from '@/pages/AboutPage';
+import SamplesPage from '@/pages/SamplesPage';
+import ContactPage from '@/pages/ContactPage';
+import PortfolioPage from '@/pages/PortfolioPage';
+import FAQsPage from '@/pages/FAQsPage';
+import OrderPage from '@/pages/OrderPage';
+import ServicePageDetail from '@/pages/ServicePageDetail';
+import ServicesPage from '@/pages/ServicesPage';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
               <Routes location={location}>
                 <Route path="/" element={<Home />} />
 
+                <Route path="/services" element={<ServicesPage />} />
                 <Route path="/services/:serviceId" element={<ServicePageDetail />} />
                 <Route path="/samples" element={<SamplesPage />} />
                 <Route path="/about" element={<AboutPage />} />

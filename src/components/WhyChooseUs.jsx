@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { Badge } from './ui/badge';
-import { Card, CardTitle, CardDescription } from './ui/card';
-import { Button } from './ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const features = [
   { icon: '🏅', title: 'World-Class Experts', desc: 'Our tutors are vetted professionals with advanced degrees in their fields.' },

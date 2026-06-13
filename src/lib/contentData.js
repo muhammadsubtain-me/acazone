@@ -13,7 +13,8 @@ export const services = [
   { id: 'proofreading-editing', name: 'Proofreading & Editing', icon: '🔍', desc: 'Meticulous proofreading and editing to refine grammar, styling, and academic structure.' },
   { id: 'semester-projects', name: 'Semester Projects Services', icon: '📂', desc: 'End-to-end support for semester-long academic projects and presentations.' },
   { id: 'final-year-projects', name: 'Final Year Projects Services', icon: '🎓', desc: 'Comprehensive final year project support including coding, thesis writing, and report creation.' },
-  { id: 'lab-tasks-projects', name: 'Lab Tasks & Projects', icon: '🛠️', desc: 'Practical lab report writing, hardware tasks, software simulations, and project designs.' }
+  { id: 'lab-tasks-projects', name: 'Lab Tasks & Projects', icon: '🛠️', desc: 'Practical lab report writing, hardware tasks, software simulations, and project designs.' },
+  { id: 'programming-coding', name: 'Programming & Coding Help', icon: '👨‍💻', desc: 'Expert coding assistance, debugging, software development support, and script writing.' }
 ];
 
 // Content map: [domainId][serviceId]
@@ -90,6 +91,15 @@ export const contentData = {
         { icon: '🎯', title: 'Concept Summaries', desc: 'Condensed summaries of core equations, boundary conditions, and laws.' },
         { icon: '⏱️', title: 'Time-Management Prep', desc: 'Practice mock exams structured under standard university test durations.' }
       ]
+    },
+    'programming-coding': {
+      title: 'Mechanical Programming & Coding',
+      desc: 'Help with Matlab scripting, Python data analysis, CFD/FEA scripting, and automation coding for mechanical systems.',
+      topics: ['MATLAB Scripting & Solvers', 'Python for FEA/CFD Data Analysis', 'Arduino/Raspberry Pi Programming', 'SolidWorks API Scripts'],
+      benefits: [
+        { icon: '💻', title: 'Engineering Scripts', desc: 'Clean, well-documented scripts for technical calculation and simulation.' },
+        { icon: '🤖', title: 'Control Automation', desc: 'Hardware integration code for microcontrollers and actuators.' }
+      ]
     }
   },
   electrical: {
@@ -163,6 +173,15 @@ export const contentData = {
       benefits: [
         { icon: '📝', title: 'Custom Formula Cards', desc: 'Cheat sheets covering Laplace, Z-transforms, and Fourier series.' },
         { icon: '🏆', title: 'Grading Rubric Target', desc: 'Solutions structured exactly to earn maximum points from university graders.' }
+      ]
+    },
+    'programming-coding': {
+      title: 'Electrical Programming & Coding',
+      desc: 'Microcontroller programming, HDL design (Verilog/VHDL), PLC automation, and system simulations.',
+      topics: ['Arduino & ESP32 Coding', 'VHDL / Verilog (FPGA)', 'PLC Ladder Logic', 'MATLAB & Simulink Scripts'],
+      benefits: [
+        { icon: '⚡', title: 'Embedded Systems', desc: 'Efficient C/C++ firmware for microcontrollers and IoT applications.' },
+        { icon: '⚙️', title: 'Hardware Simulation', desc: 'HDL code verified for functional correctness and synthesis.' }
       ]
     }
   },
@@ -238,6 +257,15 @@ export const contentData = {
         { icon: '📖', title: 'Core Equation Guides', desc: 'Formula sheets covering transport phenomena, kinetics, and thermodynamics.' },
         { icon: '🏆', title: 'Solved Mock Exams', desc: 'Full step-by-step walkthroughs of past exams and standard review questions.' }
       ]
+    },
+    'programming-coding': {
+      title: 'Chemical Programming & Coding',
+      desc: 'Process simulation scripts, numerical solving, Matlab calculations, and thermodynamic scripting.',
+      topics: ['MATLAB Process Solvers', 'Python Thermodynamic Scripts', 'Aspen Plus Automation APIs', 'R for Reaction Kinetics Data'],
+      benefits: [
+        { icon: '🧪', title: 'Numerical Models', desc: 'Accurate scripts to solve complex ODEs/PDEs for mass and heat transfer.' },
+        { icon: '📊', title: 'Data Visualization', desc: 'Custom scripts to plot phase diagrams, reactor yields, and streams.' }
+      ]
     }
   },
   'computer-science': {
@@ -311,6 +339,15 @@ export const contentData = {
       benefits: [
         { icon: '📝', title: 'Trace & Debug Worksheets', desc: 'Guides on tracing loops, recursion, stack states, and pointers.' },
         { icon: '🏆', title: 'Solved Theory Proofs', desc: 'Step-by-step answers showing induction proofs and state machine diagrams.' }
+      ]
+    },
+    'programming-coding': {
+      title: 'Computer Science Programming & Coding',
+      desc: 'Full-stack development, algorithms, backend APIs, data structures, and software engineering support.',
+      topics: ['Python, Java & C++ Programming', 'Full-Stack Web (React, Node.js)', 'Data Structures & Algorithms', 'Database Queries & ORM Config'],
+      benefits: [
+        { icon: '🚀', title: 'Clean Code Standards', desc: 'Production-ready code written with clean architecture and robust error handling.' },
+        { icon: '📂', title: 'Tested Codebase', desc: 'Delivered with installation steps, unit tests, and comprehensive README files.' }
       ]
     }
   }

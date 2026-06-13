@@ -1,5 +1,5 @@
-import { Card } from '../components/ui/card';
-import PageHero from '../components/PageHero';
+import { Card } from '@/components/ui/card';
+import PageHero from '@/components/PageHero';
 
 export default function ContactPage() {
   return (

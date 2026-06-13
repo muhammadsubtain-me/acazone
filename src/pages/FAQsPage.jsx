@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { Card } from '../components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from '../components/ui/accordion';
-import PageHero from '../components/PageHero';
-import { faqs } from '../lib/contentData';
+} from '@/components/ui/accordion';
+import PageHero from '@/components/PageHero';
+import { faqs } from '@/lib/contentData';
 
 export default function FAQsPage() {
   return (

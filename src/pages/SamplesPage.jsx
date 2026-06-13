@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Badge } from '../components/ui/badge';
-import { Card, CardTitle } from '../components/ui/card';
-import PageHero from '../components/PageHero';
-import { samples } from '../lib/contentData';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardTitle } from '@/components/ui/card';
+import PageHero from '@/components/PageHero';
+import { samples } from '@/lib/contentData';
 
 export default function SamplesPage() {
   return (

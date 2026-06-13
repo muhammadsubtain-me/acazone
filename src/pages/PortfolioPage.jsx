@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Star } from 'lucide-react';
-import { Badge } from '../components/ui/badge';
-import { Card } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import PageHero from '../components/PageHero';
-import { portfolioItems, categories } from '../lib/contentData';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import PageHero from '@/components/PageHero';
+import { portfolioItems, categories } from '@/lib/contentData';
 
 export default function PortfolioPage() {
   const [active, setActive] = useState('All');

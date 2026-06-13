@@ -1,14 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
-import { Button } from './ui/button';
-import { services as rawServices } from '../lib/contentData';
-
-const services = rawServices.map(s => ({ ...s, path: `/services/${s.id}` }));
+import { Menu, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const navLinks = [
   { name: 'Home', path: '/' },
-  { name: 'Services', path: '/services', hasDropdown: true, dropdownType: 'services' },
+  { name: 'Services', path: '/services' },
   { name: 'Samples', path: '/samples' },
   { name: 'About', path: '/about' },
   { name: 'Contact', path: '/contact' },
@@ -17,11 +14,8 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const [activeDropdown, setActiveDropdown] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileDropdown, setMobileDropdown] = useState(null);
   const [scrolled, setScrolled] = useState(false);
-  const timeoutRef = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -33,8 +27,6 @@ export default function Navbar() {
   // Close mobile menu on route change
   useEffect(() => {
     setMobileOpen(false);
-    setActiveDropdown(null);
-    setMobileDropdown(null);
   }, [location.pathname]);
 
   // Prevent background scrolling when mobile menu is open
@@ -49,11 +41,8 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
-  const handleMouseEnter = (type) => { clearTimeout(timeoutRef.current); setActiveDropdown(type); };
-  const handleMouseLeave = () => { timeoutRef.current = setTimeout(() => setActiveDropdown(null), 150); };
-
   const isLinkActive = (link) => {
-    if (link.dropdownType === 'services') {
+    if (link.name === 'Services') {
       return location.pathname.startsWith('/services');
     }
     return location.pathname === link.path;
@@ -64,146 +53,83 @@ export default function Navbar() {
   return (
     <>
       <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
-        isHomePage
-          ? scrolled || mobileOpen
-            ? 'bg-black/30 backdrop-blur-[24px] backdrop-saturate-[180%] border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
-            : 'bg-transparent border-b border-transparent shadow-none'
-          : 'bg-[#161616]/90 backdrop-blur-[24px] backdrop-saturate-[180%] border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
-      }`}
-    >
-      {/* Liquid glass shimmer line — visible when scrolled or when on other pages */}
-      <div
-        className={`absolute top-0 left-0 right-0 h-px transition-opacity duration-500 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.2)_30%,rgba(255,255,255,0.35)_50%,rgba(255,255,255,0.2)_70%,transparent_100%)] ${
-          !isHomePage || scrolled ? 'opacity-100' : 'opacity-0'
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
+          isHomePage
+            ? scrolled || mobileOpen
+              ? 'bg-black/30 backdrop-blur-[24px] backdrop-saturate-[180%] border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
+              : 'bg-transparent border-b border-transparent shadow-none'
+            : 'bg-[#161616]/90 backdrop-blur-[24px] backdrop-saturate-[180%] border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
         }`}
-      />
+      >
+        {/* Liquid glass shimmer line — visible when scrolled or when on other pages */}
+        <div
+          className={`absolute top-0 left-0 right-0 h-px transition-opacity duration-500 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.2)_30%,rgba(255,255,255,0.35)_50%,rgba(255,255,255,0.2)_70%,transparent_100%)] ${
+            !isHomePage || scrolled ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center no-underline">
-            <span className="text-[var(--color-text-heading)] font-bold text-xl tracking-[-0.02em]">
-              Zen<span className="text-[var(--color-accent-muted)]">Edify</span>
-            </span>
-          </Link>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center no-underline">
+              <span className="text-[var(--color-text-heading)] font-bold text-xl tracking-[-0.02em]">
+                Zen<span className="text-[var(--color-accent-muted)]">Edify</span>
+              </span>
+            </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-1 ml-auto">
-            {navLinks.map((link) =>
-              link.hasDropdown ? (
-                <div key={link.name} className="relative"
-                  onMouseEnter={() => handleMouseEnter(link.dropdownType)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <button
-                    aria-haspopup="true"
-                    aria-expanded={activeDropdown === link.dropdownType}
-                    className={`flex items-center px-4 py-2 text-sm font-medium border-none cursor-pointer transition-all duration-150 bg-transparent gap-1.5 ${
-                      isLinkActive(link)
-                        ? 'text-white'
-                        : 'text-[var(--color-text-muted)] hover:text-white'
-                    }`}
-                  >
-                    <span>{link.name}</span>
-                  </button>
-                  <div className={`absolute top-full left-0 mt-2 w-64 rounded-xl overflow-hidden transition-all duration-200 bg-[rgba(10,10,10,0.85)] backdrop-blur-[20px] backdrop-saturate-[160%] border border-[rgba(255,255,255,0.1)] shadow-[0_16px_48px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] ${
-                    activeDropdown === link.dropdownType
-                      ? 'opacity-100 translate-y-0 pointer-events-auto'
-                      : 'opacity-0 -translate-y-2 pointer-events-none'
-                  }`}
-                  >
-                    <div className="p-2">
-                      {services.map((item) => (
-                        <Link key={item.name} to={item.path} onClick={() => setActiveDropdown(null)}
-                          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-text)] no-underline transition-all duration-150 hover:bg-white/10 hover:text-white"
-                        >
-                          <span>{item.icon}</span>
-                          <span className="font-medium whitespace-nowrap">{item.name}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <Link key={link.name} to={link.path}
+            {/* Desktop Nav */}
+            <div className="hidden lg:flex items-center gap-1 ml-auto">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
                   className={`px-4 py-2 text-sm font-medium no-underline transition-all duration-150 ${
-                    location.pathname === link.path
+                    isLinkActive(link)
                       ? 'text-white'
                       : 'text-[var(--color-text-muted)] hover:text-white'
                   }`}
                 >
                   {link.name}
                 </Link>
-              )
-            )}
-            <Button asChild size="sm" className="ml-3">
-              <Link to="/order">Hire Expert</Link>
-            </Button>
+              ))}
+              <Button asChild size="sm" className="ml-3">
+                <Link to="/order">Hire Expert</Link>
+              </Button>
+            </div>
+
+            {/* Mobile toggle */}
+            <button
+              className={`lg:hidden ml-auto w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                scrolled ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
+              }`}
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-expanded={mobileOpen}
+              aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            >
+              {mobileOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
+            </button>
           </div>
-
-          {/* Mobile toggle */}
-          <button
-            className={`lg:hidden ml-auto w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${
-              scrolled ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
-            }`}
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-expanded={mobileOpen}
-            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
-          >
-            {mobileOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
-          </button>
         </div>
-      </div>
-    </header>
+      </header>
 
-    {/* Mobile menu */}
-    {mobileOpen && (
+      {/* Mobile menu */}
+      {mobileOpen && (
         <div
           className="fixed top-16 left-0 right-0 bottom-0 z-40 px-4 pb-24 pt-2 bg-[rgba(5,5,5,0.92)] backdrop-blur-[24px] backdrop-saturate-[180%] overflow-y-auto border-t border-white/[0.08]"
         >
           {navLinks.map((link) => (
-            <div key={link.name}>
-              {link.hasDropdown ? (
-                <>
-                  <button
-                    onClick={() => setMobileDropdown(mobileDropdown === link.dropdownType ? null : link.dropdownType)}
-                    aria-haspopup="true"
-                    aria-expanded={mobileDropdown === link.dropdownType}
-                    className={`flex items-center justify-between w-full px-4 py-2.5 text-sm font-medium border-none bg-transparent cursor-pointer transition-all duration-150 ${
-                      location.pathname.startsWith('/services')
-                        ? 'text-white'
-                        : 'text-[var(--color-text-muted)] hover:text-white'
-                    }`}
-                  >
-                    <span>{link.name}</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileDropdown === link.dropdownType ? 'rotate-180' : ''}`} />
-                  </button>
-                  {mobileDropdown === link.dropdownType && (
-                    <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-white/10 pl-3 mb-2">
-                      {services.map((s) => (
-                        <Link key={s.name} to={s.path} onClick={() => setMobileOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--color-text-muted)] no-underline hover:text-white hover:bg-white/[0.07] transition-all duration-150"
-                        >
-                          <span>{s.icon}</span>
-                          <span>{s.name}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <Link to={link.path} onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-2.5 text-sm font-medium no-underline transition-all duration-150 ${
-                    location.pathname === link.path
-                      ? 'text-white'
-                      : 'text-[var(--color-text-muted)] hover:text-white'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              )}
-            </div>
+            <Link
+              key={link.name}
+              to={link.path}
+              onClick={() => setMobileOpen(false)}
+              className={`block px-4 py-2.5 text-sm font-medium no-underline transition-all duration-150 ${
+                isLinkActive(link)
+                  ? 'text-white'
+                  : 'text-[var(--color-text-muted)] hover:text-white'
+              }`}
+            >
+              {link.name}
+            </Link>
           ))}
           <div className="pt-2">
             <Button asChild className="w-full">
