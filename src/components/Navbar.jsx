@@ -2,15 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
-import { domains as rawDomains, services as rawServices } from '../lib/contentData';
+import { services as rawServices } from '../lib/contentData';
 
 const services = rawServices.map(s => ({ ...s, path: `/services/${s.id}` }));
-const domains = rawDomains.map(d => ({ ...d, path: `/domains/${d.id}` }));
 
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Services', path: '/services', hasDropdown: true, dropdownType: 'services' },
-  { name: 'Domains', path: '/domains/mechanical', hasDropdown: true, dropdownType: 'domains' },
   { name: 'Samples', path: '/samples' },
   { name: 'About', path: '/about' },
   { name: 'Contact', path: '/contact' },
@@ -56,10 +54,7 @@ export default function Navbar() {
 
   const isLinkActive = (link) => {
     if (link.dropdownType === 'services') {
-      return location.pathname.startsWith('/services') && !location.pathname.startsWith('/services/mechanical') && !location.pathname.startsWith('/services/electrical') && !location.pathname.startsWith('/services/chemical') && !location.pathname.startsWith('/services/computer-science');
-    }
-    if (link.dropdownType === 'domains') {
-      return location.pathname.startsWith('/domains') || location.pathname.startsWith('/services/mechanical') || location.pathname.startsWith('/services/electrical') || location.pathname.startsWith('/services/chemical') || location.pathname.startsWith('/services/computer-science');
+      return location.pathname.startsWith('/services');
     }
     return location.pathname === link.path;
   };
@@ -101,11 +96,15 @@ export default function Navbar() {
                   onMouseEnter={() => handleMouseEnter(link.dropdownType)}
                   onMouseLeave={handleMouseLeave}
                 >
-                  <button className={`flex items-center px-4 py-2 text-sm font-medium border-none cursor-pointer transition-all duration-150 bg-transparent gap-1.5 ${
-                    isLinkActive(link)
-                      ? 'text-white'
-                      : 'text-[var(--color-text-muted)] hover:text-white'
-                  }`}>
+                  <button
+                    aria-haspopup="true"
+                    aria-expanded={activeDropdown === link.dropdownType}
+                    className={`flex items-center px-4 py-2 text-sm font-medium border-none cursor-pointer transition-all duration-150 bg-transparent gap-1.5 ${
+                      isLinkActive(link)
+                        ? 'text-white'
+                        : 'text-[var(--color-text-muted)] hover:text-white'
+                    }`}
+                  >
                     <span>{link.name}</span>
                   </button>
                   <div className={`absolute top-full left-0 mt-2 w-64 rounded-xl overflow-hidden transition-all duration-200 bg-[rgba(10,10,10,0.85)] backdrop-blur-[20px] backdrop-saturate-[160%] border border-[rgba(255,255,255,0.1)] shadow-[0_16px_48px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] ${
@@ -115,7 +114,7 @@ export default function Navbar() {
                   }`}
                   >
                     <div className="p-2">
-                      {(link.dropdownType === 'domains' ? domains : services).map((item) => (
+                      {services.map((item) => (
                         <Link key={item.name} to={item.path} onClick={() => setActiveDropdown(null)}
                           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-text)] no-underline transition-all duration-150 hover:bg-white/10 hover:text-white"
                         >
@@ -139,7 +138,7 @@ export default function Navbar() {
               )
             )}
             <Button asChild size="sm" className="ml-3">
-              <Link to="/contact">Order Now</Link>
+              <Link to="/order">Hire Expert</Link>
             </Button>
           </div>
 
@@ -149,6 +148,8 @@ export default function Navbar() {
               scrolled ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
             }`}
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-expanded={mobileOpen}
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
           >
             {mobileOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
           </button>
@@ -167,8 +168,10 @@ export default function Navbar() {
                 <>
                   <button
                     onClick={() => setMobileDropdown(mobileDropdown === link.dropdownType ? null : link.dropdownType)}
+                    aria-haspopup="true"
+                    aria-expanded={mobileDropdown === link.dropdownType}
                     className={`flex items-center justify-between w-full px-4 py-2.5 text-sm font-medium border-none bg-transparent cursor-pointer transition-all duration-150 ${
-                      location.pathname.startsWith(link.dropdownType === 'services' ? '/services' : '/domains')
+                      location.pathname.startsWith('/services')
                         ? 'text-white'
                         : 'text-[var(--color-text-muted)] hover:text-white'
                     }`}
@@ -178,7 +181,7 @@ export default function Navbar() {
                   </button>
                   {mobileDropdown === link.dropdownType && (
                     <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-white/10 pl-3 mb-2">
-                      {(link.dropdownType === 'domains' ? domains : services).map((s) => (
+                      {services.map((s) => (
                         <Link key={s.name} to={s.path} onClick={() => setMobileOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--color-text-muted)] no-underline hover:text-white hover:bg-white/[0.07] transition-all duration-150"
                         >
@@ -204,7 +207,7 @@ export default function Navbar() {
           ))}
           <div className="pt-2">
             <Button asChild className="w-full">
-              <Link to="/contact" onClick={() => setMobileOpen(false)}>Order Now</Link>
+              <Link to="/order" onClick={() => setMobileOpen(false)}>Hire Expert</Link>
             </Button>
           </div>
         </div>

@@ -3,7 +3,6 @@ import ServicesSection from '../components/ServicesSection';
 import WhyChooseUs from '../components/WhyChooseUs';
 import StatsSection from '../components/StatsSection';
 import Testimonials from '../components/Testimonials';
-import BlogSection from '../components/BlogSection';
 import HireExpertCTA from '../components/HireExpertCTA';
 
 export default function Home() {
@@ -14,7 +13,6 @@ export default function Home() {
       <WhyChooseUs />
       <StatsSection />
       <Testimonials />
-      <BlogSection />
       <HireExpertCTA />
     </>
   );

@@ -21,15 +21,15 @@ export default function ServicesSection() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {services.map((service) => (
-            <Link key={service.id} to={`/services/${service.id}`} className="no-underline block">
-              <Card className="p-5 h-full cursor-pointer hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-2)] hover:-translate-y-1 transition-all duration-300">
+            <div key={service.id} className="block">
+              <Card className="p-5 h-full hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-2)] transition-all duration-300">
                 <div className="w-11 h-11 bg-[var(--color-surface-3)] rounded-xl flex items-center justify-center text-xl mb-4">
                   {service.icon}
                 </div>
                 <CardTitle className="text-[13px] mb-2 leading-snug">{service.name}</CardTitle>
                 <CardDescription className="text-xs leading-normal">{service.desc}</CardDescription>
               </Card>
-            </Link>
+            </div>
           ))}
         </div>
 

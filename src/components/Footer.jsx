@@ -39,7 +39,7 @@ export default function Footer() {
                 { name: 'Contact Us', path: '/contact' },
                 { name: 'Samples', path: '/samples' },
                 { name: 'Portfolio', path: '/portfolio' },
-                { name: 'Order Now', path: '/contact' },
+                { name: 'Hire Expert', path: '/order' },
               ].map((link) => (
                 <li key={link.name} className="mb-2.5">
                   <Link to={link.path}
@@ -55,10 +55,10 @@ export default function Footer() {
             <h4 className="font-semibold text-[var(--color-footer-head)] mb-5 text-xs uppercase tracking-[0.08em]">Domains</h4>
             <ul className="list-none p-0 m-0">
               {[
-                { name: 'Mechanical Engineering', path: '/domains/mechanical' },
-                { name: 'Electrical Engineering', path: '/domains/electrical' },
-                { name: 'Chemical Engineering', path: '/domains/chemical' },
-                { name: 'Computer Science', path: '/domains/computer-science' },
+                { name: 'Mechanical Engineering', path: '/services/homeworks-assignments?domain=mechanical' },
+                { name: 'Electrical Engineering', path: '/services/homeworks-assignments?domain=electrical' },
+                { name: 'Chemical Engineering', path: '/services/homeworks-assignments?domain=chemical' },
+                { name: 'Computer Science', path: '/services/homeworks-assignments?domain=computer-science' },
               ].map((s) => (
                 <li key={s.name} className="mb-2.5">
                   <Link to={s.path}

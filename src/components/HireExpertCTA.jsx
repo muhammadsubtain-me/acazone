@@ -22,8 +22,8 @@ export default function HireExpertCTA() {
               We understand that you might not always have access to homework assistance. This is why we give students step-by-step solutions from competent tutors with immediate, dependable support.
             </p>
             <Button asChild>
-              <Link to="/contact" className="inline-flex items-center gap-2">
-                Order Now <ArrowRight className="w-4 h-4" />
+              <Link to="/order" className="inline-flex items-center gap-2">
+                Hire Expert Now <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
           </div>
