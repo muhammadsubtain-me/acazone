@@ -19,17 +19,110 @@ export const services = [
 
 
 
-export const samples = [
-  { title: 'Thermodynamics Assignment', subject: 'Mechanical Eng.', pages: 12, grade: 'A+', icon: '⚙️' },
-  { title: 'Circuit Analysis Lab Report', subject: 'Electrical Eng.', pages: 8, grade: 'A', icon: '⚡' },
-  { title: 'Reaction Kinetics Assignment', subject: 'Chemical Eng.', pages: 15, grade: 'A+', icon: '🧪' },
-  { title: 'Data Structures Project', subject: 'Computer Science', pages: 20, grade: 'A', icon: '💻' },
-  { title: 'Literature Review Essay', subject: 'English', pages: 10, grade: 'A+', icon: '📝' },
-  { title: 'Research Proposal', subject: 'Research Methods', pages: 18, grade: 'A', icon: '🔬' },
-  { title: 'Dissertation Chapter', subject: 'Management', pages: 35, grade: 'A+', icon: '🎓' },
-  { title: 'MATLAB Analysis', subject: 'Applied Math', pages: 9, grade: 'A', icon: '📊' },
-  { title: 'Python ML Project', subject: 'Computer Science', pages: 25, grade: 'A+', icon: '🤖' },
-];
+export const pdfSamples = {
+  problems: [
+    {
+      title: 'Circuit Network Analysis',
+      subject: 'Electrical Engineering',
+      pages: 7,
+      grade: 'A+',
+      pdfUrl: '/Samples/Problems/Problem Set 1.pdf',
+      thumbnailUrl: '/Samples/Problems/Problem Set 1.png'
+    },
+    {
+      title: 'Mechanical Statics & Dynamics',
+      subject: 'Mechanical Engineering',
+      pages: 7,
+      grade: 'A',
+      pdfUrl: '/Samples/Problems/Problem Set 2.pdf',
+      thumbnailUrl: '/Samples/Problems/Problem Set 2.png'
+    },
+    {
+      title: 'Power System Circuit Design',
+      subject: 'Electrical Engineering',
+      pages: 7,
+      grade: 'A+',
+      pdfUrl: '/Samples/Problems/Problem Set 3.pdf',
+      thumbnailUrl: '/Samples/Problems/Problem Set 3.png'
+    },
+    {
+      title: 'Calculus & Differential Equations',
+      subject: 'Applied Mathematics',
+      pages: 6,
+      grade: 'A',
+      pdfUrl: '/Samples/Problems/Problem Set 4.pdf',
+      thumbnailUrl: '/Samples/Problems/Problem Set 4.png'
+    }
+  ],
+  lectures: [
+    {
+      title: 'Fourier Transform & Signals',
+      subject: 'Signal Processing',
+      pages: 1,
+      grade: 'A',
+      pdfUrl: '/Samples/Lectures/Lecture 1.pdf',
+      thumbnailUrl: '/Samples/Lectures/Lecture 1.png'
+    },
+    {
+      title: 'Mechanical Vibrations & Controls',
+      subject: 'Mechanical Engineering',
+      pages: 7,
+      grade: 'A+',
+      pdfUrl: '/Samples/Lectures/Lecture 2.pdf',
+      thumbnailUrl: '/Samples/Lectures/Lecture 2.png'
+    },
+    {
+      title: 'Feedback Control Systems',
+      subject: 'Systems Engineering',
+      pages: 3,
+      grade: 'A',
+      pdfUrl: '/Samples/Lectures/Lecture 3.pdf',
+      thumbnailUrl: '/Samples/Lectures/Lecture 3.png'
+    },
+    {
+      title: 'Fluid Mechanics & Aerodynamics',
+      subject: 'Aerospace Engineering',
+      pages: 4,
+      grade: 'A+',
+      pdfUrl: '/Samples/Lectures/Lecture 4.pdf',
+      thumbnailUrl: '/Samples/Lectures/Lecture 4.png'
+    }
+  ],
+  reports: [
+    {
+      title: 'Brayton Cycle Gas Turbine Analysis',
+      subject: 'Thermodynamics',
+      pages: 3,
+      grade: 'A+',
+      pdfUrl: '/Samples/Reports/Brayton Cycle-1.pdf',
+      thumbnailUrl: '/Samples/Reports/Brayton Cycle-1.png'
+    },
+    {
+      title: 'Conveyer Belt System Design',
+      subject: 'Mechanical Design',
+      pages: 37,
+      grade: 'A+',
+      pdfUrl: '/Samples/Reports/Conveyer Belt Design-report.pdf',
+      thumbnailUrl: '/Samples/Reports/Conveyer Belt Design-report.png'
+    },
+    {
+      title: 'Smart Energy Grid Project',
+      subject: 'Electrical Engineering',
+      pages: 17,
+      grade: 'A',
+      pdfUrl: '/Samples/Reports/Project Report.pdf',
+      thumbnailUrl: '/Samples/Reports/Project Report.png'
+    },
+    {
+      title: 'HVAC Air Conditioning Design',
+      subject: 'Building Services',
+      pages: 16,
+      grade: 'A+',
+      pdfUrl: '/Samples/Reports/Report Airconditioning.pdf',
+      thumbnailUrl: '/Samples/Reports/Report Airconditioning.png'
+    }
+  ]
+};
 
 export const portfolioItems = [
   { title: 'FEA Analysis of Beam Structures', category: 'Mechanical', icon: '⚙️', stars: 5 },
