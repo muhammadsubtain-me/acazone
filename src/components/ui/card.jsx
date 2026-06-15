@@ -12,14 +12,6 @@ function Card({ className, ...props }) {
   );
 }
 
-function CardHeader({ className, ...props }) {
-  return <div className={cn("flex flex-col space-y-1.5 p-5", className)} {...props} />;
-}
-
-function CardContent({ className, ...props }) {
-  return <div className={cn("p-5", className)} {...props} />;
-}
-
 function CardTitle({ className, ...props }) {
   return (
     <h3
@@ -38,4 +30,4 @@ function CardDescription({ className, ...props }) {
   );
 }
 
-export { Card, CardHeader, CardContent, CardTitle, CardDescription };
+export { Card, CardTitle, CardDescription };

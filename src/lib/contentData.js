@@ -40,6 +40,11 @@ export const pdfSamples = {
       title: 'Calculus & Differential Equations',
       pdfUrl: '/Samples/Problems/Problem Set 4.pdf',
       thumbnailUrl: '/Samples/Problems/Problem Set 4.png'
+    },
+    {
+      title: 'Python ATM Simulation',
+      pdfUrl: '/Samples/Problems/Problem Set 5.pdf',
+      thumbnailUrl: '/Samples/Problems/Problem Set 5.png'
     }
   ],
   lectures: [
@@ -62,11 +67,16 @@ export const pdfSamples = {
       title: 'Fluid Mechanics & Aerodynamics',
       pdfUrl: '/Samples/Lectures/Lecture 4.pdf',
       thumbnailUrl: '/Samples/Lectures/Lecture 4.png'
+    },
+    {
+      title: 'Computer Networking & OSI Model',
+      pdfUrl: '/Samples/Lectures/Lecture 5.pdf',
+      thumbnailUrl: '/Samples/Lectures/Lecture 5.png'
     }
   ],
   reports: [
     {
-      title: 'Brayton Cycle Gas Turbine Analysis',
+      title: 'Sorting Algorithms Performance Analysis',
       pdfUrl: '/Samples/Reports/Report 1.pdf',
       thumbnailUrl: '/Samples/Reports/Report 1.png'
     },
@@ -84,6 +94,11 @@ export const pdfSamples = {
       title: 'HVAC Air Conditioning Design',
       pdfUrl: '/Samples/Reports/Report 4.pdf',
       thumbnailUrl: '/Samples/Reports/Report 4.png'
+    },
+    {
+      title: 'Concentric Tube Heat Exchanger',
+      pdfUrl: '/Samples/Reports/Report 5.pdf',
+      thumbnailUrl: '/Samples/Reports/Report 5.png'
     }
   ]
 };
