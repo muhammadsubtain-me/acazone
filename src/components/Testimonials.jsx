@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 const testimonials = [
   {
     name: 'Maha Al Sulaiti', role: 'Student', avatar: '👩‍🎓',
-    text: 'When I was writing my dissertation, I used ZenEdify for the first time. I had run out of time and only needed to finish it. They helped my friend with her homework and essays, so she forwarded the information. Since then, we have collaborated quite a bit, and I cannot imagine not using their services.',
+    text: 'When I was writing my dissertation, I used AcaZone for the first time. I had run out of time and only needed to finish it. They helped my friend with her homework and essays, so she forwarded the information. Since then, we have collaborated quite a bit, and I cannot imagine not using their services.',
     rating: 5,
   },
   {

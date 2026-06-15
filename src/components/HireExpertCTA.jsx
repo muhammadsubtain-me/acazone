@@ -16,7 +16,7 @@ export default function HireExpertCTA() {
               Hire an Expert Right Now
             </h2>
             <p className="text-[var(--color-text-muted)] leading-[1.7] mb-5">
-              Find excellent quality homework help from our subject experts for your assignments! ZenEdify wants to build a solid foundation that supports students as they take off into the success sky.
+              Find excellent quality homework help from our subject experts for your assignments! AcaZone wants to build a solid foundation that supports students as they take off into the success sky.
             </p>
             <p className="text-[var(--color-text-muted)] leading-[1.7] mb-8">
               We understand that you might not always have access to homework assistance. This is why we give students step-by-step solutions from competent tutors with immediate, dependable support.

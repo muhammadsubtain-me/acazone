@@ -75,7 +75,7 @@ export default function Navbar() {
             <Link to="/" className="flex items-center gap-2.5 no-underline">
               <Logo className="w-8 h-8" />
               <span className="text-[var(--color-text-heading)] font-bold text-xl tracking-[-0.02em]">
-                Zen<span className="text-[var(--color-accent-muted)]">Edify</span>
+                Aca<span className="text-[var(--color-accent-muted)]">Zone</span>
               </span>
             </Link>
 

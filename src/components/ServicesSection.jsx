@@ -19,7 +19,7 @@ export default function ServicesSection() {
             Our Popular Services
           </h2>
           <p className="text-[var(--color-text-muted)] max-w-[560px] mx-auto text-[17px]">
-            From essays to dissertations, coding to lab reports — ZenEdify covers every academic need with expert precision.
+            From essays to dissertations, coding to lab reports — AcaZone covers every academic need with expert precision.
           </p>
         </div>
 

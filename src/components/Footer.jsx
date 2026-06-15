@@ -57,7 +57,7 @@ export default function Footer() {
             <Link to="/" className="flex items-center gap-2.5 mb-4 w-fit no-underline">
               <Logo className="w-8 h-8" />
               <span className="text-[var(--color-footer-head)] font-bold text-xl tracking-[-0.02em]">
-                Zen<span className="text-[var(--color-accent-muted)]">Edify</span>
+                Aca<span className="text-[var(--color-accent-muted)]">Zone</span>
               </span>
             </Link>
             <p className="text-sm leading-[1.7] mb-6">
@@ -122,7 +122,7 @@ export default function Footer() {
         <Separator className="my-12" />
 
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="text-sm m-0">© 2024 ZenEdify. All Rights Reserved.</p>
+          <p className="text-sm m-0">© 2024 AcaZone. All Rights Reserved.</p>
           <div className="flex items-center gap-3">
             {[
               { name: 'Facebook', icon: 'f', href: '#' },

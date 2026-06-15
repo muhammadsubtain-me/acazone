@@ -21,14 +21,14 @@ export default function WhyChooseUs() {
           <div>
             <Badge className="mb-5">Why Choose Us</Badge>
             <h2 className="font-display text-3xl sm:text-4xl font-bold mb-5 leading-tight text-[var(--color-text-heading)]">
-              ZenEdify –{' '}
+              AcaZone –{' '}
               <span className="text-[var(--color-accent-muted)]">Place of Experts</span>
             </h2>
             <p className="text-[var(--color-text-muted)] leading-[1.7] mb-5">
               Our world-class academic advisers enable professionals and students to succeed by offering top-quality academic solutions. Our experienced team members are skilled tutors who use their expertise to produce a fantastic paper for you.
             </p>
             <p className="text-[var(--color-text-muted)] leading-[1.7] mb-8">
-              ZenEdify provides the best in coursework, dissertation, lab tasks, exam preparations, programming assignments and essays. There are no restrictions on what we may offer — bring any assignment and our professional academic tutors will do their best to assist you.
+              AcaZone provides the best in coursework, dissertation, lab tasks, exam preparations, programming assignments and essays. There are no restrictions on what we may offer — bring any assignment and our professional academic tutors will do their best to assist you.
             </p>
             <Button asChild>
               <Link to="/about" className="inline-flex items-center gap-2">

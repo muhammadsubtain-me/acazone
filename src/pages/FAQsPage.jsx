@@ -13,7 +13,7 @@ import { faqs } from '@/lib/contentData';
 export default function FAQsPage() {
   return (
     <div className="min-h-screen">
-      <PageHero title="Frequently Asked Questions" subtitle="Everything you need to know about ZenEdify's services." />
+      <PageHero title="Frequently Asked Questions" subtitle="Everything you need to know about AcaZone's services." />
       <section className="py-16 bg-[var(--color-bg)]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <Accordion type="single" collapsible className="flex flex-col gap-3">

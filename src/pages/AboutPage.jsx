@@ -5,7 +5,7 @@ import PageHero from '@/components/PageHero';
 export default function AboutPage() {
   return (
     <div className="min-h-screen">
-      <PageHero title="About ZenEdify" subtitle="Your trusted academic partner, built on expertise and integrity." />
+      <PageHero title="About AcaZone" subtitle="Your trusted academic partner, built on expertise and integrity." />
 
       <section className="py-16 bg-[var(--color-bg)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-14 items-center">
@@ -13,8 +13,8 @@ export default function AboutPage() {
             <Badge className="mb-5">Our Story</Badge>
             <h2 className="font-display text-3xl font-bold mb-5 text-[var(--color-text-heading)]">Who We Are</h2>
             {[
-              'ZenEdify was founded with a single mission: to provide students worldwide with access to world-class academic expertise. We believe every student deserves the support they need to reach their full potential.',
-              "Our platform connects students with verified subject matter experts who provide personalized, high-quality academic assistance. Whether you're struggling with a complex engineering problem or need help polishing a dissertation, ZenEdify has you covered.",
+              'AcaZone was founded with a single mission: to provide students worldwide with access to world-class academic expertise. We believe every student deserves the support they need to reach their full potential.',
+              "Our platform connects students with verified subject matter experts who provide personalized, high-quality academic assistance. Whether you're struggling with a complex engineering problem or need help polishing a dissertation, AcaZone has you covered.",
               "With tutors from top universities across the globe and a commitment to academic excellence, we've helped thousands of students achieve the grades they deserve — on time, every time.",
             ].map((p, i) => (
               <p key={i} className="text-[var(--color-text-muted)] leading-[1.7] mb-4">{p}</p>
