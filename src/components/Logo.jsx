@@ -18,23 +18,13 @@ export default function Logo({ className = 'w-6 h-6', ...props }) {
       {/* White Rounded Square Container (App Icon Tile) */}
       <rect x="2" y="2" width="44" height="44" rx="9" fill="#FFFFFF" filter="url(#logo-tile-shadow)" />
 
-      {/* Symmetrical, Aligned Circular Zen Swirl (Left/Upper Swirl - Grey) */}
-      <path
-        d="M 24,7 A 8.5,8.5 0 0,0 24,24 A 8.5,8.5 0 0,1 24,41 A 17,17 0 0,0 24,7 Z"
-        fill="#555555"
-        stroke="#FFFFFF"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-
-      {/* Symmetrical, Aligned Circular Zen Swirl (Right/Lower Swirl - Black) */}
-      <path
-        d="M 24,41 A 8.5,8.5 0 0,0 24,24 A 8.5,8.5 0 0,1 24,7 A 17,17 0 0,0 24,41 Z"
-        fill="#000000"
-        stroke="#FFFFFF"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
+      {/* Solid Black Rounded Arch Logo */}
+      <g transform="translate(-2, -2.78) scale(0.52)">
+        <path
+          d="M 21,77 C 17,83 24,85 27.5,79.5 C 35,69 42,49 50,49 C 58,49 65,69 72.5,79.5 C 76,85 83,83 79,77 C 72,61 63,20 50,20 C 37,20 28,61 21,77 Z"
+          fill="#000000"
+        />
+      </g>
     </svg>
   );
 }
