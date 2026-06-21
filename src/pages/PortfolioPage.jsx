@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Star } from 'lucide-react';
+import useSEO from '@/hooks/useSEO';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,11 @@ import PageHero from '@/components/PageHero';
 import { portfolioItems, categories } from '@/lib/contentData';
 
 export default function PortfolioPage() {
+  useSEO(
+    'Academic Projects & Engineering Case Studies Portfolio',
+    'Browse our collection of successfully delivered project simulations, FEA structure analysis, machine designs, and neural network web app portfolios.'
+  );
+
   const [active, setActive] = useState('All');
   const filtered = active === 'All' ? portfolioItems : portfolioItems.filter(p => p.category === active);
 

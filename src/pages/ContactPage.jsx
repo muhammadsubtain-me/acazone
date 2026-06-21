@@ -1,7 +1,13 @@
+import useSEO from '@/hooks/useSEO';
 import { Card } from '@/components/ui/card';
 import PageHero from '@/components/PageHero';
 
 export default function ContactPage() {
+  useSEO(
+    'Contact Us | 24/7 Academic Support & Helpdesk',
+    'Have questions or need assistance? Reach out to Acezon support via email or phone call. Our academic advisors are available round-the-clock.'
+  );
+
   return (
     <div className="min-h-screen">
       <PageHero title="Contact Us" subtitle="Get in touch with us. We are available 24/7." />
@@ -19,7 +25,7 @@ export default function ContactPage() {
                 Email for Customers:
               </h3>
               <p className="text-sm font-medium text-[var(--color-text-muted)]">
-                hr@acelocale.com
+                support@acezon.com
               </p>
             </Card>
 
@@ -46,8 +52,8 @@ export default function ContactPage() {
               Address:
             </h3>
             <div className="text-sm font-medium text-[var(--color-text-muted)] flex flex-col gap-2 leading-relaxed">
-              <p>UK: Acelocale Ltd. , 124 City Road, London, England, EC1V 2NX</p>
-              <p>Pakistan: 602 A, MeherApartments, H-13 islamabad.</p>
+              <p>UK: Acezon Ltd., 124 City Road, London, England, EC1V 2NX</p>
+              <p>Pakistan: 602 A, Meher Apartments, H-13 Islamabad.</p>
             </div>
           </Card>
 

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import useSEO from '@/hooks/useSEO';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -11,9 +12,13 @@ import PageHero from '@/components/PageHero';
 import { faqs } from '@/lib/contentData';
 
 export default function FAQsPage() {
+  useSEO(
+    'Frequently Asked Questions | Academic Help FAQs',
+    'Find answers to common questions about ordering assignments, tutor qualifications, confidentiality, refund policies, and revisions at Acezon.'
+  );
   return (
     <div className="min-h-screen">
-      <PageHero title="Frequently Asked Questions" subtitle="Everything you need to know about AcaZone's services." />
+      <PageHero title="Frequently Asked Questions" subtitle="Everything you need to know about Acezon's services." />
       <section className="py-16 bg-[var(--color-bg)]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <Accordion type="single" collapsible className="flex flex-col gap-3">

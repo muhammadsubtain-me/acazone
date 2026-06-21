@@ -1,8 +1,14 @@
+import useSEO from '@/hooks/useSEO';
 import PageHero from '@/components/PageHero';
 import { pdfSamples } from '@/lib/contentData';
 import { ExternalLink, BookOpen, FileText, File } from 'lucide-react';
 
 export default function SamplesPage() {
+  useSEO(
+    'Solved Academic Assignment Samples & Reports',
+    'Download verified solutions for mechanical engineering statics, circuit network analysis, Python simulations, HVAC layouts, and lecture notes from our academic database.'
+  );
+
   const sections = [
     { 
       key: 'problems', 

@@ -54,10 +54,18 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2.5 mb-4 w-fit no-underline">
+            <Link
+              to="/"
+              className="flex items-center gap-2.5 mb-4 w-fit no-underline relative -top-[2px]"
+              onClick={() => {
+                if (window.location.pathname === '/') {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+            >
               <Logo className="w-8 h-8" />
               <span className="text-[var(--color-footer-head)] font-bold text-xl tracking-[-0.02em]">
-                Aca<span className="text-[var(--color-accent-muted)]">Zone</span>
+                Acezon
               </span>
             </Link>
             <p className="text-sm leading-[1.7] mb-6">
@@ -122,7 +130,7 @@ export default function Footer() {
         <Separator className="my-12" />
 
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="text-sm m-0">© 2024 AcaZone. All Rights Reserved.</p>
+          <p className="text-sm m-0">© 2024 Acezon. All Rights Reserved.</p>
           <div className="flex items-center gap-3">
             {[
               { name: 'Facebook', icon: 'f', href: '#' },

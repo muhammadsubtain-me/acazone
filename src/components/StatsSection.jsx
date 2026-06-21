@@ -28,7 +28,7 @@ function CountUp({ target, suffix = '' }) {
 }
 
 const stats = [
-  { value: 5000, suffix: '+', label: 'Happy Clients', icon: '😊' },
+  { value: 5000, suffix: '+', label: 'Happy Students', icon: '😊' },
   { value: 4800, suffix: '+', label: 'Feedbacks', icon: '💬' },
   { value: 200, suffix: '+', label: 'Expert Tutors', icon: '👩‍🏫' },
   { value: 10000, suffix: '+', label: 'Completed Projects', icon: '🏆' },
@@ -41,7 +41,7 @@ export default function StatsSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="font-display text-3xl sm:text-4xl font-bold mb-3 text-[var(--color-text-heading)]">
-            Better Strategy With Quality Business
+            Our Track Record of Student Success
           </h2>
           <p className="text-[var(--color-text-muted)] text-[17px]">Numbers that speak to our commitment and excellence</p>
         </div>

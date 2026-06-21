@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import useSEO from '@/hooks/useSEO';
 import { useSearchParams } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -25,6 +26,11 @@ function Select({ className, children, ...props }) {
 }
 
 export default function OrderPage() {
+  useSEO(
+    'Hire Academic Expert & Get Free Quote',
+    'Submit your homework, tutoring, or technical writing requirements. Get matched with a verified subject matter expert and receive a free quote in under 15 minutes.'
+  );
+
   const [searchParams] = useSearchParams();
   const serviceQuery = searchParams.get('service');
   const domainQuery = searchParams.get('domain');
