@@ -116,7 +116,7 @@ export default function Hero() {
           Experts
         </h1>
         <p className="mx-auto text-center text-[var(--color-text-muted)] text-lg leading-[1.7] mb-8 max-w-[560px]">
-          Get academic assistance from Acezon to earn the grades you desire. We have top professionals in academic assignment writing, essay writing, dissertation proposals, homework, exam preparation and lab task practical services.
+          Get expert academic assistance from Acezon to earn the grades you desire. Our professional team specializes in Mechanical, Electrical, Chemical Engineering, and CS & IT — delivering premium support for homework assignments, coding tasks, lab projects, exam preparation, and technical report writing.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
