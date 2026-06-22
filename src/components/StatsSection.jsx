@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
+import { stats } from '@/lib/data';
 
 function CountUp({ target, suffix = '' }) {
   const [count, setCount] = useState(0);
@@ -27,12 +28,6 @@ function CountUp({ target, suffix = '' }) {
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 }
 
-const stats = [
-  { value: 5000, suffix: '+', label: 'Happy Students', icon: '😊' },
-  { value: 4800, suffix: '+', label: 'Feedbacks', icon: '💬' },
-  { value: 200, suffix: '+', label: 'Expert Tutors', icon: '👩‍🏫' },
-  { value: 10000, suffix: '+', label: 'Completed Projects', icon: '🏆' },
-];
 
 export default function StatsSection() {
   return (

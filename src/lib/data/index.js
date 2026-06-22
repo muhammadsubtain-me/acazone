@@ -4,3 +4,6 @@ export * from './samples';
 export * from './portfolio';
 export * from './faqs';
 export * from './subjects';
+export * from './testimonials';
+export * from './stats';
+export * from './features';
