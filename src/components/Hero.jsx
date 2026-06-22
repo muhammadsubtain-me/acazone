@@ -109,17 +109,17 @@ export default function Hero() {
         <HeroDots />
       </div>
 
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-32 flex flex-col items-center text-center">
-        <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-[var(--color-text-heading)]">
+      <div className="relative max-w-4xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:px-0 pt-28 pb-32 xl:pt-36 xl:pb-44 3xl:pt-44 3xl:pb-52 flex flex-col items-center text-center">
+        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl 3xl:text-8xl 4xl:text-9xl font-bold leading-tight mb-6 text-[var(--color-text-heading)]">
           Get Help From{' '}
           <span className="text-[var(--color-accent-muted)]">Academic</span>{' '}
           Experts
         </h1>
-        <p className="mx-auto text-center text-[var(--color-text-muted)] text-lg leading-[1.7] mb-8 max-w-[560px]">
+        <p className="mx-auto text-center text-[var(--color-text-muted)] text-base md:text-lg xl:text-xl 3xl:text-2xl leading-[1.7] mb-8 max-w-[560px] xl:max-w-[680px] 3xl:max-w-[860px]">
           Get expert academic assistance from Acezon to earn the grades you desire. Our professional team specializes in Mechanical, Electrical, Chemical Engineering, and CS & IT — delivering premium support for homework assignments, coding tasks, lab projects, exam preparation, and technical report writing.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row md:flex-row gap-3 md:gap-4 xl:gap-5 justify-center">
           <Button size="lg" asChild>
             <Link to="/order" className="inline-flex items-center gap-2">
               Hire Expert <ArrowRight className="w-4 h-4" />

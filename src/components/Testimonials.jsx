@@ -27,21 +27,21 @@ export default function Testimonials() {
 
   return (
     <section className="py-20 bg-[var(--color-bg)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px]">
         <div className="text-center mb-14">
           <Badge className="mb-4">Testimonials</Badge>
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-[var(--color-text-heading)]">
+          <h2 className="font-display text-2xl md:text-3xl lg:text-4xl xl:text-5xl 3xl:text-6xl font-bold text-[var(--color-text-heading)]">
             What Students Say
           </h2>
         </div>
 
         <div className="max-w-3xl mx-auto">
-          <Card className="p-6 sm:p-10 mb-8">
+          <Card className="p-6 md:p-8 lg:p-10 xl:p-12 3xl:p-14 mb-8">
             <div className="text-[56px] text-[var(--color-border-hover)] font-extrabold leading-none mb-4">"</div>
             <p className="text-[var(--color-text)] text-[17px] leading-[1.75] mb-6">
               {testimonials[active].text}
             </p>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row md:items-center gap-4">
               <div className="flex items-center gap-4">
                 <Avatar>
                   <AvatarFallback>{testimonials[active].avatar}</AvatarFallback>
@@ -51,7 +51,7 @@ export default function Testimonials() {
                   <div className="text-[13px] text-[var(--color-text-muted)]">{testimonials[active].role}</div>
                 </div>
               </div>
-              <div className="sm:ml-auto flex gap-0.5">
+              <div className="sm:ml-auto md:ml-auto flex gap-0.5">
                 {Array.from({ length: testimonials[active].rating }).map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-current text-[var(--color-star)]" />
                 ))}

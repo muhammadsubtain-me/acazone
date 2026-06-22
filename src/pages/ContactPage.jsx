@@ -12,10 +12,10 @@ export default function ContactPage() {
     <div className="min-h-screen">
       <PageHero title="Contact Us" subtitle="Get in touch with us. We are available 24/7." />
       <section className="py-16 bg-[var(--color-bg)]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col gap-6">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 xl:px-8 3xl:max-w-[1100px] flex flex-col gap-5 md:gap-6 xl:gap-8">
           
           {/* Top Row: Email and Phone Call Support */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 xl:gap-8">
             {/* Email Card */}
             <Card className="p-8 flex flex-col items-center text-center bg-[var(--color-surface-2)] shadow-sm hover:border-[var(--color-border-hover)] transition-all duration-300">
               <div className="w-16 h-16 bg-white/[0.03] border border-white/[0.08] text-[var(--color-accent-muted)] rounded-2xl flex items-center justify-center text-3xl mb-5">

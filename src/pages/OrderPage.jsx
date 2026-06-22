@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import PageHero from '@/components/PageHero';
-import { domains, services } from '@/lib/contentData';
+import { domains, services } from '@/lib/data';
 
 function Select({ className, children, ...props }) {
   return (
@@ -105,8 +105,8 @@ export default function OrderPage() {
     <div className="min-h-screen">
       <PageHero title="Hire Expert" subtitle="Submit your requirements below and get a free quote within 15 minutes." />
       <section className="py-16 bg-[var(--color-bg)]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <Card className="p-6 md:p-8 bg-[var(--color-surface-2)] border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
+        <div className="max-w-3xl xl:max-w-4xl 3xl:max-w-5xl mx-auto px-4 md:px-6 xl:px-8">
+          <Card className="p-5 md:p-7 lg:p-8 xl:p-10 3xl:p-12 bg-[var(--color-surface-2)] border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
             {isSubmitted ? (
               <div className="text-center py-10 animate-fade-in">
                 <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6">
@@ -134,7 +134,7 @@ export default function OrderPage() {
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
                 {/* 2-Column Grid for Contact Details */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                   <div className="flex flex-col gap-1.5">
                     <Input
                       required
@@ -165,7 +165,7 @@ export default function OrderPage() {
                 </div>
 
                 {/* 2-Column Grid for Academic Domain & Service Type */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                   <div className="flex flex-col gap-1.5">
                     <Select
                       value={formData.domainId}
@@ -242,7 +242,7 @@ export default function OrderPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto px-10 self-start"
+                    className="w-full sm:w-auto md:w-auto px-8 md:px-10 self-start"
                   >
                     {isSubmitting ? 'Sending Request...' : 'Submit Request'}
                   </Button>

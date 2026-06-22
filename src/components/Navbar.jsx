@@ -67,7 +67,7 @@ export default function Navbar() {
             }`}
         />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px]">
           <div className="flex items-center h-16">
             {/* Logo */}
             <Link
@@ -86,7 +86,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-1 ml-auto">
+            <div className="hidden lg:flex xl:gap-1 items-center gap-0.5 ml-auto">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -106,7 +106,7 @@ export default function Navbar() {
 
             {/* Mobile toggle */}
             <button
-              className={`lg:hidden ml-auto w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 ${scrolled ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
+              className={`lg:hidden ml-auto w-9 h-9 xl:w-10 xl:h-10 rounded-lg flex items-center justify-center transition-all duration-200 ${scrolled ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
                 }`}
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-expanded={mobileOpen}

@@ -1,6 +1,6 @@
 import useSEO from '@/hooks/useSEO';
 import PageHero from '@/components/PageHero';
-import { pdfSamples } from '@/lib/contentData';
+import { pdfSamples } from '@/lib/data';
 import { ExternalLink, BookOpen, FileText, File } from 'lucide-react';
 
 export default function SamplesPage() {
@@ -38,7 +38,7 @@ export default function SamplesPage() {
       />
       
       <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px]">
           
 
           {/* Categorized PDF Rows */}
@@ -53,11 +53,11 @@ export default function SamplesPage() {
                       {sec.icon}
                       <h2 className="text-lg font-bold text-[var(--color-text-heading)] tracking-wide">{sec.title}</h2>
                     </div>
-                    <p className="text-xs sm:text-[13px] text-[var(--color-text-muted)] leading-relaxed">{sec.subtitle}</p>
+                    <p className="text-xs md:text-[13px] lg:text-sm xl:text-base text-[var(--color-text-muted)] leading-relaxed">{sec.subtitle}</p>
                   </div>
                   
                   {/* Grid Layout */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 3xl:grid-cols-8 gap-3 md:gap-4 xl:gap-5">
                     {list.map((item) => (
                       <div
                         key={item.pdfUrl}

@@ -9,7 +9,7 @@ import {
   AccordionContent,
 } from '@/components/ui/accordion';
 import PageHero from '@/components/PageHero';
-import { faqs } from '@/lib/contentData';
+import { faqs } from '@/lib/data';
 
 export default function FAQsPage() {
   useSEO(
@@ -20,7 +20,7 @@ export default function FAQsPage() {
     <div className="min-h-screen">
       <PageHero title="Frequently Asked Questions" subtitle="Everything you need to know about Acezon's services." />
       <section className="py-16 bg-[var(--color-bg)]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        <div className="max-w-3xl xl:max-w-4xl 3xl:max-w-5xl mx-auto px-4 md:px-6 xl:px-8">
           <Accordion type="single" collapsible className="flex flex-col gap-3">
             {faqs.map((faq, i) => (
               <AccordionItem key={i} value={`item-${i}`}>

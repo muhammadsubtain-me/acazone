@@ -16,11 +16,11 @@ const features = [
 export default function WhyChooseUs() {
   return (
     <section className="py-20 bg-[var(--color-bg)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-14 items-center">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 xl:gap-20 3xl:gap-24 items-center">
           <div>
             <Badge className="mb-5">Why Choose Us</Badge>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold mb-5 leading-tight text-[var(--color-text-heading)]">
+            <h2 className="font-display text-2xl md:text-3xl lg:text-4xl xl:text-5xl 3xl:text-6xl font-bold mb-5 leading-tight text-[var(--color-text-heading)]">
               Acezon –{' '}
               <span className="text-[var(--color-accent-muted)]">Place of Experts</span>
             </h2>
@@ -37,7 +37,7 @@ export default function WhyChooseUs() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 xl:gap-5">
             {features.map((f) => (
               <Card key={f.title} className="p-5 hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-2)]">
                 <div className="w-10 h-10 bg-[var(--color-surface-3)] rounded-xl flex items-center justify-center text-xl mb-3">

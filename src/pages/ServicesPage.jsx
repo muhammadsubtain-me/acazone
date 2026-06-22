@@ -1,6 +1,6 @@
 import useSEO from '@/hooks/useSEO';
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
-import { services } from '@/lib/contentData';
+import { services } from '@/lib/data';
 
 export default function ServicesPage() {
   useSEO(
@@ -14,7 +14,7 @@ export default function ServicesPage() {
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(var(--dot-color)_1px,transparent_1px)] bg-[size:30px_30px]" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full blur-[100px] pointer-events-none bg-[radial-gradient(ellipse,rgba(255,255,255,0.04)_0%,transparent_70%)]" />
         <div className="relative max-w-3xl mx-auto px-4 flex flex-col items-center">
-          <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4 text-[var(--color-text-heading)]">
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl xl:text-6xl 3xl:text-7xl font-bold mb-4 text-[var(--color-text-heading)]">
             Our Services
           </h1>
           <p className="text-[var(--color-text-muted)] text-[17px] mb-6 font-medium">
@@ -24,15 +24,15 @@ export default function ServicesPage() {
             <span className="px-3.5 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-full flex items-center gap-1.5 shadow-sm">
               ⚙️ Mechanical
             </span>
-            <span className="text-white/20 select-none hidden sm:inline">·</span>
+            <span className="text-white/20 select-none hidden md:inline">·</span>
             <span className="px-3.5 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-full flex items-center gap-1.5 shadow-sm">
               ⚡ Electrical
             </span>
-            <span className="text-white/20 select-none hidden sm:inline">·</span>
+            <span className="text-white/20 select-none hidden md:inline">·</span>
             <span className="px-3.5 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-full flex items-center gap-1.5 shadow-sm">
               ⚗️ Chemical
             </span>
-            <span className="text-white/20 select-none hidden sm:inline">·</span>
+            <span className="text-white/20 select-none hidden md:inline">·</span>
             <span className="px-3.5 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-full flex items-center gap-1.5 shadow-sm">
               💻 Computer Science
             </span>
@@ -42,8 +42,8 @@ export default function ServicesPage() {
       </section>
 
       <section className="py-20 bg-[var(--color-bg)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 4xl:grid-cols-6 gap-4 md:gap-5 xl:gap-6 3xl:gap-8">
             {services.map((service) => (
               <div key={service.id} className="block">
                 <Card className="p-6 h-full hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-2)] transition-all duration-300 shadow-sm border border-white/[0.06] bg-white/[0.01]">

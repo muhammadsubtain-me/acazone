@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import PageHero from '@/components/PageHero';
-import { portfolioItems, categories } from '@/lib/contentData';
+import { portfolioItems, categories } from '@/lib/data';
 
 export default function PortfolioPage() {
   useSEO(
@@ -20,7 +20,7 @@ export default function PortfolioPage() {
     <div className="min-h-screen">
       <PageHero title="Our Portfolio" subtitle="A showcase of the exceptional academic work delivered by our experts." />
       <section className="py-16 bg-[var(--color-bg)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px]">
           {/* Filter tabs */}
           <div className="flex flex-wrap gap-2 justify-center mb-10">
             {categories.map((cat) => (
@@ -33,7 +33,7 @@ export default function PortfolioPage() {
             ))}
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 gap-4 md:gap-5 xl:gap-6 3xl:gap-8">
             {filtered.map((item) => (
               <Card key={item.title} className="overflow-hidden hover:border-[var(--color-border-hover)] hover:-translate-y-1">
                 <div className="h-36 bg-[var(--color-surface-2)] flex items-center justify-center text-[48px]">

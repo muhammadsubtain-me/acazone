@@ -14,7 +14,7 @@ export default function AboutPage() {
       <PageHero title="About Acezon" subtitle="Your trusted academic partner, built on expertise and integrity." />
 
       <section className="py-16 bg-[var(--color-bg)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-14 items-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px] grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 xl:gap-20 items-center">
           <div>
             <Badge className="mb-5">Our Story</Badge>
             <h2 className="font-display text-3xl font-bold mb-5 text-[var(--color-text-heading)]">Who We Are</h2>
@@ -26,7 +26,7 @@ export default function AboutPage() {
               <p key={i} className="text-[var(--color-text-muted)] leading-[1.7] mb-4">{p}</p>
             ))}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 xl:gap-5">
             {[
               { icon: '🎯', title: 'Our Mission', desc: 'Empower every student with expert academic support to unlock their true potential.' },
               { icon: '👁️', title: 'Our Vision', desc: 'Become the most trusted global platform for academic excellence and student success.' },
@@ -44,9 +44,9 @@ export default function AboutPage() {
       </section>
 
       <section className="py-16 bg-[var(--color-section-alt)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px] text-center">
           <h2 className="font-display text-3xl font-bold mb-10 text-[var(--color-text-heading)]">Our Expert Team</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 xl:gap-6 3xl:gap-8">
             {['⚙️ Mechanical', '⚡ Electrical', '🧪 Chemical', '💻 CS & IT'].map((dept) => (
               <Card key={dept} className="p-6 hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-2)]">
                 <div className="text-[40px] mb-3">{dept.split(' ')[0]}</div>

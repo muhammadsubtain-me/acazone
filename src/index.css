@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  --breakpoint-3xl: 1920px;
+  --breakpoint-4xl: 2560px;
+}
+
 /* ─── GLOBAL DESIGN TOKENS ────────────────────────────────────────────────────
    Change these variables to retheme the entire site instantly.
    ──────────────────────────────────────────────────────────────────────────── */
