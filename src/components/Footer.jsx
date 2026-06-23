@@ -35,8 +35,7 @@ export default function Footer() {
               Expert academic assistance to help students achieve the grades they deserve. Available 24/7.
             </p>
             <div className="text-sm leading-loose">
-              <div className="flex gap-2"><span>🇬🇧</span><span>124 City Road, London, England, EC1V 2NX</span></div>
-              <div className="flex gap-2"><span>🇵🇰</span><span>602 A, Meher Apartments, H-13 Islamabad</span></div>
+              <div className="flex gap-2"><span>📍</span><span>Atomic Energy Colony Chashma, District Mianwali, Pakistan</span></div>
             </div>
           </div>
 
@@ -49,7 +48,6 @@ export default function Footer() {
                 { name: 'About Us', path: '/about' },
                 { name: 'Contact Us', path: '/contact' },
                 { name: 'Samples', path: '/samples' },
-                { name: 'Portfolio', path: '/portfolio' },
                 { name: 'Hire Expert', path: '/order' },
               ].map((link) => (
                 <li key={link.name} className="mb-2.5">
@@ -112,7 +110,7 @@ export default function Footer() {
         <Separator className="my-12" />
 
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="text-sm m-0">© 2024 Acezon. All Rights Reserved.</p>
+          <p className="text-sm m-0">© 2026 Acezon. All Rights Reserved.</p>
           <div className="flex items-center gap-3">
             {[
               { name: 'Facebook', icon: 'f', href: '#' },

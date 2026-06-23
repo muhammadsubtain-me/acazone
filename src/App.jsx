@@ -7,7 +7,6 @@ import Home from '@/pages/Home';
 import AboutPage from '@/pages/AboutPage';
 import SamplesPage from '@/pages/SamplesPage';
 import ContactPage from '@/pages/ContactPage';
-import PortfolioPage from '@/pages/PortfolioPage';
 import FAQsPage from '@/pages/FAQsPage';
 import OrderPage from '@/pages/OrderPage';
 import ServicesPage from '@/pages/ServicesPage';
@@ -28,7 +27,6 @@ export default function App() {
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/order" element={<OrderPage />} />
-                <Route path="/portfolio" element={<PortfolioPage />} />
                 <Route path="/faqs" element={<FAQsPage />} />
                 <Route path="*" element={<Home />} />
               </Routes>

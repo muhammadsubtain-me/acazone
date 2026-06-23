@@ -6,9 +6,7 @@ import { Button } from '@/components/ui/button';
 import { services } from '@/lib/data';
 
 export default function ServicesSection() {
-  const homeServices = services.filter(
-    (s) => s.id !== 'final-year-projects' && s.id !== 'lab-tasks-projects' && s.id !== 'programming-coding'
-  );
+  const homeServices = services.slice(0, 6);
 
   return (
     <section className="py-20 bg-[var(--color-section-alt)]">

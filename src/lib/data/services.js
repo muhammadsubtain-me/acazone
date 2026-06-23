@@ -7,5 +7,6 @@ export const services = [
   { id: 'semester-projects', name: 'Semester Projects Services', icon: '📂', desc: 'End-to-end support for semester-long academic projects and presentations.' },
   { id: 'final-year-projects', name: 'Final Year Projects Services', icon: '🎓', desc: 'Comprehensive final year project support including coding, thesis writing, and report creation.' },
   { id: 'lab-tasks-projects', name: 'Lab Tasks & Projects', icon: '🛠️', desc: 'Practical lab report writing, hardware tasks, software simulations, and project designs.' },
-  { id: 'programming-coding', name: 'Programming & Coding Help', icon: '👨‍💻', desc: 'Expert coding assistance, debugging, software development support, and script writing.' }
+  { id: 'programming-coding', name: 'Programming & Coding Help', icon: '👨‍💻', desc: 'Expert coding assistance, debugging, software development support, and script writing.' },
+  { id: 'ai-plagiarism-reduction', name: 'AI & Plagiarism Reduction', icon: '🛡️', desc: 'Humanize AI-generated content and reduce plagiarism to ensure originality and academic integrity.' }
 ];

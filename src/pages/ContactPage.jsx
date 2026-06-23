@@ -21,7 +21,7 @@ export default function ContactPage() {
               <div className="w-16 h-16 bg-white/[0.03] border border-white/[0.08] text-[var(--color-accent-muted)] rounded-2xl flex items-center justify-center text-3xl mb-5">
                 📬
               </div>
-              <h3 className="font-display text-xl font-bold mb-3 text-[#f97316]">
+              <h3 className="font-display text-xl font-bold mb-3 text-[var(--color-text-heading)]">
                 Email for Customers:
               </h3>
               <p className="text-sm font-medium text-[var(--color-text-muted)]">
@@ -34,11 +34,11 @@ export default function ContactPage() {
               <div className="w-16 h-16 bg-white/[0.03] border border-white/[0.08] text-[var(--color-accent-muted)] rounded-2xl flex items-center justify-center text-3xl mb-5">
                 💬
               </div>
-              <h3 className="font-display text-xl font-bold mb-3 text-[#f97316]">
+              <h3 className="font-display text-xl font-bold mb-3 text-[var(--color-text-heading)]">
                 Call Support:
               </h3>
               <p className="text-sm font-medium text-[var(--color-text-muted)] leading-relaxed">
-                +92 300 0464321 | +44 7706 659724
+                +92 310 7459732 | +92 304 2335382
               </p>
             </Card>
           </div>
@@ -48,12 +48,11 @@ export default function ContactPage() {
             <div className="w-16 h-16 bg-white/[0.03] border border-white/[0.08] text-[var(--color-accent-muted)] rounded-2xl flex items-center justify-center text-3xl mb-5">
               📍
             </div>
-            <h3 className="font-display text-xl font-bold mb-4 text-[#f97316]">
+            <h3 className="font-display text-xl font-bold mb-4 text-[var(--color-text-heading)]">
               Address:
             </h3>
             <div className="text-sm font-medium text-[var(--color-text-muted)] flex flex-col gap-2 leading-relaxed">
-              <p>UK: Acezon Ltd., 124 City Road, London, England, EC1V 2NX</p>
-              <p>Pakistan: 602 A, Meher Apartments, H-13 Islamabad.</p>
+              <p>Atomic Energy Colony Chashma, District Mianwali, Pakistan.</p>
             </div>
           </Card>
 

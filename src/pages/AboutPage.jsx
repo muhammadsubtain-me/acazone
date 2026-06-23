@@ -45,13 +45,64 @@ export default function AboutPage() {
 
       <section className="py-16 bg-[var(--color-section-alt)]">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px] text-center">
-          <h2 className="font-display text-3xl font-bold mb-10 text-[var(--color-text-heading)]">Our Expert Team</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 xl:gap-6 3xl:gap-8">
-            {['⚙️ Mechanical', '⚡ Electrical', '🧪 Chemical', '💻 CS & IT'].map((dept) => (
-              <Card key={dept} className="p-6 hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-2)]">
-                <div className="text-[40px] mb-3">{dept.split(' ')[0]}</div>
-                <div className="font-semibold text-[var(--color-text-heading)]">{dept.split(' ').slice(1).join(' ')}</div>
-                <div className="text-[13px] text-[var(--color-text-muted)] mt-1">Department</div>
+          <Badge className="mb-5">Our Founders</Badge>
+          <h2 className="font-display text-3xl font-bold mb-3 text-[var(--color-text-heading)]">Meet the Team Behind Acezon</h2>
+          <p className="text-[var(--color-text-muted)] mb-12 max-w-xl mx-auto leading-[1.7]">
+            Our founding team brings together verified expertise from one of Pakistan's most prestigious institutions.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">
+            {[
+              {
+                icon: '⚙️',
+                degree: 'MSc Mechanical Engineering',
+                university: 'PIEAS',
+                specialization: 'Designing & Manufacturing',
+                experience: '4+ Years Experience',
+                tags: ['CAD Design', 'Manufacturing', 'Mechanical Systems'],
+              },
+              {
+                icon: '⚡',
+                degree: 'MSc Electrical Engineering',
+                university: 'PIEAS',
+                specialization: 'Power & Control Systems',
+                experience: '4+ Years Experience',
+                tags: ['Power Systems', 'Control Theory', 'Circuit Design'],
+              },
+              {
+                icon: '💻',
+                degree: 'BSc Computer Science',
+                university: 'PIEAS',
+                specialization: 'Software Development, DevOps & AI/ML',
+                experience: '1+ Year Experience',
+                tags: ['Software Dev', 'DevOps', 'AI / ML'],
+              },
+            ].map((member, i) => (
+              <Card key={i} className="p-8 flex flex-col items-center text-center gap-4 hover:border-[var(--color-border-hover)] hover:-translate-y-1 transition-all duration-300">
+                {/* Icon */}
+                <div className="w-16 h-16 bg-white/[0.03] border border-white/[0.08] rounded-2xl flex items-center justify-center text-4xl">
+                  {member.icon}
+                </div>
+
+                {/* Degree */}
+                <div className="font-bold text-lg text-[var(--color-text-heading)] leading-snug">{member.degree}</div>
+
+                {/* Divider */}
+                <div className="w-full h-px bg-[var(--color-border)]" />
+
+                {/* Specialization & Experience */}
+                <div className="flex flex-col gap-1.5 text-sm text-[var(--color-text-muted)]">
+                  <div>🔬 <span className="text-[var(--color-text)]">{member.specialization}</span></div>
+                  <div>📅 {member.experience}</div>
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap justify-center gap-2 mt-1">
+                  {member.tags.map(tag => (
+                    <span key={tag} className="text-[11px] bg-[var(--color-surface-3)] border border-[var(--color-border)] px-2.5 py-1 rounded-lg text-[var(--color-text-muted)]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </Card>
             ))}
           </div>
