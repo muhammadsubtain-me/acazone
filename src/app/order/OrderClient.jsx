@@ -251,6 +251,22 @@ function OrderForm() {
     setIsSubmitting(true);
     setSubmitError('');
     try {
+      // 1. Upload attachments to Supabase storage
+      const uploadedUrls = [];
+      for (const file of attachments) {
+        const ext      = file.name.split('.').pop();
+        const filePath = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: uploadError } = await supabase.storage
+          .from('inquiry-files')
+          .upload(filePath, file, { cacheControl: '3600', upsert: false });
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage
+          .from('inquiry-files')
+          .getPublicUrl(filePath);
+        uploadedUrls.push(urlData.publicUrl);
+      }
+
+      // 2. Insert inquiry with attachment URLs
       const { error } = await supabase.from('inquiries').insert({
         submitted_at:   new Date().toISOString(),
         name:           formData.name.trim(),
@@ -268,6 +284,7 @@ function OrderForm() {
         claimed_at:     null,
         completed_at:   null,
         notes:          '',
+        attachments:    uploadedUrls,
       });
       if (error) throw error;
       setIsSubmitted(true);
