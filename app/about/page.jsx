@@ -1,14 +1,14 @@
-import useSEO from '@/hooks/useSEO';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
 import PageHero from '@/components/PageHero';
 
-export default function AboutPage() {
-  useSEO(
-    'About Acezon | Verified Tutors & Academic Advisers',
-    "Meet Acezon's expert academic tutoring team. Discover our mission, student-first values, and quality assurance workflows across major technical disciplines."
-  );
+export const metadata = {
+  title: 'About Acezon | Verified Tutors & Academic Advisers',
+  description:
+    "Meet Acezon's expert academic tutoring team. Discover our mission, student-first values, and quality assurance workflows across major technical disciplines.",
+};
 
+export default function AboutPage() {
   return (
     <div className="min-h-screen">
       <PageHero title="About Acezon" subtitle="Your trusted academic partner, built on expertise and integrity." />

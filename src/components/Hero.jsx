@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -116,17 +118,17 @@ export default function Hero() {
           Experts
         </h1>
         <p className="mx-auto text-center text-[var(--color-text-muted)] text-base md:text-lg xl:text-xl 3xl:text-2xl leading-[1.7] mb-8 max-w-[560px] xl:max-w-[680px] 3xl:max-w-[860px]">
-          Get expert academic assistance from Acezon to earn the grades you desire. Our professional team specializes in Mechanical, Electrical, Chemical Engineering, and CS & IT — delivering premium support for homework assignments, coding tasks, lab projects, exam preparation, and technical report writing.
+          Get expert academic assistance from Acezon to earn the grades you desire. Our professional team specializes in Mechanical, Electrical, Chemical Engineering, and CS &amp; IT — delivering premium support for homework assignments, coding tasks, lab projects, exam preparation, and technical report writing.
         </p>
 
         <div className="flex flex-col sm:flex-row md:flex-row gap-3 md:gap-4 xl:gap-5 justify-center">
           <Button size="lg" asChild>
-            <Link to="/order" className="inline-flex items-center gap-2">
+            <Link href="/order" className="inline-flex items-center gap-2">
               Hire Expert <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
-            <Link to="/samples">View Samples</Link>
+            <Link href="/samples">View Samples</Link>
           </Button>
         </div>
       </div>

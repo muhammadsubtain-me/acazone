@@ -1,5 +1,8 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/Logo';
@@ -16,7 +19,7 @@ const navLinks = [
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -27,7 +30,7 @@ export default function Navbar() {
   // Close mobile menu on route change
   useEffect(() => {
     setMobileOpen(false);
-  }, [location.pathname]);
+  }, [pathname]);
 
   // Prevent background scrolling when mobile menu is open
   useEffect(() => {
@@ -43,12 +46,12 @@ export default function Navbar() {
 
   const isLinkActive = (link) => {
     if (link.name === 'Services') {
-      return location.pathname.startsWith('/services');
+      return pathname.startsWith('/services');
     }
-    return location.pathname === link.path;
+    return pathname === link.path;
   };
 
-  const isHomePage = location.pathname === '/';
+  const isHomePage = pathname === '/';
 
   return (
     <>
@@ -70,7 +73,7 @@ export default function Navbar() {
           <div className="flex items-center h-16">
             {/* Logo */}
             <Link
-              to="/"
+              href="/"
               className="flex items-center gap-2.5 no-underline"
               onClick={() => {
                 if (window.location.pathname === '/') {
@@ -89,7 +92,7 @@ export default function Navbar() {
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
-                  to={link.path}
+                  href={link.path}
                   className={`px-4 py-2 text-sm font-medium no-underline transition-all duration-150 ${isLinkActive(link)
                       ? 'text-white'
                       : 'text-[var(--color-text-muted)] hover:text-white'
@@ -99,7 +102,7 @@ export default function Navbar() {
                 </Link>
               ))}
               <Button asChild size="sm" className="ml-3">
-                <Link to="/order">Hire Expert</Link>
+                <Link href="/order">Hire Expert</Link>
               </Button>
             </div>
 
@@ -125,7 +128,7 @@ export default function Navbar() {
           {navLinks.map((link) => (
             <Link
               key={link.name}
-              to={link.path}
+              href={link.path}
               onClick={() => setMobileOpen(false)}
               className={`block px-4 py-2.5 text-sm font-medium no-underline transition-all duration-150 ${isLinkActive(link)
                   ? 'text-white'
@@ -137,7 +140,7 @@ export default function Navbar() {
           ))}
           <div className="pt-2">
             <Button asChild className="w-full">
-              <Link to="/order" onClick={() => setMobileOpen(false)}>Hire Expert</Link>
+              <Link href="/order" onClick={() => setMobileOpen(false)}>Hire Expert</Link>
             </Button>
           </div>
         </div>

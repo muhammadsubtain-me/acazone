@@ -1,10 +1,9 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { features } from '@/lib/data';
-
 
 export default function WhyChooseUs() {
   return (
@@ -24,7 +23,7 @@ export default function WhyChooseUs() {
               Acezon provides the best in coursework, dissertation, lab tasks, exam preparations, programming assignments and essays. There are no restrictions on what we may offer — bring any assignment and our professional academic tutors will do their best to assist you.
             </p>
             <Button asChild>
-              <Link to="/about" className="inline-flex items-center gap-2">
+              <Link href="/about" className="inline-flex items-center gap-2">
                 About Us <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>

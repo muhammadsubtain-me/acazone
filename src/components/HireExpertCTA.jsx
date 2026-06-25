@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
@@ -22,7 +22,7 @@ export default function HireExpertCTA() {
               We understand that you might not always have access to homework assistance. This is why we give students step-by-step solutions from competent tutors with immediate, dependable support.
             </p>
             <Button asChild>
-              <Link to="/order" className="inline-flex items-center gap-2">
+              <Link href="/order" className="inline-flex items-center gap-2">
                 Hire Expert Now <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>

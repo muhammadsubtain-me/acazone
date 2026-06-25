@@ -1,10 +1,11 @@
+'use client';
+
 import { useState } from 'react';
 import { Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { testimonials } from '@/lib/data';
-
 
 export default function Testimonials() {
   const [active, setActive] = useState(0);

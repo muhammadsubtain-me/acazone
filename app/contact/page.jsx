@@ -1,19 +1,19 @@
-import useSEO from '@/hooks/useSEO';
 import { Card } from '@/components/ui/card';
 import PageHero from '@/components/PageHero';
 
-export default function ContactPage() {
-  useSEO(
-    'Contact Us | 24/7 Academic Support & Helpdesk',
-    'Have questions or need assistance? Reach out to Acezon support via email or phone call. Our academic advisors are available round-the-clock.'
-  );
+export const metadata = {
+  title: 'Contact Us | 24/7 Academic Support & Helpdesk',
+  description:
+    'Have questions or need assistance? Reach out to Acezon support via email or phone call. Our academic advisors are available round-the-clock.',
+};
 
+export default function ContactPage() {
   return (
     <div className="min-h-screen">
       <PageHero title="Contact Us" subtitle="Get in touch with us. We are available 24/7." />
       <section className="py-16 bg-[var(--color-bg)]">
         <div className="max-w-5xl mx-auto px-4 md:px-6 xl:px-8 3xl:max-w-[1100px] flex flex-col gap-5 md:gap-6 xl:gap-8">
-          
+
           {/* Top Row: Email and Phone Call Support */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 xl:gap-8">
             {/* Email Card */}

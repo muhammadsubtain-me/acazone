@@ -1,13 +1,15 @@
-import useSEO from '@/hooks/useSEO';
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import PageHero from '@/components/PageHero';
 import { services } from '@/lib/data';
 
-export default function ServicesPage() {
-  useSEO(
-    'Academic Tutoring & Technical Writing Services',
-    "Explore Acezon's custom academic solutions, including homework writing, subject tutoring, programming help, lab tasks, semester projects, and thesis writing."
-  );
+export const metadata = {
+  title: 'Academic Tutoring & Technical Writing Services',
+  description:
+    "Explore Acezon's custom academic solutions, including homework writing, subject tutoring, programming help, lab tasks, semester projects, and thesis writing.",
+};
 
+export default function ServicesPage() {
   return (
     <div className="min-h-screen">
       <section className="-mt-16 pt-36 pb-20 bg-[var(--color-surface)] text-center relative overflow-hidden">

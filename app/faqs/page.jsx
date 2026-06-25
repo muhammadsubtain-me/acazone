@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-import useSEO from '@/hooks/useSEO';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -11,11 +10,13 @@ import {
 import PageHero from '@/components/PageHero';
 import { faqs } from '@/lib/data';
 
+export const metadata = {
+  title: 'Frequently Asked Questions | Academic Help FAQs',
+  description:
+    'Find answers to common questions about ordering assignments, tutor qualifications, confidentiality, refund policies, and revisions at Acezon.',
+};
+
 export default function FAQsPage() {
-  useSEO(
-    'Frequently Asked Questions | Academic Help FAQs',
-    'Find answers to common questions about ordering assignments, tutor qualifications, confidentiality, refund policies, and revisions at Acezon.'
-  );
   return (
     <div className="min-h-screen">
       <PageHero title="Frequently Asked Questions" subtitle="Everything you need to know about Acezon's services." />
@@ -34,7 +35,7 @@ export default function FAQsPage() {
             <h3 className="font-display text-xl font-bold mb-2 text-[var(--color-text-heading)]">Still have questions?</h3>
             <p className="text-[var(--color-text-muted)] text-sm mb-5">Our support team is available 24/7 to help with any queries.</p>
             <Button asChild>
-              <Link to="/contact">Contact Support</Link>
+              <Link href="/contact">Contact Support</Link>
             </Button>
           </Card>
         </div>

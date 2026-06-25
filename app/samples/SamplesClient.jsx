@@ -1,4 +1,5 @@
-import useSEO from '@/hooks/useSEO';
+'use client';
+
 import PageHero from '@/components/PageHero';
 import { pdfSamples } from '@/lib/data';
 import { ExternalLink, BookOpen, FileText, File } from 'lucide-react';
@@ -33,12 +34,7 @@ function SampleCard({ item, className = '' }) {
   );
 }
 
-export default function SamplesPage() {
-  useSEO(
-    'Solved Academic Assignment Samples & Reports',
-    'Download verified solutions for mechanical engineering statics, circuit network analysis, Python simulations, HVAC layouts, and lecture notes from our academic database.'
-  );
-
+export default function SamplesClient() {
   return (
     <div className="min-h-screen pb-24 bg-[var(--color-bg)]">
       <PageHero

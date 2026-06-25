@@ -3,7 +3,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "plugins": [{ "name": "next" }]
   },
-  "include": ["src"]
+  "include": ["**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules"]
 }

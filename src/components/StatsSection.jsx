@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { stats } from '@/lib/data';
@@ -27,7 +29,6 @@ function CountUp({ target, suffix = '' }) {
 
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 }
-
 
 export default function StatsSection() {
   return (

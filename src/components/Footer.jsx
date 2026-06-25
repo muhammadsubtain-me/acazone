@@ -1,11 +1,11 @@
+'use client';
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { subjects } from '@/lib/data';
-
-
 
 export default function Footer() {
   const [expanded, setExpanded] = useState(false);
@@ -18,7 +18,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link
-              to="/"
+              href="/"
               className="flex items-center gap-2.5 mb-4 w-fit no-underline relative -top-[2px]"
               onClick={() => {
                 if (window.location.pathname === '/') {
@@ -51,7 +51,7 @@ export default function Footer() {
                 { name: 'Hire Expert', path: '/order' },
               ].map((link) => (
                 <li key={link.name} className="mb-2.5">
-                  <Link to={link.path}
+                  <Link href={link.path}
                     className="text-sm text-[var(--color-footer-text)] no-underline transition-colors duration-150 hover:text-[var(--color-text)]"
                   >{link.name}</Link>
                 </li>

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardTitle } from '@/components/ui/card';
@@ -38,7 +38,7 @@ export default function ServicesSection() {
 
         <div className="flex justify-center mt-12">
           <Button size="lg" variant="outline" asChild>
-            <Link to="/services" className="inline-flex items-center gap-2">
+            <Link href="/services" className="inline-flex items-center gap-2">
               Explore All Services <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
