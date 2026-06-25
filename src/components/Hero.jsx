@@ -118,7 +118,7 @@ export default function Hero() {
           Experts
         </h1>
         <p className="mx-auto text-center text-[var(--color-text-muted)] text-base md:text-lg xl:text-xl 3xl:text-2xl leading-[1.7] mb-8 max-w-[560px] xl:max-w-[680px] 3xl:max-w-[860px]">
-          Get expert academic assistance from Acezon to earn the grades you desire. Our professional team specializes in Mechanical, Electrical, Chemical Engineering, and CS &amp; IT — delivering premium support for homework assignments, coding tasks, lab projects, exam preparation, and technical report writing.
+          Get expert academifc assistance from Acezon to earn the grades you desire. Our professional team specializes in Mechanical, Electrical, Chemical Engineering, and CS &amp; IT — delivering premium support for homework assignments, coding tasks, lab projects, exam preparation, and technical report writing.
         </p>
 
         <div className="flex flex-col sm:flex-row md:flex-row gap-3 md:gap-4 xl:gap-5 justify-center">
