@@ -12,7 +12,7 @@ import {
   Loader2, Inbox, Shield,
   AlertCircle, Zap, Users, ClipboardList,
   StickyNote, ArrowRight, Eye, EyeOff,
-  Paperclip, Image,
+  Paperclip, Image, Download,
 } from 'lucide-react';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -92,6 +92,30 @@ function getDisplayName(email) {
   return EMAIL_TO_NAME[email] || email?.split('@')[0] || 'You';
 }
 
+// ─── Download helper (blob fetch — works cross-origin with Supabase Storage) ──
+
+async function downloadAttachment(url, fileName, setDownloading) {
+  try {
+    setDownloading(true);
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const blob = await res.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = objectUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(objectUrl);
+  } catch (err) {
+    console.error('Download failed:', err);
+    alert('Download failed. Please try again.');
+  } finally {
+    setDownloading(false);
+  }
+}
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function MemberAvatar({ name, size = 'md' }) {
@@ -110,6 +134,33 @@ function StatusBadge({ status }) {
       <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
       {meta.label}
     </span>
+  );
+}
+
+// ─── Attachment Item ──────────────────────────────────────────────────────────
+
+function AttachmentItem({ url }) {
+  const [downloading, setDownloading] = useState(false);
+  const fileName = decodeURIComponent(url.split('/').pop());
+  const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+
+  return (
+    <button
+      type="button"
+      disabled={downloading}
+      onClick={() => downloadAttachment(url, fileName, setDownloading)}
+      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.12] active:scale-[0.98] transition-all group disabled:opacity-60 disabled:cursor-not-allowed text-left"
+    >
+      {isImage
+        ? <Image className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-faint)] group-hover:text-white transition-colors" />
+        : <FileText className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-faint)] group-hover:text-white transition-colors" />
+      }
+      <span className="text-xs text-[var(--color-text)] truncate flex-1">{fileName}</span>
+      {downloading
+        ? <Loader2 className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-faint)] animate-spin" />
+        : <Download className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-faint)] opacity-0 group-hover:opacity-100 transition-opacity" />
+      }
+    </button>
   );
 }
 
@@ -573,26 +624,9 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
             <section>
               <SectionLabel icon={Paperclip} label={`Attachments (${inquiry.attachments.length})`} />
               <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col gap-2">
-                {inquiry.attachments.map((url, idx) => {
-                  const fileName = decodeURIComponent(url.split('/').pop());
-                  const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
-                  return (
-                    <a
-                      key={idx}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.12] transition-all group"
-                    >
-                      {isImage
-                        ? <Image className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-faint)] group-hover:text-white transition-colors" />
-                        : <FileText className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-faint)] group-hover:text-white transition-colors" />
-                      }
-                      <span className="text-xs text-[var(--color-text)] truncate flex-1">{fileName}</span>
-                      <ArrowRight className="w-3 h-3 shrink-0 text-[var(--color-text-faint)] opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </a>
-                  );
-                })}
+                {inquiry.attachments.map((url, idx) => (
+                  <AttachmentItem key={idx} url={url} />
+                ))}
               </div>
             </section>
           )}
