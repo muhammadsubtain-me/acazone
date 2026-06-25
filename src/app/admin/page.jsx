@@ -22,9 +22,9 @@ const TEAM_AVATARS = {
 
 // Map email → display name
 const EMAIL_TO_NAME = {
-  'muhammadsibtain894@gmail.com':    'Sibtain',
-  'zainulhassan74@gmail.com':         'Zain',
-  'hasnainraza.el@gmail.com':      'Hasnain',
+  'admsibtain@acezon.app': 'Sibtain',
+  'admzain@acezon.app':    'Zain',
+  'admhasnain@acezon.app': 'Hasnain',
 };
 
 const STATUS_META = {
@@ -635,17 +635,24 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function AdminPage() {
-  const [session,    setSession]    = useState(null);
-  const [userName,   setUserName]   = useState('');
-  const [inquiries,  setInquiries]  = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [search,     setSearch]     = useState('');
-  const [activeTab,  setActiveTab]  = useState('all');
-  const [selected,   setSelected]   = useState(null);
+  const [session,     setSession]     = useState(null);
+  const [userName,    setUserName]    = useState('');
+  const [inquiries,   setInquiries]   = useState([]);
+  const [loading,     setLoading]     = useState(true);
+  const [fetchError,  setFetchError]  = useState('');
+  const [actionError, setActionError] = useState('');
+  const [search,      setSearch]      = useState('');
+  const [activeTab,   setActiveTab]   = useState('all');
+  const [selected,    setSelected]    = useState(null);
 
   // ── Auth: check existing session on mount ──
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        setFetchError('Failed to restore session. Please refresh the page.');
+        setLoading(false);
+        return;
+      }
       setSession(session);
       if (session) {
         const name = getDisplayName(session.user.email);
@@ -670,12 +677,20 @@ export default function AdminPage() {
   // ── Fetch inquiries from Supabase ──
   const fetchInquiries = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('inquiries')
-      .select('*')
-      .order('submitted_at', { ascending: false });
-    if (!error && data) setInquiries(data);
-    setLoading(false);
+    setFetchError('');
+    try {
+      const { data, error } = await supabase
+        .from('inquiries')
+        .select('*')
+        .order('submitted_at', { ascending: false });
+      if (error) throw error;
+      setInquiries(data ?? []);
+    } catch (err) {
+      console.error('fetchInquiries:', err);
+      setFetchError('Failed to load inquiries. Check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // ── Real-time subscription ──
@@ -701,36 +716,63 @@ export default function AdminPage() {
   }, [fetchInquiries]);
 
   const handleLogout = useCallback(async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error('signOut error:', err);
+    }
     setSession(null);
     setUserName('');
     setInquiries([]);
+    setFetchError('');
+    setActionError('');
   }, []);
 
   const handleClaim = useCallback(async (id) => {
-    await supabase.from('inquiries').update({
-      status: 'claimed',
-      claimed_by: userName,
-      claimed_at: new Date().toISOString(),
-    }).eq('id', id);
-    fetchInquiries();
+    setActionError('');
+    try {
+      const { error } = await supabase.from('inquiries').update({
+        status: 'claimed',
+        claimed_by: userName,
+        claimed_at: new Date().toISOString(),
+      }).eq('id', id);
+      if (error) throw error;
+      fetchInquiries();
+    } catch (err) {
+      console.error('handleClaim:', err);
+      setActionError('Failed to claim inquiry. Please try again.');
+    }
   }, [userName, fetchInquiries]);
 
   const handleRelease = useCallback(async (id) => {
-    await supabase.from('inquiries').update({
-      status: 'new',
-      claimed_by: null,
-      claimed_at: null,
-    }).eq('id', id);
-    fetchInquiries();
+    setActionError('');
+    try {
+      const { error } = await supabase.from('inquiries').update({
+        status: 'new',
+        claimed_by: null,
+        claimed_at: null,
+      }).eq('id', id);
+      if (error) throw error;
+      fetchInquiries();
+    } catch (err) {
+      console.error('handleRelease:', err);
+      setActionError('Failed to release inquiry. Please try again.');
+    }
   }, [fetchInquiries]);
 
   const handleStatusChange = useCallback(async (id, newStatus, newNotes) => {
-    const updates = { status: newStatus };
-    if (newNotes !== undefined) updates.notes = newNotes;
-    if (newStatus === 'completed') updates.completed_at = new Date().toISOString();
-    await supabase.from('inquiries').update(updates).eq('id', id);
-    fetchInquiries();
+    setActionError('');
+    try {
+      const updates = { status: newStatus };
+      if (newNotes !== undefined) updates.notes = newNotes;
+      if (newStatus === 'completed') updates.completed_at = new Date().toISOString();
+      const { error } = await supabase.from('inquiries').update(updates).eq('id', id);
+      if (error) throw error;
+      fetchInquiries();
+    } catch (err) {
+      console.error('handleStatusChange:', err);
+      setActionError('Failed to update inquiry status. Please try again.');
+    }
   }, [fetchInquiries]);
 
   // ── Filtered & sorted ──
@@ -776,6 +818,19 @@ export default function AdminPage() {
     </div>
   );
 
+  if (fetchError && inquiries.length === 0) return (
+    <div className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center justify-center gap-4 px-4">
+      <AlertCircle className="w-8 h-8 text-red-400" />
+      <p className="text-sm text-red-400 text-center max-w-sm">{fetchError}</p>
+      <button
+        onClick={fetchInquiries}
+        className="px-4 py-2 rounded-xl bg-white text-black text-sm font-semibold hover:opacity-90 transition-all"
+      >
+        Retry
+      </button>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       <TopBar userName={userName} inquiries={inquiries} onLogout={handleLogout} />
@@ -785,6 +840,23 @@ export default function AdminPage() {
           <h1 className="font-display text-2xl font-bold text-[var(--color-text-heading)]">Inquiries</h1>
           <p className="text-sm text-[var(--color-text-muted)] mt-1">Manage and track all client inquiries in real-time.</p>
         </div>
+
+        {actionError && (
+          <div className="flex items-center gap-2.5 mb-4 px-4 py-3 rounded-xl bg-red-400/10 border border-red-400/20 text-sm text-red-400">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            {actionError}
+            <button onClick={() => setActionError('')} className="ml-auto text-red-400/60 hover:text-red-400 transition-colors">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
+        {fetchError && (
+          <div className="flex items-center gap-2.5 mb-4 px-4 py-3 rounded-xl bg-amber-400/10 border border-amber-400/20 text-sm text-amber-400">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            {fetchError} Showing last loaded data.
+          </div>
+        )}
 
         <StatsRow stats={stats} />
 

@@ -148,6 +148,7 @@ function OrderForm() {
   const [fileError,    setFileError]    = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted,  setIsSubmitted]  = useState(false);
+  const [submitError,  setSubmitError]  = useState('');
   const [errors,       setErrors]       = useState({});
 
   const fileInputRef = useRef(null);
@@ -248,8 +249,9 @@ function OrderForm() {
     e.preventDefault();
     if (!validate()) return;
     setIsSubmitting(true);
+    setSubmitError('');
     try {
-      await supabase.from('inquiries').insert({
+      const { error } = await supabase.from('inquiries').insert({
         submitted_at:   new Date().toISOString(),
         name:           formData.name.trim(),
         phone:          formData.phone.trim(),
@@ -267,12 +269,15 @@ function OrderForm() {
         completed_at:   null,
         notes:          '',
       });
+      if (error) throw error;
+      setIsSubmitted(true);
+      setAttachments([]);
     } catch (err) {
-      console.error('Supabase insert error:', err);
+      console.error('Order submit error:', err);
+      setSubmitError('Something went wrong while submitting your request. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setAttachments([]);
   };
 
   const resetForm = () => {
@@ -280,6 +285,7 @@ function OrderForm() {
     setFormData(INITIAL_FORM);
     setAttachments([]);
     setFileError('');
+    setSubmitError('');
     setErrors({});
   };
 
@@ -562,14 +568,21 @@ function OrderForm() {
           </div>
 
           {/* Submit */}
-          <div className="flex justify-start pt-2">
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full sm:w-auto md:w-auto px-8 md:px-10 self-start"
-            >
-              {isSubmitting ? 'Sending Request...' : 'Submit Request'}
-            </Button>
+          <div className="flex flex-col gap-3 pt-2">
+            {submitError && (
+              <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2.5 text-center leading-relaxed">
+                {submitError}
+              </p>
+            )}
+            <div className="flex justify-start">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full sm:w-auto md:w-auto px-8 md:px-10 self-start"
+              >
+                {isSubmitting ? 'Sending Request...' : 'Submit Request'}
+              </Button>
+            </div>
           </div>
 
         </form>
