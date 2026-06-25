@@ -12,6 +12,7 @@ import {
   Loader2, Inbox, Shield,
   AlertCircle, Zap, Users, ClipboardList,
   StickyNote, ArrowRight, Eye, EyeOff,
+  Paperclip, Image,
 } from 'lucide-react';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -22,7 +23,6 @@ const TEAM_AVATARS = {
   Sibtain: { initials: 'SI', color: 'from-emerald-500 to-teal-600' },
 };
 
-// Map email → display name
 const EMAIL_TO_NAME = {
   'admsibtain@acezon.app': 'Sibtain',
   'admzain@acezon.app':    'Zain',
@@ -116,11 +116,11 @@ function StatusBadge({ status }) {
 // ─── Login Gate ───────────────────────────────────────────────────────────────
 
 function LoginGate({ onLogin }) {
-  const [email,       setEmail]       = useState('');
-  const [password,    setPassword]    = useState('');
-  const [showPass,    setShowPass]    = useState(false);
-  const [error,       setError]       = useState('');
-  const [loading,     setLoading]     = useState(false);
+  const [email,    setEmail]    = useState('');
+  const [password, setPassword] = useState('');
+  const [showPass, setShowPass] = useState(false);
+  const [error,    setError]    = useState('');
+  const [loading,  setLoading]  = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -538,6 +538,7 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
             </div>
           </div>
 
+          {/* Client */}
           <section>
             <SectionLabel icon={User} label="Client" />
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col gap-2">
@@ -547,6 +548,7 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
             </div>
           </section>
 
+          {/* Assignment */}
           <section>
             <SectionLabel icon={BookOpen} label="Assignment" />
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col gap-2">
@@ -556,6 +558,7 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
             </div>
           </section>
 
+          {/* Description */}
           <section>
             <SectionLabel icon={FileText} label="Description" />
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4">
@@ -565,6 +568,36 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
             </div>
           </section>
 
+          {/* Attachments */}
+          {inquiry.attachments?.length > 0 && (
+            <section>
+              <SectionLabel icon={Paperclip} label={`Attachments (${inquiry.attachments.length})`} />
+              <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col gap-2">
+                {inquiry.attachments.map((url, idx) => {
+                  const fileName = decodeURIComponent(url.split('/').pop());
+                  const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+                  return (
+                    <a
+                      key={idx}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.12] transition-all group"
+                    >
+                      {isImage
+                        ? <Image className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-faint)] group-hover:text-white transition-colors" />
+                        : <FileText className="w-3.5 h-3.5 shrink-0 text-[var(--color-text-faint)] group-hover:text-white transition-colors" />
+                      }
+                      <span className="text-xs text-[var(--color-text)] truncate flex-1">{fileName}</span>
+                      <ArrowRight className="w-3 h-3 shrink-0 text-[var(--color-text-faint)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* Assigned */}
           {inquiry.claimed_by && (
             <section>
               <SectionLabel icon={Users} label="Assigned" />
@@ -583,6 +616,7 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
             </section>
           )}
 
+          {/* Internal Notes */}
           <section>
             <SectionLabel icon={StickyNote} label="Internal Notes" />
             <textarea
@@ -647,7 +681,6 @@ export default function AdminPage() {
   const [activeTab,   setActiveTab]   = useState('all');
   const [selected,    setSelected]    = useState(null);
 
-  // ── Auth: check existing session on mount ──
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
@@ -676,7 +709,6 @@ export default function AdminPage() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // ── Fetch inquiries from Supabase ──
   const fetchInquiries = useCallback(async () => {
     setLoading(true);
     setFetchError('');
@@ -695,7 +727,6 @@ export default function AdminPage() {
     }
   }, []);
 
-  // ── Real-time subscription ──
   useEffect(() => {
     if (!session) return;
     fetchInquiries();
@@ -710,7 +741,6 @@ export default function AdminPage() {
     return () => supabase.removeChannel(channel);
   }, [session, fetchInquiries]);
 
-  // ── Actions ──
   const handleLogin = useCallback((user) => {
     setSession({ user });
     setUserName(getDisplayName(user.email));
@@ -777,7 +807,6 @@ export default function AdminPage() {
     }
   }, [fetchInquiries]);
 
-  // ── Filtered & sorted ──
   const filtered = useMemo(() => {
     return inquiries
       .filter(inq => {
@@ -880,9 +909,9 @@ export default function AdminPage() {
                   <tr className="border-b border-[var(--color-border)]">
                     {['Client', 'Contact', 'Service', 'Subject', 'Time', 'Status', 'Assigned', 'Actions'].map((h) => (
                       <th key={h} className={`px-4 py-3 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-faint)] ${
-                        h === 'Service' ? 'hidden lg:table-cell' :
-                        h === 'Subject' ? 'hidden md:table-cell' :
-                        h === 'Time' ? 'hidden xl:table-cell' :
+                        h === 'Service'  ? 'hidden lg:table-cell' :
+                        h === 'Subject'  ? 'hidden md:table-cell' :
+                        h === 'Time'     ? 'hidden xl:table-cell' :
                         h === 'Assigned' ? 'hidden md:table-cell' : ''
                       }`}>{h}</th>
                     ))}
