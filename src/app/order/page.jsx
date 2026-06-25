@@ -1,5 +1,7 @@
 import OrderClient from './OrderClient';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Hire Academic Expert & Get Free Quote',
   description:
