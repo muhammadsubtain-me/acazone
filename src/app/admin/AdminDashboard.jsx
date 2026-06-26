@@ -16,9 +16,9 @@ import {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const TEAM_AVATARS = {
-  Zain:    { initials: 'ZA', color: 'from-violet-500 to-purple-600' },
-  Hasnain: { initials: 'HA', color: 'from-blue-500 to-cyan-600' },
-  Sibtain: { initials: 'SI', color: 'from-emerald-500 to-teal-600' },
+  Zain:    { initials: 'Z', color: 'from-violet-500 to-purple-600' },
+  Hasnain: { initials: 'H', color: 'from-blue-500 to-cyan-600' },
+  Sibtain: { initials: 'S', color: 'from-emerald-500 to-teal-600' },
 };
 
 const EMAIL_TO_NAME = {
