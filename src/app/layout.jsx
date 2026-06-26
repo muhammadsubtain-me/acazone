@@ -12,6 +12,9 @@ export const metadata = {
   icons: {
     icon: '/favicon.svg',
   },
+  alternates: {
+    canonical: 'https://www.acezon.app',
+  },
 };
 
 export default function RootLayout({ children }) {
