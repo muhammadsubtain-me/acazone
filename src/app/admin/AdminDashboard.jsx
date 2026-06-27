@@ -90,6 +90,26 @@ function getDisplayName(email) {
   return EMAIL_TO_NAME[email] || email?.split('@')[0] || 'You';
 }
 
+function sortInquiries(rows) {
+  return [...rows].sort((a, b) => new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0));
+}
+
+function mergeRealtimeInquiry(rows, payload) {
+  if (payload.eventType === 'DELETE') {
+    return rows.filter(inquiry => inquiry.id !== payload.old?.id);
+  }
+
+  const incoming = payload.new;
+  if (!incoming?.id) return rows;
+
+  const exists = rows.some(inquiry => inquiry.id === incoming.id);
+  const nextRows = exists
+    ? rows.map(inquiry => inquiry.id === incoming.id ? { ...inquiry, ...incoming } : inquiry)
+    : [incoming, ...rows];
+
+  return sortInquiries(nextRows);
+}
+
 // ─── Download helper ──────────────────────────────────────────────────────────
 
 async function downloadAttachment(url, fileName, setDownloading) {
@@ -605,10 +625,10 @@ export default function AdminDashboard({ initialEmail }) {
   const [actionError, setActionError] = useState('');
   const [search,      setSearch]      = useState('');
   const [activeTab,   setActiveTab]   = useState('all');
-  const [selected,    setSelected]    = useState(null);
+  const [selectedId,   setSelectedId]  = useState(null);
 
-  const fetchInquiries = useCallback(async () => {
-    setLoading(true);
+  const fetchInquiries = useCallback(async ({ showLoading = false } = {}) => {
+    if (showLoading) setLoading(true);
     setFetchError('');
     try {
       const { data, error } = await supabase
@@ -627,14 +647,34 @@ export default function AdminDashboard({ initialEmail }) {
 
   // Initial fetch + realtime subscription
   useEffect(() => {
-    fetchInquiries();
+    fetchInquiries({ showLoading: true });
 
     const channel = supabase
       .channel('inquiries-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, fetchInquiries)
-      .subscribe();
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, (payload) => {
+        setFetchError('');
+        setInquiries(current => mergeRealtimeInquiry(current, payload));
+      })
+      .subscribe((status, error) => {
+        if (error) console.error('inquiries realtime subscription:', error);
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          fetchInquiries();
+        }
+      });
 
-    return () => supabase.removeChannel(channel);
+    const refreshOnFocus = () => {
+      if (document.visibilityState === 'visible') fetchInquiries();
+    };
+    document.addEventListener('visibilitychange', refreshOnFocus);
+
+    // Keeps admin screens synced even if the table is not in the realtime publication yet.
+    const syncInterval = window.setInterval(() => fetchInquiries(), 10000);
+
+    return () => {
+      document.removeEventListener('visibilitychange', refreshOnFocus);
+      window.clearInterval(syncInterval);
+      supabase.removeChannel(channel);
+    };
   }, [fetchInquiries]);
 
   const handleLogout = useCallback(async () => {
@@ -650,12 +690,21 @@ export default function AdminDashboard({ initialEmail }) {
   const handleClaim = useCallback(async (id) => {
     setActionError('');
     try {
-      const { error } = await supabase.from('inquiries').update({
-        status: 'claimed',
-        claimed_by: userName,
-        claimed_at: new Date().toISOString(),
-      }).eq('id', id);
+      const { data, error } = await supabase
+        .from('inquiries')
+        .update({
+          status: 'claimed',
+          claimed_by: userName,
+          claimed_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .eq('status', 'new')
+        .is('claimed_by', null)
+        .select();
       if (error) throw error;
+      if (!data?.length) {
+        setActionError('This inquiry was already claimed by another admin.');
+      }
       fetchInquiries();
     } catch (err) {
       console.error('handleClaim:', err);
@@ -666,11 +715,16 @@ export default function AdminDashboard({ initialEmail }) {
   const handleRelease = useCallback(async (id) => {
     setActionError('');
     try {
-      const { error } = await supabase.from('inquiries').update({
-        status: 'new',
-        claimed_by: null,
-        claimed_at: null,
-      }).eq('id', id);
+      const { error } = await supabase
+        .from('inquiries')
+        .update({
+          status: 'new',
+          claimed_by: null,
+          claimed_at: null,
+          completed_at: null,
+        })
+        .eq('id', id)
+        .eq('claimed_by', userName);
       if (error) throw error;
       fetchInquiries();
     } catch (err) {
@@ -685,7 +739,12 @@ export default function AdminDashboard({ initialEmail }) {
       const updates = { status: newStatus };
       if (newNotes !== undefined) updates.notes = newNotes;
       if (newStatus === 'completed') updates.completed_at = new Date().toISOString();
-      const { error } = await supabase.from('inquiries').update(updates).eq('id', id);
+      if (newStatus !== 'completed') updates.completed_at = null;
+      const { error } = await supabase
+        .from('inquiries')
+        .update(updates)
+        .eq('id', id)
+        .eq('claimed_by', userName);
       if (error) throw error;
       fetchInquiries();
     } catch (err) {
@@ -727,6 +786,11 @@ export default function AdminDashboard({ initialEmail }) {
     in_progress: inquiries.filter(i => i.status === 'in_progress').length,
     completed:   inquiries.filter(i => i.status === 'completed').length,
   }), [inquiries, userName]);
+
+  const selectedInquiry = useMemo(
+    () => inquiries.find(inquiry => inquiry.id === selectedId) || null,
+    [inquiries, selectedId]
+  );
 
   if (loading) return (
     <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
@@ -811,8 +875,8 @@ export default function AdminDashboard({ initialEmail }) {
                       onClaim={handleClaim}
                       onRelease={handleRelease}
                       onStatusChange={handleStatusChange}
-                      onClick={() => setSelected(inq)}
-                      isSelected={selected?.id === inq.id}
+                      onClick={() => setSelectedId(inq.id)}
+                      isSelected={selectedId === inq.id}
                     />
                   ))}
                 </tbody>
@@ -828,7 +892,7 @@ export default function AdminDashboard({ initialEmail }) {
                   onClaim={handleClaim}
                   onRelease={handleRelease}
                   onStatusChange={handleStatusChange}
-                  onClick={() => setSelected(inq)}
+                  onClick={() => setSelectedId(inq.id)}
                 />
               ))}
             </div>
@@ -840,11 +904,11 @@ export default function AdminDashboard({ initialEmail }) {
         )}
       </div>
 
-      {selected && (
+      {selectedInquiry && (
         <DetailDrawer
-          inquiry={selected}
+          inquiry={selectedInquiry}
           userName={userName}
-          onClose={() => setSelected(null)}
+          onClose={() => setSelectedId(null)}
           onClaim={handleClaim}
           onRelease={handleRelease}
           onStatusChange={handleStatusChange}
