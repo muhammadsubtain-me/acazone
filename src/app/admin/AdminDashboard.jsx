@@ -164,8 +164,8 @@ function AttachmentItem({ url }) {
 
 // ─── Login Gate ───────────────────────────────────────────────────────────────
 
-function LoginGate({ onLogin }) {
-  const [email,    setEmail]    = useState('');
+function LoginGate({ onLogin, prefillEmail = '' }) {
+  const [email,    setEmail]    = useState(prefillEmail);
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [error,    setError]    = useState('');
@@ -185,46 +185,87 @@ function LoginGate({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(255,255,255,0.04),transparent)]" />
+    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-4 py-8">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(255,255,255,0.04),transparent)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(var(--dot-color)_1px,transparent_1px)] bg-[size:28px_28px] pointer-events-none" />
 
-      <div className="relative w-full max-w-md">
-        <div className="flex items-center justify-center gap-3 mb-10">
-          <Logo className="w-9 h-9" />
-          <div>
-            <div className="text-white font-bold text-xl tracking-[-0.02em]">Acezon</div>
-            <div className="text-[var(--color-text-muted)] text-xs font-medium tracking-wide uppercase">Admin Panel</div>
-          </div>
+      <div className="relative w-full max-w-3xl bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl overflow-hidden flex" style={{boxShadow:'0 8px 32px rgba(0,0,0,0.9)'}}>
+
+        {/* Left illustration panel */}
+        <div className="hidden lg:flex flex-col items-center justify-center flex-1 p-12 relative overflow-hidden border-r border-[var(--color-border)]">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(255,255,255,0.04),transparent)]" />
+          <svg viewBox="0 0 300 260" width="260" style={{position:'relative',zIndex:1}} fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="70" cy="155" rx="60" ry="60" fill="rgba(255,255,255,0.035)"/>
+            <ellipse cx="230" cy="95" rx="45" ry="45" fill="rgba(255,255,255,0.025)"/>
+            <rect x="50" y="30" width="200" height="150" rx="14" fill="#1a1a1a" stroke="#2a2a2a" strokeWidth="1.5"/>
+            <rect x="64" y="44" width="172" height="122" rx="8" fill="#111111"/>
+            <rect x="82" y="62" width="88" height="7" rx="3" fill="#2a2a2a"/>
+            <rect x="82" y="77" width="138" height="4.5" rx="2" fill="#1f1f1f"/>
+            <rect x="82" y="88" width="118" height="4.5" rx="2" fill="#1f1f1f"/>
+            <rect x="82" y="99" width="98" height="4.5" rx="2" fill="#1f1f1f"/>
+            <rect x="82" y="110" width="128" height="4.5" rx="2" fill="#1f1f1f"/>
+            <rect x="82" y="121" width="78" height="4.5" rx="2" fill="#1f1f1f"/>
+            <circle cx="208" cy="126" r="22" fill="#1a1a1a" stroke="#2a2a2a" strokeWidth="1.5"/>
+            <circle cx="208" cy="126" r="15" fill="rgba(255,255,255,0.06)"/>
+            <polyline points="200,126 205,132 217,118" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <rect x="138" y="180" width="24" height="22" rx="2" fill="#1a1a1a" stroke="#2a2a2a" strokeWidth="1"/>
+            <rect x="118" y="200" width="64" height="8" rx="4" fill="#1a1a1a" stroke="#2a2a2a" strokeWidth="1"/>
+            <circle cx="150" cy="228" r="18" fill="#1f1f1f" stroke="#2a2a2a" strokeWidth="1.5"/>
+            <circle cx="150" cy="222" r="6" fill="#333"/>
+            <path d="M 138,240 Q 150,234 162,240" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round"/>
+            <circle cx="163" cy="237" r="9" fill="#1a1a1a" stroke="#2a2a2a" strokeWidth="1.2"/>
+            <rect x="159.5" y="237" width="7" height="5" rx="1" fill="#555"/>
+            <path d="M 160,237 Q 160,233 163,233 Q 166,233 166,237" stroke="#555" strokeWidth="1.2" fill="none"/>
+            <circle cx="40" cy="72" r="3.5" fill="rgba(255,255,255,0.1)"/>
+            <circle cx="267" cy="195" r="2.5" fill="rgba(255,255,255,0.07)"/>
+            <circle cx="280" cy="50" r="2" fill="rgba(255,255,255,0.06)"/>
+            <circle cx="32" cy="205" r="2" fill="rgba(255,255,255,0.07)"/>
+            <circle cx="150" cy="130" r="108" stroke="rgba(255,255,255,0.04)" strokeWidth="1" strokeDasharray="5 7"/>
+          </svg>
+          <p style={{position:'relative',zIndex:1,marginTop:'20px',fontSize:'12px',color:'#444',textAlign:'center',maxWidth:'180px',lineHeight:1.6}}>
+            Secure access to the Acezon admin workspace
+          </p>
         </div>
 
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-8">
-          <div className="flex items-center justify-center w-14 h-14 bg-white/[0.04] border border-white/[0.08] rounded-2xl mx-auto mb-6">
-            <Shield className="w-6 h-6 text-[var(--color-text-muted)]" />
+        {/* Right form panel */}
+        <div className="w-full lg:w-[340px] shrink-0 flex flex-col items-center justify-center p-8 lg:p-10">
+
+          {/* Logo */}
+          <div className="flex flex-col items-center gap-3 mb-8">
+            <Logo className="w-14 h-14" />
+            <div className="text-center">
+              <div className="text-white font-bold text-lg tracking-[-0.02em] leading-none">Acezon</div>
+              <div className="text-[var(--color-text-faint)] text-[11px] font-medium tracking-widest uppercase mt-1">Admin Panel</div>
+            </div>
           </div>
 
-          <h1 className="font-display text-2xl font-bold text-center text-[var(--color-text-heading)] mb-2">
-            Team Login
-          </h1>
-          <p className="text-[var(--color-text-muted)] text-sm text-center mb-8">
-            Sign in with your Acezon team account.
-          </p>
+          {/* Heading */}
+          <div className="w-full mb-5">
+            <div style={{width:'20px',height:'2px',background:'rgba(255,255,255,0.35)',borderRadius:'2px',marginBottom:'10px'}} />
+            <h1 className="font-display text-xl font-bold text-[var(--color-text-heading)]">Login as an Admin User</h1>
+          </div>
 
-          <form onSubmit={handleLogin} className="flex flex-col gap-4">
-            <input
-              type="email"
-              required
-              placeholder="Email address"
-              value={email}
-              onChange={e => { setEmail(e.target.value); setError(''); }}
-              className="w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all"
-            />
+          {/* Fields */}
+          <div className="w-full flex flex-col gap-3">
+            <div className="relative">
+              <input
+                type="email"
+                required
+                placeholder="admin@acezon.app"
+                value={email}
+                onChange={e => { setEmail(e.target.value); setError(''); }}
+                className="w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl px-4 py-3 pr-11 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-faint)]">
+                <User className="w-4 h-4" />
+              </span>
+            </div>
 
             <div className="relative">
               <input
                 type={showPass ? 'text' : 'password'}
                 required
-                placeholder="Password"
+                placeholder="••••••••"
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(''); }}
                 className="w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl px-4 py-3 pr-11 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all"
@@ -245,16 +286,16 @@ function LoginGate({ onLogin }) {
             )}
 
             <button
-              type="submit"
+              onClick={handleLogin}
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-white text-black text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full mt-1 py-3 rounded-xl bg-white text-black text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Signing in…' : 'Login'}
             </button>
-          </form>
+          </div>
 
-          <p className="text-center text-[11px] text-[var(--color-text-faint)] mt-6">
+          <p className="mt-6 text-[11px] text-[var(--color-text-faint)] text-center">
             Only Acezon team members can access this panel.
           </p>
         </div>
@@ -703,15 +744,16 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function AdminDashboard({ initialEmail }) {
-  const [session,     setSession]     = useState(null);
-  const [userName,    setUserName]    = useState(initialEmail ? getDisplayName(initialEmail) : '');
-  const [inquiries,   setInquiries]   = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [fetchError,  setFetchError]  = useState('');
-  const [actionError, setActionError] = useState('');
-  const [search,      setSearch]      = useState('');
-  const [activeTab,   setActiveTab]   = useState('all');
-  const [selected,    setSelected]    = useState(null);
+  const [session,      setSession]      = useState(null);
+  const [userName,     setUserName]     = useState(initialEmail ? getDisplayName(initialEmail) : '');
+  const [prefillEmail, setPrefillEmail] = useState('');
+  const [inquiries,    setInquiries]    = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [fetchError,   setFetchError]   = useState('');
+  const [actionError,  setActionError]  = useState('');
+  const [search,       setSearch]       = useState('');
+  const [activeTab,    setActiveTab]    = useState('all');
+  const [selected,     setSelected]     = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session }, error }) => {
@@ -780,11 +822,13 @@ export default function AdminDashboard({ initialEmail }) {
   }, [fetchInquiries]);
 
   const handleLogout = useCallback(async () => {
+    const currentEmail = (await supabase.auth.getSession())?.data?.session?.user?.email || '';
     try {
       await supabase.auth.signOut();
     } catch (err) {
       console.error('signOut error:', err);
     }
+    setPrefillEmail(currentEmail);
     setSession(null);
     setUserName('');
     setInquiries([]);
@@ -880,7 +924,7 @@ export default function AdminDashboard({ initialEmail }) {
     </div>
   );
 
-  if (!session) return <LoginGate onLogin={handleLogin} />;
+  if (!session) return <LoginGate onLogin={handleLogin} prefillEmail={prefillEmail} />;
 
   if (fetchError && inquiries.length === 0) return (
     <div className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center justify-center gap-4 px-4">
