@@ -309,7 +309,7 @@ function FiltersBar({ search, setSearch, activeTab, setActiveTab, counts }) {
           title="Toggle team view"
         >
           <Users className="w-3.5 h-3.5" />
-          <span className="hidden sm:block">Team</span>
+          <span className="hidden sm:block">Overview</span>
         </button>
       </div>
     </div>
