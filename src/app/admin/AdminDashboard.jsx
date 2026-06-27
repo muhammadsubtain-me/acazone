@@ -37,7 +37,6 @@ const FILTER_TABS = [
   { key: 'inbox', label: 'Inbox' },
   { key: 'work',  label: 'My Work' },
   { key: 'done',  label: 'Done' },
-  { key: 'team',  label: 'Team View' },
 ];
 
 const TABLE_HEADERS         = ['Client', 'Contact', 'Service', 'Subject', 'Time', 'Status', 'Assigned', 'Actions'];
@@ -260,6 +259,8 @@ function StatsRow({ stats }) {
 // ─── Filters Bar ──────────────────────────────────────────────────────────────
 
 function FiltersBar({ search, setSearch, activeTab, setActiveTab, counts }) {
+  const isTeamView = activeTab === 'team';
+
   return (
     <div className="flex flex-col sm:flex-row gap-3 mb-5">
       <div className="relative flex-1">
@@ -278,23 +279,38 @@ function FiltersBar({ search, setSearch, activeTab, setActiveTab, counts }) {
         )}
       </div>
 
-      <div className="flex gap-1 p-1 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl overflow-x-auto shrink-0">
-        {FILTER_TABS.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 ${
-              activeTab === tab.key ? 'bg-white text-black' : 'text-[var(--color-text-muted)] hover:text-white'
-            }`}
-          >
-            {tab.label}
-            {tab.key !== 'team' && counts[tab.key] > 0 && (
-              <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] ${activeTab === tab.key ? 'bg-black/20' : 'bg-white/10'}`}>
-                {counts[tab.key]}
-              </span>
-            )}
-          </button>
-        ))}
+      <div className="flex gap-2 shrink-0">
+        <div className="flex gap-1 p-1 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl overflow-x-auto">
+          {FILTER_TABS.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 ${
+                activeTab === tab.key ? 'bg-white text-black' : 'text-[var(--color-text-muted)] hover:text-white'
+              }`}
+            >
+              {tab.label}
+              {counts[tab.key] > 0 && (
+                <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] ${activeTab === tab.key ? 'bg-black/20' : 'bg-white/10'}`}>
+                  {counts[tab.key]}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={() => setActiveTab(isTeamView ? 'inbox' : 'team')}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-150 ${
+            isTeamView
+              ? 'bg-violet-500/15 text-violet-400 border-violet-500/30 hover:bg-violet-500/25'
+              : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-white hover:border-[var(--color-border-hover)]'
+          }`}
+          title="Toggle team view"
+        >
+          <Users className="w-3.5 h-3.5" />
+          <span className="hidden sm:block">Team</span>
+        </button>
       </div>
     </div>
   );
@@ -460,7 +476,7 @@ function EmptyState({ activeTab, search }) {
     inbox: 'No unclaimed inquiries',
     work:  'No active work',
     team:  'No assigned inquiries',
-    done:  'No completed inquiries',
+    done:  'No completed inquiries yet',
   };
 
   return (
@@ -798,8 +814,8 @@ export default function AdminDashboard({ initialEmail }) {
     .filter(inq => {
       if (activeTab === 'inbox') return inq.status === 'new' && !inq.claimed_by;
       if (activeTab === 'work')  return isActiveWork(inq) && inq.claimed_by === userName;
-      if (activeTab === 'team')  return Boolean(inq.claimed_by);
-      if (activeTab === 'done')  return inq.status === 'completed';
+      if (activeTab === 'team')  return Boolean(inq.claimed_by) || inq.status === 'completed';
+      if (activeTab === 'done')  return inq.status === 'completed' && inq.claimed_by === userName;
       return false;
     })
     .filter(inq => {
@@ -824,7 +840,7 @@ export default function AdminDashboard({ initialEmail }) {
     inbox: inquiries.filter(i => i.status === 'new' && !i.claimed_by).length,
     work:  inquiries.filter(i => isActiveWork(i) && i.claimed_by === userName).length,
     team:  inquiries.filter(i => Boolean(i.claimed_by)).length,
-    done:  inquiries.filter(i => i.status === 'completed').length,
+    done:  inquiries.filter(i => i.status === 'completed' && i.claimed_by === userName).length,
   }), [inquiries, userName]);
 
   const selectedInquiry = useMemo(
