@@ -309,7 +309,7 @@ function FiltersBar({ search, setSearch, activeTab, setActiveTab, counts }) {
           title="Toggle team view"
         >
           <Users className="w-3.5 h-3.5" />
-          <span className="hidden sm:block">Overview</span>
+          <span className="hidden sm:block">Team Activity</span>
         </button>
       </div>
     </div>
@@ -906,7 +906,7 @@ export default function AdminDashboard({ initialEmail }) {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-[var(--color-border)]">
-                    {(isTeamView ? TABLE_HEADERS_TEAM : TABLE_HEADERS).map(h => (
+                    {(isTeamView || activeTab === 'done' ? TABLE_HEADERS_TEAM : TABLE_HEADERS).map(h => (
                       <th key={h} className={`px-4 py-3 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-faint)] ${HEADER_HIDDEN_CLASS[h] || ''}`}>
                         {h}
                       </th>
@@ -925,7 +925,7 @@ export default function AdminDashboard({ initialEmail }) {
                       onClick={() => setSelectedId(inq.id)}
                       isSelected={selectedId === inq.id}
                       readOnly={isTeamView}
-                      showActions={!isTeamView}
+                      showActions={!isTeamView && activeTab !== 'done'}
                     />
                   ))}
                 </tbody>
