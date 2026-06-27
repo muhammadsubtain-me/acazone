@@ -4,32 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import Logo from '@/components/Logo';
-import { subjects } from '@/lib/data';
-
-const QUICK_LINKS = [
-  { name: 'FAQs',       path: '/faqs'    },
-  { name: 'About Us',   path: '/about'   },
-  { name: 'Contact Us', path: '/contact' },
-  { name: 'Samples',    path: '/samples' },
-  { name: 'Hire Expert',path: '/order'   },
-];
-
-const DOMAINS = [
-  'Mechanical Engineering',
-  'Electrical Engineering',
-  'Chemical Engineering',
-  'Computer Science',
-];
-
-const SOCIALS = [
-  { name: 'Facebook',  icon: 'f',  href: '#' },
-  { name: 'Instagram', icon: '📷', href: '#' },
-  { name: 'Twitter',   icon: '𝕏',  href: '#' },
-  { name: 'LinkedIn',  icon: 'in', href: '#' },
-  { name: 'YouTube',   icon: '▶',  href: '#' },
-];
+import { domains, footerQuickLinks, siteInfo, socialLinks, subjects } from '@/lib/data';
 
 const VISIBLE_SUBJECTS = 13;
 
@@ -56,16 +33,16 @@ export default function Footer() {
             >
               <Logo className="w-8 h-8" />
               <span className="text-[var(--color-footer-head)] font-bold text-xl tracking-[-0.02em]">
-                Acezon
+                {siteInfo.name}
               </span>
             </Link>
             <p className="text-sm leading-[1.7] mb-6">
-              Expert academic assistance to help students achieve the grades they deserve. Available 24/7.
+              {siteInfo.tagline}
             </p>
             <div className="text-sm leading-loose">
               <div className="flex gap-2">
-                <span>📍</span>
-                <span>Atomic Energy Colony Chashma, District Mianwali, Pakistan</span>
+                <MapPin className="w-4 h-4 mt-1 shrink-0" />
+                <span>{siteInfo.address}</span>
               </div>
             </div>
           </div>
@@ -74,7 +51,7 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-[var(--color-footer-head)] mb-5 text-xs uppercase tracking-[0.08em]">Quick Links</h4>
             <ul className="list-none p-0 m-0">
-              {QUICK_LINKS.map((link) => (
+              {footerQuickLinks.map((link) => (
                 <li key={link.name} className="mb-2.5">
                   <Link
                     href={link.path}
@@ -91,10 +68,10 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-[var(--color-footer-head)] mb-5 text-xs uppercase tracking-[0.08em]">Domains</h4>
             <ul className="list-none p-0 m-0">
-              {DOMAINS.map((domain) => (
-                <li key={domain} className="mb-2.5">
+              {domains.map((domain) => (
+                <li key={domain.id} className="mb-2.5">
                   <span className="text-sm text-[var(--color-footer-text)] transition-colors duration-150 hover:text-[var(--color-text)] cursor-default">
-                    {domain}
+                    {domain.name}
                   </span>
                 </li>
               ))}
@@ -132,9 +109,9 @@ export default function Footer() {
         <Separator className="my-12" />
 
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="text-sm m-0">© 2026 Acezon. All Rights Reserved.</p>
+          <p className="text-sm m-0">{siteInfo.copyright}</p>
           <div className="flex items-center gap-3">
-            {SOCIALS.map((social) => (
+            {socialLinks.map((social) => (
               <a
                 key={social.name}
                 href={social.href}

@@ -6,3 +6,26 @@ export const features = [
   { icon: '💰', title: 'Affordable Pricing',    desc: 'Premium academic help that fits every student budget without compromise.' },
   { icon: '🔄', title: 'Unlimited Revisions',   desc: 'We refine your work until you are completely satisfied with the outcome.' },
 ];
+
+export const hireExpertBenefits = [
+  {
+    icon: 'target',
+    title: 'Targeted Help',
+    desc: 'Subject-specific solutions matched to your course requirements.',
+  },
+  {
+    icon: 'zap',
+    title: 'Fast Turnaround',
+    desc: 'Express delivery options available for urgent assignments.',
+  },
+  {
+    icon: 'phone',
+    title: '24/7 Support',
+    desc: 'Round-the-clock assistance whenever you need guidance.',
+  },
+  {
+    icon: 'badgeCheck',
+    title: 'Grade Guarantee',
+    desc: 'Work crafted to help you achieve the grades you deserve.',
+  },
+];

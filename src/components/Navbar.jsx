@@ -6,15 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/Logo';
-
-const NAV_LINKS = [
-  { name: 'Home',     path: '/'        },
-  { name: 'Services', path: '/services' },
-  { name: 'Samples',  path: '/samples'  },
-  { name: 'About',    path: '/about'    },
-  { name: 'Contact',  path: '/contact'  },
-  { name: 'FAQs',     path: '/faqs'     },
-];
+import { mainNavLinks } from '@/lib/data';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -81,7 +73,7 @@ export default function Navbar() {
 
             {/* Desktop nav */}
             <nav className="hidden lg:flex xl:gap-1 items-center gap-0.5 ml-auto">
-              {NAV_LINKS.map((link) => (
+              {mainNavLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.path}
@@ -115,7 +107,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <nav className="fixed top-16 left-0 right-0 bottom-0 z-40 px-4 pb-24 pt-2 bg-[rgba(5,5,5,0.92)] backdrop-blur-[24px] backdrop-saturate-[180%] overflow-y-auto border-t border-white/[0.08]">
-          {NAV_LINKS.map((link) => (
+          {mainNavLinks.map((link) => (
             <Link
               key={link.name}
               href={link.path}

@@ -1,8 +1,16 @@
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Phone, Target, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { hireExpertBenefits } from '@/lib/data';
+
+const BENEFIT_ICONS = {
+  target: Target,
+  zap: Zap,
+  phone: Phone,
+  badgeCheck: BadgeCheck,
+};
 
 export default function HireExpertCTA() {
   return (
@@ -29,18 +37,18 @@ export default function HireExpertCTA() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 xl:gap-5">
-            {[
-              { icon: '🎯', title: 'Targeted Help', desc: 'Subject-specific solutions matched to your course requirements.' },
-              { icon: '⚡', title: 'Fast Turnaround', desc: 'Express delivery options available for urgent assignments.' },
-              { icon: '📞', title: '24/7 Support', desc: 'Round-the-clock assistance whenever you need guidance.' },
-              { icon: '💯', title: 'Grade Guarantee', desc: 'Work crafted to help you achieve the grades you deserve.' },
-            ].map((item) => (
-              <Card key={item.title} className="p-5 bg-[var(--color-surface-2)] hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-3)]">
-                <div className="text-2xl mb-3">{item.icon}</div>
-                <CardTitle className="text-[13px] mb-1.5">{item.title}</CardTitle>
-                <CardDescription>{item.desc}</CardDescription>
-              </Card>
-            ))}
+            {hireExpertBenefits.map((item) => {
+              const Icon = BENEFIT_ICONS[item.icon] || Target;
+              return (
+                <Card key={item.title} className="p-5 bg-[var(--color-surface-2)] hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-3)]">
+                  <div className="w-10 h-10 bg-[var(--color-surface-3)] rounded-xl flex items-center justify-center mb-3">
+                    <Icon className="w-5 h-5 text-[var(--color-accent-muted)]" />
+                  </div>
+                  <CardTitle className="text-[13px] mb-1.5">{item.title}</CardTitle>
+                  <CardDescription>{item.desc}</CardDescription>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </div>

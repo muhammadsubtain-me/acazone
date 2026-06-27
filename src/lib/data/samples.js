@@ -1,3 +1,24 @@
+export const sampleSections = [
+  {
+    key: 'problems',
+    title: 'Problem Sets',
+    subtitle: 'Expertly solved homework assignments, problems, and practice sheets.',
+    icon: 'bookOpen',
+  },
+  {
+    key: 'lectures',
+    title: 'Lectures',
+    subtitle: 'Structured lecture notes, slides, and educational guides.',
+    icon: 'fileText',
+  },
+  {
+    key: 'reports',
+    title: 'Reports',
+    subtitle: 'Rigorous engineering reports, lab files, and case study documents.',
+    icon: 'file',
+  },
+];
+
 export const pdfSamples = {
   problems: [
     {

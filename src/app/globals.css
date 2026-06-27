@@ -71,6 +71,13 @@ body {
 
 .font-display { font-family: "Google Sans Flex", "Google Sans Flex Variable", sans-serif; }
 
+.admin-login-input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-surface-2) inset;
+  -webkit-text-fill-color: var(--color-text);
+  caret-color: var(--color-text);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 /* Accordion animations */
 @keyframes accordion-down {
   from { height: 0; }

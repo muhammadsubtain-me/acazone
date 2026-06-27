@@ -1,19 +1,12 @@
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
 import PageHero from '@/components/PageHero';
-import { services } from '@/lib/data';
+import { domains, services } from '@/lib/data';
 
 export const metadata = {
   title: 'Academic Tutoring & Technical Writing Services',
   description:
     "Explore Acezon's custom academic solutions, including homework writing, subject tutoring, programming help, lab tasks, semester projects, and thesis writing.",
 };
-
-const DOMAIN_PILLS = [
-  { icon: '⚙️', label: 'Mechanical' },
-  { icon: '⚡', label: 'Electrical' },
-  { icon: '⚗️', label: 'Chemical'  },
-  { icon: '💻', label: 'Computer Science' },
-];
 
 export default function ServicesPage() {
   return (
@@ -26,12 +19,12 @@ export default function ServicesPage() {
               Expert academic help, delivered on time.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-[var(--color-text-muted)]">
-              {DOMAIN_PILLS.map((pill, i) => (
-                <span key={pill.label} className="flex items-center gap-2">
+              {domains.map((domain, i) => (
+                <span key={domain.id} className="flex items-center gap-2">
                   <span className="px-3.5 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-full flex items-center gap-1.5 shadow-sm">
-                    {pill.icon} {pill.label}
+                    {domain.icon} {domain.shortName}
                   </span>
-                  {i < DOMAIN_PILLS.length - 1 && (
+                  {i < domains.length - 1 && (
                     <span className="text-white/20 select-none hidden md:inline">·</span>
                   )}
                 </span>

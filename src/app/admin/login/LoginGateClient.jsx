@@ -158,7 +158,7 @@ export default function LoginGateClient() {
                 placeholder="admin@acezon.app"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setError(''); }}
-                className="w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl px-4 py-3 pr-11 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all"
+                className="admin-login-input w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl px-4 py-3 pr-11 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-faint)]">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -175,7 +175,7 @@ export default function LoginGateClient() {
                 placeholder="••••••••"
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(''); }}
-                className="w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl px-4 py-3 pr-11 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all"
+                className="admin-login-input w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl px-4 py-3 pr-11 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all"
               />
               <button
                 type="button"

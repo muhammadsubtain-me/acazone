@@ -1,14 +1,14 @@
 'use client';
 
 import PageHero from '@/components/PageHero';
-import { pdfSamples } from '@/lib/data';
+import { pdfSamples, sampleSections } from '@/lib/data';
 import { ExternalLink, BookOpen, FileText, File } from 'lucide-react';
 
-const SECTIONS = [
-  { key: 'problems', title: 'Problem Sets', subtitle: 'Expertly solved homework assignments, problems, and practice sheets.',          icon: <BookOpen className="w-5 h-5 text-neutral-400" /> },
-  { key: 'lectures', title: 'Lectures',     subtitle: 'Structured lecture notes, slides, and educational guides.',                     icon: <FileText  className="w-5 h-5 text-neutral-400" /> },
-  { key: 'reports',  title: 'Reports',      subtitle: 'Rigorous engineering reports, lab files, and case study documents.',            icon: <File      className="w-5 h-5 text-neutral-400" /> },
-];
+const SECTION_ICONS = {
+  bookOpen: BookOpen,
+  fileText: FileText,
+  file: File,
+};
 
 function SampleCard({ item, className = '' }) {
   return (
@@ -48,13 +48,14 @@ export default function SamplesClient() {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px]">
           <div className="space-y-14">
-            {SECTIONS.map((sec) => {
+            {sampleSections.map((sec) => {
               const list = pdfSamples[sec.key] || [];
+              const Icon = SECTION_ICONS[sec.icon] || File;
               return (
                 <div key={sec.key}>
                   <div className="flex flex-col gap-1 border-b border-white/[0.06] pb-3 mb-6">
                     <div className="flex items-center gap-2">
-                      {sec.icon}
+                      <Icon className="w-5 h-5 text-neutral-400" />
                       <h2 className="text-lg font-bold text-[var(--color-text-heading)] tracking-wide">{sec.title}</h2>
                     </div>
                     <p className="text-xs md:text-[13px] lg:text-sm xl:text-base text-[var(--color-text-muted)] leading-relaxed">{sec.subtitle}</p>
