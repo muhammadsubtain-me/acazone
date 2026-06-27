@@ -1,11 +1,4 @@
 User-agent: *
-Allow: /$
-Allow: /services$
-Allow: /samples$
-Allow: /about$
-Allow: /contact$
-Allow: /faqs$
-Allow: /order$
 Disallow: /admin
 Disallow: /admin/
 
