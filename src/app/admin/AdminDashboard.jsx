@@ -5,12 +5,11 @@ import { services, domains } from '@/lib/data';
 import Logo from '@/components/Logo';
 import { supabase } from '@/lib/supabase';
 import {
-  Search, X, LogOut, Clock, User, Phone,
+  Search, X, LogOut, Clock, User,
   BookOpen, FileText, CheckCircle2,
-  Loader2, Inbox, Shield,
-  AlertCircle, Zap, Users, ClipboardList,
-  StickyNote, ArrowRight, Eye, EyeOff,
-  Paperclip, Image, Download,
+  Loader2, Inbox, Users,
+  AlertCircle, Zap,
+  StickyNote, Paperclip, Image, Download,
 } from 'lucide-react';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -28,19 +27,22 @@ const EMAIL_TO_NAME = {
 };
 
 const STATUS_META = {
-  new:         { label: 'New',         dot: 'bg-blue-400 animate-pulse',   badge: 'text-blue-400 bg-blue-400/10 border-blue-400/20'   },
-  claimed:     { label: 'Claimed',     dot: 'bg-amber-400',                badge: 'text-amber-400 bg-amber-400/10 border-amber-400/20'   },
-  in_progress: { label: 'In Progress', dot: 'bg-violet-400',               badge: 'text-violet-400 bg-violet-400/10 border-violet-400/20' },
-  completed:   { label: 'Completed',   dot: 'bg-emerald-400',              badge: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20' },
+  new:         { label: 'New',         dot: 'bg-blue-400',    badge: 'text-blue-400 bg-blue-400/10 border-blue-400/20'     },
+  claimed:     { label: 'Claimed',     dot: 'bg-amber-400',   badge: 'text-amber-400 bg-amber-400/10 border-amber-400/20'   },
+  in_progress: { label: 'In Progress', dot: 'bg-violet-400',  badge: 'text-violet-400 bg-violet-400/10 border-violet-400/20' },
+  completed:   { label: 'Completed',   dot: 'bg-emerald-400', badge: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20' },
 };
 
 const FILTER_TABS = [
-  { key: 'all',         label: 'All'         },
-  { key: 'new',         label: 'New'         },
-  { key: 'mine',        label: 'My Claims'   },
-  { key: 'in_progress', label: 'In Progress' },
-  { key: 'completed',   label: 'Completed'   },
+  { key: 'inbox', label: 'Inbox' },
+  { key: 'work',  label: 'My Work' },
+  { key: 'done',  label: 'Done' },
+  { key: 'team',  label: 'Team View' },
 ];
+
+const TABLE_HEADERS         = ['Client', 'Contact', 'Service', 'Subject', 'Time', 'Status', 'Assigned', 'Actions'];
+const TABLE_HEADERS_TEAM    = ['Client', 'Contact', 'Service', 'Subject', 'Time', 'Status', 'Assigned'];
+const HEADER_HIDDEN_CLASS   = { Service: 'hidden lg:table-cell', Subject: 'hidden md:table-cell', Time: 'hidden xl:table-cell', Assigned: 'hidden md:table-cell' };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -90,23 +92,29 @@ function getDisplayName(email) {
   return EMAIL_TO_NAME[email] || email?.split('@')[0] || 'You';
 }
 
+function isActiveWork(inquiry) {
+  return inquiry.status === 'claimed' || inquiry.status === 'in_progress';
+}
+
+function isCompletedToday(inquiry) {
+  if (inquiry.status !== 'completed' || !inquiry.completed_at) return false;
+  return new Date(inquiry.completed_at).toDateString() === new Date().toDateString();
+}
+
 function sortInquiries(rows) {
   return [...rows].sort((a, b) => new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0));
 }
 
 function mergeRealtimeInquiry(rows, payload) {
   if (payload.eventType === 'DELETE') {
-    return rows.filter(inquiry => inquiry.id !== payload.old?.id);
+    return rows.filter(i => i.id !== payload.old?.id);
   }
-
   const incoming = payload.new;
   if (!incoming?.id) return rows;
-
-  const exists = rows.some(inquiry => inquiry.id === incoming.id);
+  const exists = rows.some(i => i.id === incoming.id);
   const nextRows = exists
-    ? rows.map(inquiry => inquiry.id === incoming.id ? { ...inquiry, ...incoming } : inquiry)
+    ? rows.map(i => i.id === incoming.id ? { ...i, ...incoming } : i)
     : [incoming, ...rows];
-
   return sortInquiries(nextRows);
 }
 
@@ -224,14 +232,13 @@ function TopBar({ userName, inquiries, onLogout }) {
 
 function StatsRow({ stats }) {
   const cards = [
-    { label: 'Total Inquiries', value: stats.total,     icon: ClipboardList, color: 'text-[var(--color-text-muted)]', bg: 'bg-white/[0.04]' },
-    { label: 'Unclaimed',       value: stats.unclaimed, icon: AlertCircle,   color: 'text-amber-400',                  bg: 'bg-amber-400/[0.06]' },
-    { label: 'My Claims',       value: stats.mine,      icon: Zap,           color: 'text-violet-400',                 bg: 'bg-violet-400/[0.06]' },
-    { label: 'Completed',       value: stats.completed, icon: CheckCircle2,  color: 'text-emerald-400',                bg: 'bg-emerald-400/[0.06]' },
+    { label: 'Unclaimed',       value: stats.unclaimed,      icon: AlertCircle,  color: 'text-amber-400',   bg: 'bg-amber-400/[0.06]'  },
+    { label: 'My Active',       value: stats.myActive,       icon: Zap,          color: 'text-violet-400',  bg: 'bg-violet-400/[0.06]' },
+    { label: 'Completed Today', value: stats.completedToday, icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-400/[0.06]' },
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
       {cards.map((c) => {
         const Icon = c.icon;
         return (
@@ -281,7 +288,7 @@ function FiltersBar({ search, setSearch, activeTab, setActiveTab, counts }) {
             }`}
           >
             {tab.label}
-            {counts[tab.key] > 0 && (
+            {tab.key !== 'team' && counts[tab.key] > 0 && (
               <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] ${activeTab === tab.key ? 'bg-black/20' : 'bg-white/10'}`}>
                 {counts[tab.key]}
               </span>
@@ -295,16 +302,16 @@ function FiltersBar({ search, setSearch, activeTab, setActiveTab, counts }) {
 
 // ─── Inquiry Table Row (desktop) ──────────────────────────────────────────────
 
-function InquiryRow({ inquiry, userName, onClaim, onRelease, onStatusChange, onClick, isSelected }) {
+function InquiryRow({ inquiry, userName, onClaim, onRelease, onStatusChange, onClick, isSelected, readOnly = false, showActions = true }) {
   const isMyInquiry = inquiry.claimed_by === userName;
-  const canClaim = inquiry.status === 'new';
-  const canAct = isMyInquiry && inquiry.status !== 'completed';
+  const canClaim = !readOnly && inquiry.status === 'new';
+  const canAct = !readOnly && isMyInquiry && inquiry.status !== 'completed';
 
   return (
     <tr
       onClick={onClick}
       className={`border-b border-[var(--color-border)] cursor-pointer transition-colors duration-150 ${
-        isSelected ? 'bg-white/[0.04]' : 'hover:bg-white/[0.025]'
+        isSelected ? 'bg-white/[0.04] [box-shadow:inset_3px_0_0_0_rgb(167,139,250)]' : 'hover:bg-white/[0.025]'
       }`}
     >
       <td className="px-4 py-3.5">
@@ -314,7 +321,14 @@ function InquiryRow({ inquiry, userName, onClaim, onRelease, onStatusChange, onC
           </div>
           <div>
             <div className="font-semibold text-sm text-[var(--color-text-heading)]">{inquiry.name}</div>
-            <div className="text-[10px] text-[var(--color-text-faint)] font-mono">{shortId(inquiry.id)}</div>
+            <button
+              type="button"
+              onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(inquiry.id); }}
+              title="Copy full ID"
+              className="text-[10px] text-[var(--color-text-faint)] font-mono hover:text-white transition-colors cursor-copy"
+            >
+              {shortId(inquiry.id)}
+            </button>
           </div>
         </div>
       </td>
@@ -328,7 +342,10 @@ function InquiryRow({ inquiry, userName, onClaim, onRelease, onStatusChange, onC
         <div className="text-[11px] text-[var(--color-text-faint)]">{getDomainLabel(inquiry.domain_id)}</div>
       </td>
       <td className="px-4 py-3.5 hidden md:table-cell">
-        <div className="text-xs text-[var(--color-text)] font-medium truncate max-w-[160px]">{inquiry.subject}</div>
+        <div className="flex items-center gap-1.5">
+          <div className="text-xs text-[var(--color-text)] font-medium truncate max-w-[150px]">{inquiry.subject}</div>
+          {inquiry.notes && <StickyNote className="w-3 h-3 shrink-0 text-[var(--color-text-faint)]" title="Has notes" />}
+        </div>
       </td>
       <td className="px-4 py-3.5 hidden xl:table-cell">
         <div className="text-xs text-[var(--color-text-muted)]">{timeAgo(inquiry.submitted_at)}</div>
@@ -348,40 +365,42 @@ function InquiryRow({ inquiry, userName, onClaim, onRelease, onStatusChange, onC
           <span className="text-[11px] text-[var(--color-text-faint)]">Unclaimed</span>
         )}
       </td>
-      <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center gap-1.5">
-          {canClaim && (
-            <button onClick={() => onClaim(inquiry.id)} className="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-white text-black hover:opacity-90 active:scale-95 transition-all">
-              Claim
-            </button>
-          )}
-          {canAct && inquiry.status === 'claimed' && (
-            <button onClick={() => onStatusChange(inquiry.id, 'in_progress')} className="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-violet-500/15 text-violet-400 border border-violet-500/20 hover:bg-violet-500/25 transition-all">
-              Start
-            </button>
-          )}
-          {canAct && inquiry.status === 'in_progress' && (
-            <button onClick={() => onStatusChange(inquiry.id, 'completed')} className="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 transition-all">
-              Done
-            </button>
-          )}
-          {isMyInquiry && inquiry.status !== 'completed' && (
-            <button onClick={() => onRelease(inquiry.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--color-text-faint)] hover:text-red-400 hover:bg-red-400/10 transition-all" title="Release claim">
-              <X className="w-3 h-3" />
-            </button>
-          )}
-        </div>
-      </td>
+      {showActions && (
+        <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center gap-1.5">
+            {canClaim && (
+              <button onClick={() => onClaim(inquiry.id)} className="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-white text-black hover:opacity-90 active:scale-95 transition-all">
+                Claim
+              </button>
+            )}
+            {canAct && inquiry.status === 'claimed' && (
+              <button onClick={() => onStatusChange(inquiry.id, 'in_progress')} className="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-violet-500/15 text-violet-400 border border-violet-500/20 hover:bg-violet-500/25 transition-all">
+                Start
+              </button>
+            )}
+            {canAct && inquiry.status === 'in_progress' && (
+              <button onClick={() => onStatusChange(inquiry.id, 'completed')} className="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 transition-all">
+                Done
+              </button>
+            )}
+            {!readOnly && isMyInquiry && inquiry.status !== 'completed' && (
+              <button onClick={() => onRelease(inquiry.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--color-text-faint)] hover:text-red-400 hover:bg-red-400/10 transition-all" title="Release claim">
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        </td>
+      )}
     </tr>
   );
 }
 
 // ─── Mobile Card ──────────────────────────────────────────────────────────────
 
-function InquiryCard({ inquiry, userName, onClaim, onRelease, onStatusChange, onClick }) {
+function InquiryCard({ inquiry, userName, onClaim, onStatusChange, onClick, readOnly = false }) {
   const isMyInquiry = inquiry.claimed_by === userName;
-  const canClaim = inquiry.status === 'new';
-  const canAct = isMyInquiry && inquiry.status !== 'completed';
+  const canClaim = !readOnly && inquiry.status === 'new';
+  const canAct = !readOnly && isMyInquiry && inquiry.status !== 'completed';
 
   return (
     <div className="bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-hover)] rounded-xl p-4 cursor-pointer transition-all duration-200 hover:bg-[var(--color-surface-2)]" onClick={onClick}>
@@ -416,6 +435,7 @@ function InquiryCard({ inquiry, userName, onClaim, onRelease, onStatusChange, on
           )}
         </div>
         <div className="flex gap-1.5" onClick={e => e.stopPropagation()}>
+          {readOnly && <span className="text-[11px] text-[var(--color-text-faint)]">Tracking</span>}
           {canClaim && (
             <button onClick={() => onClaim(inquiry.id)} className="px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-white text-black hover:opacity-90 transition-all">
               Claim
@@ -435,17 +455,24 @@ function InquiryCard({ inquiry, userName, onClaim, onRelease, onStatusChange, on
 // ─── Empty State ──────────────────────────────────────────────────────────────
 
 function EmptyState({ activeTab, search }) {
-  const isFiltered = activeTab !== 'all' || search;
+  const isSearching = Boolean(search.trim());
+  const emptyCopy = {
+    inbox: 'No unclaimed inquiries',
+    work:  'No active work',
+    team:  'No assigned inquiries',
+    done:  'No completed inquiries',
+  };
+
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="w-16 h-16 rounded-2xl bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center mb-5">
         <Inbox className="w-7 h-7 text-[var(--color-text-faint)]" />
       </div>
       <h3 className="font-semibold text-[var(--color-text-heading)] mb-2">
-        {isFiltered ? 'No results found' : 'No inquiries yet'}
+        {isSearching ? 'No results found' : emptyCopy[activeTab] || 'No inquiries yet'}
       </h3>
       <p className="text-sm text-[var(--color-text-muted)] max-w-xs leading-relaxed">
-        {isFiltered
+        {isSearching
           ? 'Try adjusting your search or filter.'
           : 'When clients submit the Hire Expert form, inquiries will appear here.'}
       </p>
@@ -464,7 +491,7 @@ function SectionLabel({ icon: Icon, label }) {
   );
 }
 
-function Row({ label, value, mono = false }) {
+function DetailRow({ label, value, mono = false }) {
   return (
     <div className="flex items-start justify-between gap-4">
       <span className="text-xs text-[var(--color-text-faint)] shrink-0">{label}</span>
@@ -473,10 +500,10 @@ function Row({ label, value, mono = false }) {
   );
 }
 
-function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatusChange }) {
+function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatusChange, readOnly = false }) {
   const isMyInquiry = inquiry.claimed_by === userName;
-  const canClaim = inquiry.status === 'new';
-  const canAct = isMyInquiry;
+  const canClaim = !readOnly && inquiry.status === 'new';
+  const canAct = !readOnly && isMyInquiry;
   const [notes, setNotes] = useState(inquiry.notes || '');
 
   useEffect(() => { setNotes(inquiry.notes || ''); }, [inquiry.id, inquiry.notes]);
@@ -488,7 +515,14 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)] shrink-0">
           <div>
             <div className="font-semibold text-[var(--color-text-heading)] text-sm">Inquiry Details</div>
-            <div className="text-[11px] text-[var(--color-text-faint)] font-mono mt-0.5">{shortId(inquiry.id)}</div>
+            <button
+              type="button"
+              onClick={() => navigator.clipboard.writeText(inquiry.id)}
+              title="Copy full ID"
+              className="text-[11px] text-[var(--color-text-faint)] font-mono mt-0.5 hover:text-white transition-colors cursor-copy text-left"
+            >
+              {shortId(inquiry.id)}
+            </button>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--color-text-faint)] hover:text-white hover:bg-white/[0.06] transition-all">
             <X className="w-4 h-4" />
@@ -507,18 +541,29 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
           <section>
             <SectionLabel icon={User} label="Client" />
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col gap-2">
-              <Row label="Name" value={inquiry.name} />
-              <Row label="Phone" value={`${inquiry.country_dial || ''} ${inquiry.phone || ''}`} mono />
-              <Row label="Country" value={inquiry.country_name || '—'} />
+              <DetailRow label="Name"    value={inquiry.name} />
+              <DetailRow label="Phone"   value={`${inquiry.country_dial || ''} ${inquiry.phone || ''}`} mono />
+              <DetailRow label="Country" value={inquiry.country_name || '—'} />
+              {inquiry.phone && (
+                <a
+                  href={`https://wa.me/${(inquiry.country_dial || '').replace(/\D/g, '')}${inquiry.phone.replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20 transition-all"
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  Message on WhatsApp
+                </a>
+              )}
             </div>
           </section>
 
           <section>
             <SectionLabel icon={BookOpen} label="Assignment" />
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col gap-2">
-              <Row label="Subject" value={inquiry.subject} />
-              <Row label="Domain" value={getDomainLabel(inquiry.domain_id)} />
-              <Row label="Service" value={getServiceLabel(inquiry.service_id, inquiry.custom_service)} />
+              <DetailRow label="Subject" value={inquiry.subject} />
+              <DetailRow label="Domain"  value={getDomainLabel(inquiry.domain_id)} />
+              <DetailRow label="Service" value={getServiceLabel(inquiry.service_id, inquiry.custom_service)} />
             </div>
           </section>
 
@@ -555,7 +600,7 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
                     <div className="text-xs text-[var(--color-text-faint)]">Claimed {timeAgo(inquiry.claimed_at)}</div>
                   </div>
                 </div>
-                {inquiry.completed_at && <Row label="Completed" value={formatDate(inquiry.completed_at)} />}
+                {inquiry.completed_at && <DetailRow label="Completed" value={formatDate(inquiry.completed_at)} />}
               </div>
             </section>
           )}
@@ -565,15 +610,22 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
             <textarea
               value={notes}
               onChange={e => setNotes(e.target.value)}
-              onBlur={() => onStatusChange(inquiry.id, inquiry.status, notes)}
+              onBlur={() => { if (!readOnly) onStatusChange(inquiry.id, inquiry.status, notes); }}
               placeholder="Add internal notes about this inquiry..."
               rows={3}
-              className="w-full bg-[var(--color-surface)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all resize-none"
+              readOnly={readOnly}
+              className="w-full bg-[var(--color-surface)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all resize-none read-only:cursor-default read-only:text-[var(--color-text-muted)]"
             />
           </section>
         </div>
 
         <div className="px-6 py-4 border-t border-[var(--color-border)] shrink-0 flex flex-col gap-2">
+          {readOnly && (
+            <div className="flex items-center justify-center gap-2 py-2.5 text-xs text-[var(--color-text-faint)]">
+              {inquiry.claimed_by && <MemberAvatar name={inquiry.claimed_by} size="sm" />}
+              Tracking only{inquiry.claimed_by ? ` - handled by ${inquiry.claimed_by}` : ''}
+            </div>
+          )}
           {canClaim && (
             <button onClick={() => onClaim(inquiry.id)} className="w-full py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all">
               Claim This Inquiry
@@ -589,17 +641,17 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
               Mark as Completed ✓
             </button>
           )}
-          {inquiry.status === 'completed' && (
+          {!readOnly && isMyInquiry && inquiry.status === 'completed' && (
             <button onClick={() => onStatusChange(inquiry.id, 'in_progress')} className="w-full py-2.5 rounded-xl bg-[var(--color-surface-2)] text-[var(--color-text-muted)] border border-[var(--color-border)] text-sm font-semibold hover:text-white transition-all">
               Reopen
             </button>
           )}
-          {isMyInquiry && inquiry.status !== 'completed' && (
+          {!readOnly && isMyInquiry && inquiry.status !== 'completed' && (
             <button onClick={() => { onRelease(inquiry.id); onClose(); }} className="w-full py-2.5 rounded-xl text-red-400 bg-red-400/[0.06] border border-red-400/15 text-sm font-medium hover:bg-red-400/10 active:scale-[0.98] transition-all">
               Release Claim
             </button>
           )}
-          {!canClaim && !isMyInquiry && inquiry.status !== 'completed' && inquiry.claimed_by && (
+          {!readOnly && !canClaim && !isMyInquiry && inquiry.status !== 'completed' && inquiry.claimed_by && (
             <div className="flex items-center justify-center gap-2 py-2.5 text-xs text-[var(--color-text-faint)]">
               <MemberAvatar name={inquiry.claimed_by} size="sm" />
               Handled by {inquiry.claimed_by}
@@ -612,9 +664,6 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
 }
 
 // ─── Main Dashboard ────────────────────────────────────────────────────────────
-// Auth is handled server-side (admin/page.jsx + middleware).
-// This component receives the current user's email as a prop and
-// only manages inquiry data fetching and UI state.
 
 export default function AdminDashboard({ initialEmail }) {
   const userName = getDisplayName(initialEmail);
@@ -624,8 +673,8 @@ export default function AdminDashboard({ initialEmail }) {
   const [fetchError,  setFetchError]  = useState('');
   const [actionError, setActionError] = useState('');
   const [search,      setSearch]      = useState('');
-  const [activeTab,   setActiveTab]   = useState('all');
-  const [selectedId,   setSelectedId]  = useState(null);
+  const [activeTab,   setActiveTab]   = useState('inbox');
+  const [selectedId,  setSelectedId]  = useState(null);
 
   const fetchInquiries = useCallback(async ({ showLoading = false } = {}) => {
     if (showLoading) setLoading(true);
@@ -645,9 +694,15 @@ export default function AdminDashboard({ initialEmail }) {
     }
   }, []);
 
-  // Initial fetch + realtime subscription
   useEffect(() => {
     fetchInquiries({ showLoading: true });
+
+    // Redirect all tabs to login on sign-out
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        window.location.href = '/admin/login';
+      }
+    });
 
     const channel = supabase
       .channel('inquiries-realtime')
@@ -657,9 +712,7 @@ export default function AdminDashboard({ initialEmail }) {
       })
       .subscribe((status, error) => {
         if (error) console.error('inquiries realtime subscription:', error);
-        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-          fetchInquiries();
-        }
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') fetchInquiries();
       });
 
     const refreshOnFocus = () => {
@@ -667,10 +720,10 @@ export default function AdminDashboard({ initialEmail }) {
     };
     document.addEventListener('visibilitychange', refreshOnFocus);
 
-    // Keeps admin screens synced even if the table is not in the realtime publication yet.
     const syncInterval = window.setInterval(() => fetchInquiries(), 10000);
 
     return () => {
+      subscription.unsubscribe();
       document.removeEventListener('visibilitychange', refreshOnFocus);
       window.clearInterval(syncInterval);
       supabase.removeChannel(channel);
@@ -682,9 +735,8 @@ export default function AdminDashboard({ initialEmail }) {
       await supabase.auth.signOut();
     } catch (err) {
       console.error('signOut error:', err);
+      window.location.href = '/admin/login';
     }
-    // Middleware will redirect to /admin/login after sign-out
-    window.location.href = '/admin/login';
   }, []);
 
   const handleClaim = useCallback(async (id) => {
@@ -692,19 +744,13 @@ export default function AdminDashboard({ initialEmail }) {
     try {
       const { data, error } = await supabase
         .from('inquiries')
-        .update({
-          status: 'claimed',
-          claimed_by: userName,
-          claimed_at: new Date().toISOString(),
-        })
+        .update({ status: 'claimed', claimed_by: userName, claimed_at: new Date().toISOString() })
         .eq('id', id)
         .eq('status', 'new')
         .is('claimed_by', null)
         .select();
       if (error) throw error;
-      if (!data?.length) {
-        setActionError('This inquiry was already claimed by another admin.');
-      }
+      if (!data?.length) setActionError('This inquiry was already claimed by another admin.');
       fetchInquiries();
     } catch (err) {
       console.error('handleClaim:', err);
@@ -717,12 +763,7 @@ export default function AdminDashboard({ initialEmail }) {
     try {
       const { error } = await supabase
         .from('inquiries')
-        .update({
-          status: 'new',
-          claimed_by: null,
-          claimed_at: null,
-          completed_at: null,
-        })
+        .update({ status: 'new', claimed_by: null, claimed_at: null, completed_at: null })
         .eq('id', id)
         .eq('claimed_by', userName);
       if (error) throw error;
@@ -731,7 +772,7 @@ export default function AdminDashboard({ initialEmail }) {
       console.error('handleRelease:', err);
       setActionError('Failed to release inquiry. Please try again.');
     }
-  }, [fetchInquiries]);
+  }, [userName, fetchInquiries]);
 
   const handleStatusChange = useCallback(async (id, newStatus, newNotes) => {
     setActionError('');
@@ -751,46 +792,47 @@ export default function AdminDashboard({ initialEmail }) {
       console.error('handleStatusChange:', err);
       setActionError('Failed to update inquiry status. Please try again.');
     }
-  }, [fetchInquiries]);
+  }, [userName, fetchInquiries]);
 
-  const filtered = useMemo(() => {
-    return inquiries
-      .filter(inq => {
-        if (activeTab === 'mine') return inq.claimed_by === userName;
-        if (activeTab !== 'all') return inq.status === activeTab;
-        return true;
-      })
-      .filter(inq => {
-        if (!search.trim()) return true;
-        const q = search.toLowerCase();
-        return (
-          inq.name?.toLowerCase().includes(q) ||
-          inq.subject?.toLowerCase().includes(q) ||
-          inq.phone?.includes(q) ||
-          inq.description?.toLowerCase().includes(q)
-        );
-      });
-  }, [inquiries, activeTab, search, userName]);
+  const filtered = useMemo(() => inquiries
+    .filter(inq => {
+      if (activeTab === 'inbox') return inq.status === 'new' && !inq.claimed_by;
+      if (activeTab === 'work')  return isActiveWork(inq) && inq.claimed_by === userName;
+      if (activeTab === 'team')  return Boolean(inq.claimed_by);
+      if (activeTab === 'done')  return inq.status === 'completed';
+      return false;
+    })
+    .filter(inq => {
+      if (!search.trim()) return true;
+      const q = search.toLowerCase();
+      return (
+        inq.name?.toLowerCase().includes(q) ||
+        inq.subject?.toLowerCase().includes(q) ||
+        inq.phone?.includes(q) ||
+        inq.description?.toLowerCase().includes(q)
+      );
+    }),
+  [inquiries, activeTab, search, userName]);
 
   const stats = useMemo(() => ({
-    total:     inquiries.length,
-    unclaimed: inquiries.filter(i => i.status === 'new').length,
-    mine:      inquiries.filter(i => i.claimed_by === userName).length,
-    completed: inquiries.filter(i => i.status === 'completed').length,
+    unclaimed:      inquiries.filter(i => i.status === 'new' && !i.claimed_by).length,
+    myActive:       inquiries.filter(i => isActiveWork(i) && i.claimed_by === userName).length,
+    completedToday: inquiries.filter(isCompletedToday).length,
   }), [inquiries, userName]);
 
   const counts = useMemo(() => ({
-    all:         inquiries.length,
-    new:         inquiries.filter(i => i.status === 'new').length,
-    mine:        inquiries.filter(i => i.claimed_by === userName).length,
-    in_progress: inquiries.filter(i => i.status === 'in_progress').length,
-    completed:   inquiries.filter(i => i.status === 'completed').length,
+    inbox: inquiries.filter(i => i.status === 'new' && !i.claimed_by).length,
+    work:  inquiries.filter(i => isActiveWork(i) && i.claimed_by === userName).length,
+    team:  inquiries.filter(i => Boolean(i.claimed_by)).length,
+    done:  inquiries.filter(i => i.status === 'completed').length,
   }), [inquiries, userName]);
 
   const selectedInquiry = useMemo(
-    () => inquiries.find(inquiry => inquiry.id === selectedId) || null,
+    () => inquiries.find(i => i.id === selectedId) || null,
     [inquiries, selectedId]
   );
+
+  const isTeamView = activeTab === 'team';
 
   if (loading) return (
     <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
@@ -802,10 +844,7 @@ export default function AdminDashboard({ initialEmail }) {
     <div className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center justify-center gap-4 px-4">
       <AlertCircle className="w-8 h-8 text-red-400" />
       <p className="text-sm text-red-400 text-center max-w-sm">{fetchError}</p>
-      <button
-        onClick={fetchInquiries}
-        className="px-4 py-2 rounded-xl bg-white text-black text-sm font-semibold hover:opacity-90 transition-all"
-      >
+      <button onClick={fetchInquiries} className="px-4 py-2 rounded-xl bg-white text-black text-sm font-semibold hover:opacity-90 transition-all">
         Retry
       </button>
     </div>
@@ -839,12 +878,7 @@ export default function AdminDashboard({ initialEmail }) {
         )}
 
         <StatsRow stats={stats} />
-
-        <FiltersBar
-          search={search} setSearch={setSearch}
-          activeTab={activeTab} setActiveTab={setActiveTab}
-          counts={counts}
-        />
+        <FiltersBar search={search} setSearch={setSearch} activeTab={activeTab} setActiveTab={setActiveTab} counts={counts} />
 
         {filtered.length === 0 ? (
           <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl">
@@ -856,13 +890,10 @@ export default function AdminDashboard({ initialEmail }) {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-[var(--color-border)]">
-                    {['Client', 'Contact', 'Service', 'Subject', 'Time', 'Status', 'Assigned', 'Actions'].map((h) => (
-                      <th key={h} className={`px-4 py-3 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-faint)] ${
-                        h === 'Service'  ? 'hidden lg:table-cell' :
-                        h === 'Subject'  ? 'hidden md:table-cell' :
-                        h === 'Time'     ? 'hidden xl:table-cell' :
-                        h === 'Assigned' ? 'hidden md:table-cell' : ''
-                      }`}>{h}</th>
+                    {(isTeamView ? TABLE_HEADERS_TEAM : TABLE_HEADERS).map(h => (
+                      <th key={h} className={`px-4 py-3 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-faint)] ${HEADER_HIDDEN_CLASS[h] || ''}`}>
+                        {h}
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -877,6 +908,8 @@ export default function AdminDashboard({ initialEmail }) {
                       onStatusChange={handleStatusChange}
                       onClick={() => setSelectedId(inq.id)}
                       isSelected={selectedId === inq.id}
+                      readOnly={isTeamView}
+                      showActions={!isTeamView}
                     />
                   ))}
                 </tbody>
@@ -890,16 +923,12 @@ export default function AdminDashboard({ initialEmail }) {
                   inquiry={inq}
                   userName={userName}
                   onClaim={handleClaim}
-                  onRelease={handleRelease}
                   onStatusChange={handleStatusChange}
                   onClick={() => setSelectedId(inq.id)}
+                  readOnly={isTeamView}
                 />
               ))}
             </div>
-
-            <p className="text-center text-xs text-[var(--color-text-faint)] mt-4">
-              {filtered.length} of {inquiries.length} inquiries · Live from Supabase
-            </p>
           </>
         )}
       </div>
@@ -912,6 +941,7 @@ export default function AdminDashboard({ initialEmail }) {
           onClaim={handleClaim}
           onRelease={handleRelease}
           onStatusChange={handleStatusChange}
+          readOnly={isTeamView}
         />
       )}
     </div>
