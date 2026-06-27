@@ -1,4 +1,3 @@
-import PageHero from '@/components/PageHero';
 import SamplesClient from './SamplesClient';
 
 export const metadata = {

@@ -6,28 +6,39 @@ import { stats } from '@/lib/data';
 
 function CountUp({ target, suffix = '' }) {
   const [count, setCount] = useState(0);
-  const ref = useRef(null);
+  const containerRef = useRef(null);
   const started = useRef(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !started.current) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || started.current) return;
         started.current = true;
-        let start = 0;
+
         const duration = 2000;
         const step = target / (duration / 16);
+        let current = 0;
+
         const timer = setInterval(() => {
-          start += step;
-          if (start >= target) { setCount(target); clearInterval(timer); }
-          else setCount(Math.floor(start));
+          current += step;
+          if (current >= target) {
+            setCount(target);
+            clearInterval(timer);
+          } else {
+            setCount(Math.floor(current));
+          }
         }, 16);
-      }
-    }, { threshold: 0.4 });
-    if (ref.current) observer.observe(ref.current);
+
+        return () => clearInterval(timer);
+      },
+      { threshold: 0.4 }
+    );
+
+    if (containerRef.current) observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, [target]);
 
-  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
+  return <span ref={containerRef}>{count.toLocaleString()}{suffix}</span>;
 }
 
 export default function StatsSection() {
@@ -43,7 +54,8 @@ export default function StatsSection() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 xl:gap-6 3xl:gap-8">
           {stats.map((stat) => (
-            <Card key={stat.label}
+            <Card
+              key={stat.label}
               className="p-6 text-center bg-[var(--color-surface-2)] hover:border-[var(--color-border-hover)] hover:bg-[var(--color-surface-3)]"
             >
               <div className="text-[28px] mb-2">{stat.icon}</div>
