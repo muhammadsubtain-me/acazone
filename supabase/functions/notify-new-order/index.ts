@@ -83,9 +83,6 @@ Deno.serve(async (req) => {
     const fcmUrl = `https://fcm.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/messages:send`;
 
     // Send to each token
-    // NOTE: No top-level "notification" key — data-only payload prevents FCM
-    // from auto-displaying a notification. The service worker onBackgroundMessage
-    // handler is the sole renderer, so only ONE notification appears per order.
     const results = await Promise.allSettled(
       tokens.map(({ token }) =>
         fetch(fcmUrl, {
@@ -97,7 +94,7 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             message: {
               token,
-              data: {
+              notification: {
                 title: '🔔 New Order — Acezon',
                 body: `From: ${record.name || 'Unknown'} · ${record.service || record.subject || 'New request'}`,
               },

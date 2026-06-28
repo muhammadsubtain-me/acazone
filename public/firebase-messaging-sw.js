@@ -12,9 +12,6 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// v2 — data-only payload; FCM never auto-displays, SW is the sole renderer.
-// This prevents the two-notification bug where FCM auto-shows one and the
-// onBackgroundMessage handler shows a second.
 messaging.onBackgroundMessage((payload) => {
   self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
     for (const client of clientList) {
@@ -22,12 +19,10 @@ messaging.onBackgroundMessage((payload) => {
         return;
       }
     }
-    // Read from payload.data — Edge Function sends data-only (no notification key)
-    const title = (payload.data && payload.data.title) || 'Acezon — New Order!';
-    const body  = (payload.data && payload.data.body)  || 'A new order has been placed.';
-    self.registration.showNotification(title, {
-      body,
-      icon: '/favicon.svg',
+    const { title, body, icon } = payload.notification || {};
+    self.registration.showNotification(title || 'Acezon — New Order!', {
+      body: body || 'A new order has been placed.',
+      icon: icon || '/favicon.svg',
       badge: '/favicon.svg',
       tag: 'new-order',
       renotify: true,
