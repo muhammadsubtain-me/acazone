@@ -19,10 +19,14 @@ messaging.onBackgroundMessage((payload) => {
         return;
       }
     }
-    const { title, body, icon } = payload.notification || {};
-    self.registration.showNotification(title || 'Acezon — New Order!', {
-      body: body || 'A new order has been placed.',
-      icon: icon || '/favicon.svg',
+    // Read from payload.data (not payload.notification) because the Edge Function
+    // sends a data-only message. This means FCM never auto-displays a notification,
+    // so this handler is the only place a notification is ever shown — no duplicates.
+    const title = payload.data?.title || 'Acezon — New Order!';
+    const body  = payload.data?.body  || 'A new order has been placed.';
+    self.registration.showNotification(title, {
+      body,
+      icon: '/favicon.svg',
       badge: '/favicon.svg',
       tag: 'new-order',
       renotify: true,

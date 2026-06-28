@@ -94,7 +94,11 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             message: {
               token,
-              notification: {
+              // data-only payload — no top-level notification key so FCM does
+              // NOT auto-display. The service worker onBackgroundMessage handler
+              // is the sole notification renderer, preventing the duplicate
+              // notification (flash + replace) that a notification+SW combo causes.
+              data: {
                 title: '🔔 New Order — Acezon',
                 body: `From: ${record.name || 'Unknown'} · ${record.service || record.subject || 'New request'}`,
               },
