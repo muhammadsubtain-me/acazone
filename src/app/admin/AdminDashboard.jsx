@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { services, domains } from '@/lib/data';
 import Logo from '@/components/Logo';
 import { supabase } from '@/lib/supabase';
+import ChatPanel from './ChatPanel';
 import {
   Search, X, LogOut, Clock, User,
   BookOpen, FileText, CheckCircle2,
   Loader2, Inbox, Users,
   AlertCircle, Zap,
-  StickyNote, Paperclip, Image, Download,
+  StickyNote, Paperclip, Image, Download, MessageSquare,
 } from 'lucide-react';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -189,7 +190,7 @@ function AttachmentItem({ url }) {
 
 // ─── Top Bar ──────────────────────────────────────────────────────────────────
 
-function TopBar({ userName, inquiries, onLogout }) {
+function TopBar({ userName, inquiries, onLogout, onChatOpen, chatUnread }) {
   const newCount = inquiries.filter(i => i.status === 'new').length;
 
   return (
@@ -214,6 +215,16 @@ function TopBar({ userName, inquiries, onLogout }) {
             <MemberAvatar name={userName} size="sm" />
             <span className="text-sm font-medium text-[var(--color-text)] hidden sm:block">{userName}</span>
           </div>
+          <button
+            onClick={onChatOpen}
+            className="relative w-8 h-8 rounded-lg flex items-center justify-center text-[var(--color-text-faint)] hover:text-white hover:bg-white/[0.06] transition-all"
+            title="Team chat"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            {chatUnread && (
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            )}
+          </button>
           <button
             onClick={onLogout}
             className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--color-text-faint)] hover:text-white hover:bg-white/[0.06] transition-all"
@@ -691,6 +702,56 @@ export default function AdminDashboard({ initialEmail }) {
   const [search,      setSearch]      = useState('');
   const [activeTab,   setActiveTab]   = useState('inbox');
   const [selectedId,  setSelectedId]  = useState(null);
+  const [chatOpen,     setChatOpen]     = useState(false);
+  const [chatUnread,   setChatUnread]   = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const chatOpenRef                     = useRef(false);
+
+  // Keep ref in sync with state so realtime callback can read it without stale closure
+
+  // ── Single chat channel: fetches messages + drives unread dot ──────────────
+  useEffect(() => {
+    // Initial fetch
+    supabase
+      .from('admin_messages')
+      .select('*')
+      .order('created_at', { ascending: true })
+      .limit(200)
+      .then(({ data, error }) => {
+        if (!error && data) setChatMessages(data);
+      });
+
+    const channel = supabase
+      .channel('admin_chat')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'admin_messages',
+      }, (payload) => {
+        const msg = payload.new;
+        if (!msg?.id) return;
+        // Append new message (avoid duplicates)
+        setChatMessages(prev =>
+          prev.some(m => m.id === msg.id) ? prev : [...prev, msg]
+        );
+        // Show unread dot and play sound if message is from someone else
+        if (msg.sender_name !== userName) {
+          if (!chatOpenRef.current) setChatUnread(true);
+          try {
+            const audio = new Audio('/Sounds/chat_sound.mp3');
+            audio.volume = 0.5;
+            audio.play().catch(() => {}); // silently ignore if browser blocks autoplay
+          } catch (e) {}
+        }
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('[admin_chat] realtime connected');
+        }
+      });
+
+    return () => { supabase.removeChannel(channel); };
+  }, [userName]);
 
   const fetchInquiries = useCallback(async ({ showLoading = false } = {}) => {
     if (showLoading) setLoading(true);
@@ -868,7 +929,13 @@ export default function AdminDashboard({ initialEmail }) {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      <TopBar userName={userName} inquiries={inquiries} onLogout={handleLogout} />
+      <TopBar
+          userName={userName}
+          inquiries={inquiries}
+          onLogout={handleLogout}
+          onChatOpen={() => { chatOpenRef.current = true; setChatOpen(true); setChatUnread(false); }}
+          chatUnread={chatUnread}
+        />
 
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-6">
         <div className="mb-6">
@@ -958,6 +1025,13 @@ export default function AdminDashboard({ initialEmail }) {
           onRelease={handleRelease}
           onStatusChange={handleStatusChange}
           readOnly={isTeamView}
+        />
+      )}
+      {chatOpen && (
+        <ChatPanel
+          userName={userName}
+          messages={chatMessages}
+          onClose={() => { chatOpenRef.current = false; setChatOpen(false); }}
         />
       )}
     </div>
