@@ -706,10 +706,8 @@ export default function AdminDashboard({ initialEmail }) {
   const [chatOpen,     setChatOpen]     = useState(false);
   const [chatUnread,   setChatUnread]   = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
-  const [orderToast,   setOrderToast]   = useState(null); // { name, service }
   const chatOpenRef                     = useRef(false);
   const audioCtxRef                     = useRef(null);
-  const toastTimerRef                   = useRef(null);
 
   // Pick up the AudioContext that was unlocked on the login page click.
   // No interaction needed here — the login button gesture already satisfied
@@ -723,9 +721,7 @@ export default function AdminDashboard({ initialEmail }) {
     const setupFCM = async () => {
       try {
         // Register the Firebase service worker
-        const registration =
-  await navigator.serviceWorker.getRegistration('/firebase-messaging-sw.js') ||
-  await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
 
         const messaging = getFirebaseMessaging();
         if (!messaging) return;
@@ -880,15 +876,6 @@ export default function AdminDashboard({ initialEmail }) {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, (payload) => {
         setFetchError('');
         setInquiries(current => mergeRealtimeInquiry(current, payload));
-
-        // Show in-app toast for new orders
-        if (payload.eventType === 'INSERT' && payload.new?.status === 'new') {
-          const { name, service_id, custom_service, subject } = payload.new;
-          const service = getServiceLabel(service_id, custom_service) || subject || 'New request';
-          setOrderToast({ name: name || 'Unknown', service });
-          if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-          toastTimerRef.current = setTimeout(() => setOrderToast(null), 5000);
-        }
       })
       .subscribe((status, error) => {
         if (error) console.error('inquiries realtime subscription:', error);
@@ -1150,26 +1137,6 @@ export default function AdminDashboard({ initialEmail }) {
         </>
       )}
 
-      {/* ── In-app new order toast ── */}
-      {orderToast && (
-        <div className="fixed bottom-6 right-6 z-[100] flex items-start gap-3 px-4 py-3.5 rounded-2xl bg-[#111] border border-white/[0.1] shadow-2xl shadow-black/60 backdrop-blur-xl max-w-sm animate-in slide-in-from-bottom-4 fade-in duration-300">
-          <div className="w-8 h-8 rounded-xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
-            <span className="text-sm">🔔</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold text-white">New Order — Acezon</div>
-            <div className="text-xs text-[var(--color-text-muted)] mt-0.5 truncate">
-              From: {orderToast.name} · {orderToast.service}
-            </div>
-          </div>
-          <button
-            onClick={() => setOrderToast(null)}
-            className="text-[var(--color-text-faint)] hover:text-white transition-colors shrink-0 mt-0.5"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
     </div>
   );
 }
