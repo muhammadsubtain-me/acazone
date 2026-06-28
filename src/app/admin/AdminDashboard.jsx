@@ -723,7 +723,9 @@ export default function AdminDashboard({ initialEmail }) {
     const setupFCM = async () => {
       try {
         // Register the Firebase service worker
-        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        const registration =
+  await navigator.serviceWorker.getRegistration('/firebase-messaging-sw.js') ||
+  await navigator.serviceWorker.register('/firebase-messaging-sw.js');
 
         const messaging = getFirebaseMessaging();
         if (!messaging) return;
