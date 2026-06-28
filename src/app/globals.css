@@ -71,6 +71,16 @@ body {
 
 .font-display { font-family: "Google Sans Flex", "Google Sans Flex Variable", sans-serif; }
 
+/* Hide native browser password reveal button (Edge/IE/Chrome) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none !important;
+}
+
 .admin-login-input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 1000px var(--color-surface-2) inset;
   -webkit-text-fill-color: var(--color-text);
