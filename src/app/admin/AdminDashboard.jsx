@@ -739,7 +739,7 @@ export default function AdminDashboard({ initialEmail }) {
           if (!chatOpenRef.current) setChatUnread(true);
           try {
             const audio = new Audio('/Sounds/chat_sound.mp3');
-            audio.volume = 0.5;
+            audio.volume = 1.0;
             audio.play().catch(() => {}); // silently ignore if browser blocks autoplay
           } catch (e) {}
         }
