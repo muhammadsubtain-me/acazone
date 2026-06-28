@@ -13,20 +13,27 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
+  // Since we now send data-only messages, payload.data carries our fields.
+  // payload.notification will be undefined — FCM won't auto-show anything.
+  const title = payload.data?.title || 'Acezon — New Order!';
+  const body  = payload.data?.body  || 'A new order has been placed.';
+  const url   = payload.data?.url   || '/admin';
+
+  // ✅ Check if the admin tab is already open and visible — skip if so.
   self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
     for (const client of clientList) {
       if (client.url.includes('/admin') && client.visibilityState === 'visible') {
-        return;
+        return; // tab is open & focused — no notification needed
       }
     }
-    const { title, body, icon } = payload.notification || {};
-    self.registration.showNotification(title || 'Acezon — New Order!', {
-      body: body || 'A new order has been placed.',
-      icon: icon || '/favicon.svg',
+
+    self.registration.showNotification(title, {
+      body,
+      icon: '/favicon.svg',
       badge: '/favicon.svg',
-      tag: 'new-order',
-      renotify: true,
-      data: { url: '/admin' },
+      tag: 'new-order',   // replaces any previous unread notification
+      renotify: true,     // still plays sound/vibrate even on replace
+      data: { url },
     });
   });
 });

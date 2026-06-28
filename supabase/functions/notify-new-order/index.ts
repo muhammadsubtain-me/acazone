@@ -4,8 +4,6 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const FIREBASE_PROJECT_ID = 'acezon';
 
-// Generate a Google OAuth2 access token from service account credentials
-// This is required by FCM HTTP v1 API
 async function getAccessToken(serviceAccount: Record<string, string>): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
@@ -22,7 +20,6 @@ async function getAccessToken(serviceAccount: Record<string, string>): Promise<s
 
   const signingInput = `${encode(header)}.${encode(payload)}`;
 
-  // Import private key
   const privateKeyPem = serviceAccount.private_key
     .replace('-----BEGIN PRIVATE KEY-----', '')
     .replace('-----END PRIVATE KEY-----', '')
@@ -48,7 +45,6 @@ async function getAccessToken(serviceAccount: Record<string, string>): Promise<s
 
   const jwt = `${signingInput}.${sigB64}`;
 
-  // Exchange JWT for access token
   const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -62,11 +58,10 @@ async function getAccessToken(serviceAccount: Record<string, string>): Promise<s
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
-    const record = body.record; // new inquiry row from webhook
+    const record = body.record;
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-    // Fetch all FCM tokens
     const { data: tokens, error } = await supabase
       .from('fcm_tokens')
       .select('token');
@@ -76,13 +71,11 @@ Deno.serve(async (req) => {
       return new Response('No tokens', { status: 200 });
     }
 
-    // Get service account from env
     const serviceAccount = JSON.parse(Deno.env.get('FIREBASE_SERVICE_ACCOUNT_JSON')!);
     const accessToken = await getAccessToken(serviceAccount);
 
     const fcmUrl = `https://fcm.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/messages:send`;
 
-    // Send to each token
     const results = await Promise.allSettled(
       tokens.map(({ token }) =>
         fetch(fcmUrl, {
@@ -94,13 +87,19 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             message: {
               token,
-              notification: {
-                title: '🔔 New Order — Acezon',
+              // ✅ data-only — NO "notification" field.
+              // FCM won't auto-display anything; the service worker
+              // handles showNotification() exclusively, so you get
+              // exactly one notification regardless of tab state.
+              data: {
+                title: 'Acezon — New Order!',
                 body: `From: ${record.name || 'Unknown'} · ${record.service || record.subject || 'New request'}`,
+                url: 'https://acezon.app/admin',
               },
               webpush: {
-                fcm_options: {
-                  link: 'https://acezon.app/admin',
+                headers: {
+                  // Keeps notifications collapsing by key (replaces old one)
+                  Topic: 'new-order',
                 },
               },
             },
