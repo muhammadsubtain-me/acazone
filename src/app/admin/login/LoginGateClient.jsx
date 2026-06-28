@@ -53,9 +53,18 @@ export default function LoginGateClient() {
   const [loading,  setLoading]  = useState(false);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     setError('');
     setLoading(true);
+    // Unlock AudioContext using this gesture so the admin dashboard
+    // can play notification sounds without needing any further interaction.
+    try {
+      if (!window.__adminAudioCtx) {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        ctx.resume().catch(() => {});
+        window.__adminAudioCtx = ctx;
+      }
+    } catch (_) {}
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (authError) {
@@ -104,6 +113,7 @@ export default function LoginGateClient() {
                 placeholder="admin"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setError(''); }}
+                onKeyDown={e => e.key === 'Enter' && handleLogin()}
                 className="admin-login-input w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl pl-10 pr-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all"
               />
             </div>
@@ -121,6 +131,7 @@ export default function LoginGateClient() {
                 placeholder="••••••••••••••"
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(''); }}
+                onKeyDown={e => e.key === 'Enter' && handleLogin()}
                 style={{ WebkitAppearance: 'none' }}
                 className="admin-login-input w-full bg-[var(--color-surface-2)] border border-[var(--color-border)] focus:border-[var(--color-border-focus)] rounded-xl pl-10 pr-11 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] outline-none transition-all [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
                 autoComplete="current-password"

@@ -706,19 +706,59 @@ export default function AdminDashboard({ initialEmail }) {
   const [chatUnread,   setChatUnread]   = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const chatOpenRef                     = useRef(false);
+  const audioCtxRef                     = useRef(null);
 
-  // Keep ref in sync with state so realtime callback can read it without stale closure
+  // Pick up the AudioContext that was unlocked on the login page click.
+  // No interaction needed here — the login button gesture already satisfied
+  // the browser's autoplay policy.
+  useEffect(() => {
+    audioCtxRef.current = window.__adminAudioCtx || null;
+  }, []);
 
   // ── Single chat channel: fetches messages + drives unread dot ──────────────
+  // localStorage key is per-user so each admin has their own last-seen cursor.
+  const lastSeenKey = `chat_last_seen_${userName}`;
+
+  const playSound = useCallback(() => {
+    try {
+      const ctx = audioCtxRef.current;
+      if (!ctx) return;
+      fetch('/Sounds/chat_sound.mp3')
+        .then(r => r.arrayBuffer())
+        .then(buf => ctx.decodeAudioData(buf))
+        .then(decoded => {
+          const src = ctx.createBufferSource();
+          src.buffer = decoded;
+          src.connect(ctx.destination);
+          src.start(0);
+        })
+        .catch(() => {});
+    } catch (e) {}
+  }, []);
+
+  const markSeen = useCallback(() => {
+    localStorage.setItem(lastSeenKey, new Date().toISOString());
+    setChatUnread(false);
+  }, [lastSeenKey]);
+
   useEffect(() => {
-    // Initial fetch
+    // Initial fetch — after loading history, check if any messages arrived
+    // since this user last had the chat open.
     supabase
       .from('admin_messages')
       .select('*')
       .order('created_at', { ascending: true })
       .limit(200)
       .then(({ data, error }) => {
-        if (!error && data) setChatMessages(data);
+        if (error || !data) return;
+        setChatMessages(data);
+        // Check for unread messages from others since last seen
+        const lastSeen = localStorage.getItem(lastSeenKey);
+        const hasUnread = data.some(msg =>
+          msg.sender_name !== userName &&
+          (!lastSeen || new Date(msg.created_at) > new Date(lastSeen))
+        );
+        if (hasUnread) setChatUnread(true);
       });
 
     const channel = supabase
@@ -736,12 +776,13 @@ export default function AdminDashboard({ initialEmail }) {
         );
         // Show unread dot and play sound if message is from someone else
         if (msg.sender_name !== userName) {
-          if (!chatOpenRef.current) setChatUnread(true);
-          try {
-            const audio = new Audio('/Sounds/chat_sound.mp3');
-            audio.volume = 1.0;
-            audio.play().catch(() => {}); // silently ignore if browser blocks autoplay
-          } catch (e) {}
+          if (!chatOpenRef.current) {
+            setChatUnread(true);
+          } else {
+            // Chat is open — update last seen immediately
+            localStorage.setItem(lastSeenKey, new Date().toISOString());
+          }
+          playSound();
         }
       })
       .subscribe((status) => {
@@ -751,7 +792,7 @@ export default function AdminDashboard({ initialEmail }) {
       });
 
     return () => { supabase.removeChannel(channel); };
-  }, [userName]);
+  }, [userName, lastSeenKey, playSound]);
 
   const fetchInquiries = useCallback(async ({ showLoading = false } = {}) => {
     if (showLoading) setLoading(true);
@@ -933,7 +974,13 @@ export default function AdminDashboard({ initialEmail }) {
           userName={userName}
           inquiries={inquiries}
           onLogout={handleLogout}
-          onChatOpen={() => { chatOpenRef.current = true; setChatOpen(true); setChatUnread(false); }}
+          onChatOpen={() => {
+            if (chatOpenRef.current) {
+              chatOpenRef.current = false; setChatOpen(false);
+            } else {
+              chatOpenRef.current = true; setChatOpen(true); markSeen();
+            }
+          }}
           chatUnread={chatUnread}
         />
 
@@ -1028,11 +1075,17 @@ export default function AdminDashboard({ initialEmail }) {
         />
       )}
       {chatOpen && (
-        <ChatPanel
-          userName={userName}
-          messages={chatMessages}
-          onClose={() => { chatOpenRef.current = false; setChatOpen(false); }}
-        />
+        <>
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => { chatOpenRef.current = false; setChatOpen(false); }}
+          />
+          <ChatPanel
+            userName={userName}
+            messages={chatMessages}
+            onClose={() => { chatOpenRef.current = false; setChatOpen(false); }}
+          />
+        </>
       )}
     </div>
   );
