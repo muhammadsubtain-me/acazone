@@ -13,26 +13,28 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  // Since we now send data-only messages, payload.data carries our fields.
-  // payload.notification will be undefined — FCM won't auto-show anything.
   const title = payload.data?.title || 'Acezon — New Order!';
   const body  = payload.data?.body  || 'A new order has been placed.';
   const url   = payload.data?.url   || '/admin';
 
-  // ✅ Check if the admin tab is already open and visible — skip if so.
-  self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+  // MUST return the full promise chain so Chrome knows a notification was shown.
+  // Without return, Chrome thinks nothing was shown and fires its own
+  // "This site has been updated in the background" fallback notification.
+  return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
     for (const client of clientList) {
       if (client.url.includes('/admin') && client.visibilityState === 'visible') {
         return; // tab is open & focused — no notification needed
       }
     }
 
-    self.registration.showNotification(title, {
+    // MUST return showNotification so the promise resolves only after
+    // the notification is actually shown
+    return self.registration.showNotification(title, {
       body,
       icon: '/favicon-withBackground.png',
       badge: '/favicon-noBackground.png',
-      tag: 'new-order',   // replaces any previous unread notification
-      renotify: true,     // still plays sound/vibrate even on replace
+      tag: 'new-order',
+      renotify: true,
       data: { url },
     });
   });
