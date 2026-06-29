@@ -30,7 +30,7 @@ messaging.onBackgroundMessage((payload) => {
     self.registration.showNotification(title, {
       body,
       icon: '/favicon.svg',
-      badge: '/favicon.svg',
+      badge: '/favicon.png',
       tag: 'new-order',   // replaces any previous unread notification
       renotify: true,     // still plays sound/vibrate even on replace
       data: { url },
