@@ -1,9 +1,17 @@
-import { LogOut } from 'lucide-react';
+import { Bell, BellOff, LogOut } from 'lucide-react';
 import Logo from '@/components/layout/Logo';
 import MemberAvatar from './MemberAvatar';
 
-export default function TopBar({ userName, inquiries, onLogout }) {
+export default function TopBar({
+  userName,
+  inquiries,
+  onLogout,
+  notifPermission = 'default',
+  onEnableNotifications,
+}) {
   const newCount = inquiries.filter(i => i.status === 'new').length;
+  const showNotifButton = notifPermission === 'default' || notifPermission === 'denied';
+  const notifBlocked = notifPermission === 'denied';
 
   return (
     <header className="sticky top-0 z-30 bg-black/60 backdrop-blur-[20px] border-b border-white/[0.07]">
@@ -23,6 +31,20 @@ export default function TopBar({ userName, inquiries, onLogout }) {
         )}
 
         <div className="ml-auto flex items-center gap-3">
+          {showNotifButton && (
+            <button
+              onClick={onEnableNotifications}
+              title={notifBlocked
+                ? 'Notifications are blocked. Re-enable them in your browser site settings, then click again.'
+                : 'Enable new-order notifications'}
+              className="flex items-center gap-1.5 h-8 px-2.5 rounded-lg text-[var(--color-text-faint)] hover:text-white hover:bg-white/[0.06] transition-all"
+            >
+              {notifBlocked ? <BellOff className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
+              <span className="text-xs font-medium hidden sm:block">
+                {notifBlocked ? 'Alerts blocked' : 'Enable alerts'}
+              </span>
+            </button>
+          )}
           <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.07]">
             <MemberAvatar name={userName} size="sm" />
             <span className="text-sm font-medium text-[var(--color-text)] hidden sm:block">{userName}</span>

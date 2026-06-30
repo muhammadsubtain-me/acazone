@@ -76,45 +76,73 @@ Deno.serve(async (req) => {
 
     const fcmUrl = `https://fcm.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/messages:send`;
 
-    const results = await Promise.allSettled(
-      tokens.map(({ token }) =>
-        fetch(fcmUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: {
-              token,
-              // ✅ data-only — NO "notification" field.
-              // FCM won't auto-display anything; the service worker
-              // handles showNotification() exclusively, so you get
-              // exactly one notification regardless of tab state.
-              data: {
-                title: 'Acezon — New Order!',
-                body: `From: ${record.name || 'Unknown'} · ${record.service || record.subject || 'New request'}`,
-                url: 'https://acezon.app/admin',
-              },
-              webpush: {
-                headers: {
-                  // Keeps notifications collapsing by key (replaces old one)
-                  Topic: 'new-order',
+    const messageBody = `From: ${record.name || 'Unknown'} · ${record.subject || 'New request'}`;
+
+    // fetch() only rejects on network errors — an invalid token still resolves
+    // with an HTTP 4xx. So inspect each response explicitly: count real
+    // successes and collect dead tokens (UNREGISTERED / INVALID_ARGUMENT) to prune.
+    let succeeded = 0;
+    const invalidTokens: string[] = [];
+
+    await Promise.all(
+      tokens.map(async ({ token }) => {
+        try {
+          const res = await fetch(fcmUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: {
+                token,
+                // Data-only — NO "notification" field. FCM won't auto-display
+                // anything; the service worker calls showNotification()
+                // exclusively, so there is exactly one notification regardless
+                // of tab state.
+                data: {
+                  title: 'Acezon — New Order!',
+                  body: messageBody,
+                  url: 'https://www.acezon.app/admin',
+                },
+                webpush: {
+                  // Collapses notifications by key (replaces the previous one).
+                  headers: { Topic: 'new-order' },
                 },
               },
-            },
-          }),
-        })
-      )
+            }),
+          });
+
+          if (res.ok) {
+            succeeded++;
+            return;
+          }
+
+          const errBody = await res.json().catch(() => null);
+          const fcmStatus = errBody?.error?.status;
+          if (res.status === 404 || fcmStatus === 'UNREGISTERED' || fcmStatus === 'INVALID_ARGUMENT') {
+            invalidTokens.push(token);
+          } else {
+            console.error('[FCM] Send failed:', res.status, fcmStatus ?? '');
+          }
+        } catch (err) {
+          console.error('[FCM] Send error:', err);
+        }
+      })
     );
 
-    const succeeded = results.filter(r => r.status === 'fulfilled').length;
+    // Prune dead tokens so the table stays clean and we stop paying for them.
+    if (invalidTokens.length) {
+      await supabase.from('fcm_tokens').delete().in('token', invalidTokens);
+      console.log(`[FCM] Pruned ${invalidTokens.length} invalid token(s)`);
+    }
+
     console.log(`[FCM] Sent to ${succeeded}/${tokens.length} devices`);
 
-    return new Response(JSON.stringify({ sent: succeeded, total: tokens.length }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ sent: succeeded, total: tokens.length, pruned: invalidTokens.length }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
 
   } catch (err) {
     console.error('[FCM] Edge function error:', err);

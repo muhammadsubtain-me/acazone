@@ -1,7 +1,9 @@
 import '@fontsource-variable/google-sans-flex';
 import './globals.css';
+import { siteInfo } from '@/lib/data';
 
 export const metadata = {
+  metadataBase: new URL(siteInfo.url),
   title: {
     default: 'Acezon | Professional Academic Assistance & Tutoring',
     template: '%s | Acezon',
@@ -12,14 +14,14 @@ export const metadata = {
     icon: '/favicon.svg',
   },
   alternates: {
-    canonical: 'https://www.acezon.app',
+    canonical: siteInfo.url,
   },
   // ─── Open Graph (Facebook, LinkedIn, WhatsApp previews) ──────────────────────
   openGraph: {
     title: 'Acezon | Professional Academic Assistance & Tutoring',
     description:
       'Expert academic assistance available 24/7. Homework, assignments, lab reports, coding help, and more — across Mechanical, Electrical, Chemical Engineering, and Computer Science.',
-    url: 'https://www.acezon.app',
+    url: siteInfo.url,
     siteName: 'Acezon',
     type: 'website',
     locale: 'en_US',

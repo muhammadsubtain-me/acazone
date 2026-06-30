@@ -1,5 +1,6 @@
 export const siteInfo = {
   name: 'Acezon',
+  url: 'https://www.acezon.app',
   tagline:
     'Expert academic assistance to help students achieve the grades they deserve. Available 24/7.',
   address: 'Atomic Energy Colony Chashma, District Mianwali, Pakistan',

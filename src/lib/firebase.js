@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging';
 
 // ─── Firebase config from environment variables ───────────────────────────────
 // Values live in .env.local (dev) and Vercel Environment Variables (prod).
@@ -23,6 +23,13 @@ export { app };
 export function getFirebaseMessaging() {
   if (typeof window === 'undefined') return null;
   return getMessaging(app);
+}
+
+// Resolves true only in browsers that support FCM (e.g. excludes older Safari,
+// some in-app webviews). Prevents getMessaging() from throwing on setup.
+export function isMessagingSupported() {
+  if (typeof window === 'undefined') return Promise.resolve(false);
+  return isSupported();
 }
 
 export { getToken, onMessage };

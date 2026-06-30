@@ -6,13 +6,13 @@ export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
   const supabase = await createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  // getUser() validates the JWT against the Supabase auth server, unlike
+  // getSession() which trusts the (potentially spoofable) cookie payload.
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // If no session, redirect to login page
-  if (!session) {
+  if (!user) {
     redirect('/admin/login');
   }
 
-  // Session exists — render dashboard immediately with user email
-  return <AdminDashboard initialEmail={session.user.email} />;
+  return <AdminDashboard initialEmail={user.email} />;
 }

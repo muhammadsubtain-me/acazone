@@ -6,10 +6,11 @@ export const dynamic = 'force-dynamic';
 
 export default async function LoginPage() {
   const supabase = await createSupabaseServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  // getUser() validates the JWT with the auth server (getSession() only reads
+  // the cookie), so the redirect-when-authenticated check is trustworthy.
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // Already logged in — go straight to dashboard
-  if (session) {
+  if (user) {
     redirect('/admin');
   }
 

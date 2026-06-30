@@ -1,5 +1,7 @@
+import { siteInfo } from '@/lib/data';
+
 export default function sitemap() {
-  const baseUrl = 'https://www.acezon.app';
+  const baseUrl = siteInfo.url;
 
   return [
     {
