@@ -5,6 +5,8 @@
   --breakpoint-4xl: 2560px;
 }
 
+/* Responsive layout tokens live in src/lib/responsive.js and Container.jsx */
+
 /* ─── GLOBAL DESIGN TOKENS ────────────────────────────────────────────────────
    Change these variables to retheme the entire site instantly.
    ──────────────────────────────────────────────────────────────────────────── */

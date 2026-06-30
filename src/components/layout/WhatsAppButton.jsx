@@ -7,7 +7,7 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
-      className="fixed bottom-6 right-6 z-50 flex items-center bg-black/95 hover:bg-[#111111]/95 text-white rounded-full p-2.5 border border-white/50 hover:border-white shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.8),0_0_25px_rgba(255,255,255,0.45)] transition-all duration-500 hover:scale-105 active:scale-95 group overflow-hidden cursor-pointer animate-fade-in"
+      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 xl:bottom-8 xl:right-8 3xl:bottom-10 3xl:right-10 z-50 flex items-center bg-black/95 hover:bg-[#111111]/95 text-white rounded-full p-2 sm:p-2.5 border border-white/50 hover:border-white shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.8),0_0_25px_rgba(255,255,255,0.45)] transition-all duration-500 hover:scale-105 active:scale-95 group overflow-hidden cursor-pointer animate-fade-in"
     >
       <div className="flex items-center justify-center w-11 h-11 text-white shrink-0">
         <svg

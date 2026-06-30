@@ -1,8 +1,10 @@
 'use client';
 
 import PageHero from '@/components/layout/PageHero';
+import Container from '@/components/layout/Container';
 import { pdfSamples, sampleSections } from '@/lib/data';
 import { ExternalLink } from 'lucide-react';
+import { sections, typography } from '@/lib/responsive';
 
 function SampleCard({ item, className = '' }) {
   return (
@@ -33,39 +35,37 @@ function SampleCard({ item, className = '' }) {
 
 export default function SamplesClient() {
   return (
-    <div className="min-h-screen pb-24 bg-[var(--color-bg)]">
+    <div className="min-h-screen pb-16 sm:pb-20 lg:pb-24 bg-[var(--color-bg)]">
       <PageHero
         title="Work Samples"
         subtitle="Explore our verified portfolio of solved assignments, structured lecture notes, and professional engineering reports."
       />
 
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 xl:px-10 3xl:max-w-[1680px] 4xl:max-w-[2200px]">
-          <div className="space-y-14">
+      <section className={sections.compact}>
+        <Container>
+          <div className="space-y-10 sm:space-y-12 lg:space-y-14">
             {sampleSections.map((sec) => {
               const list = pdfSamples[sec.key] || [];
               return (
                 <div key={sec.key}>
-                  <div className="flex flex-col gap-1 border-b border-white/[0.06] pb-3 mb-6">
+                  <div className="flex flex-col gap-1 border-b border-white/[0.06] pb-3 mb-5 sm:mb-6">
                     <div className="flex items-center gap-2">
-                      <span className="text-xl">{sec.icon}</span>
-                      <h2 className="text-lg font-bold text-[var(--color-text-heading)] tracking-wide">{sec.title}</h2>
+                      <span className="text-lg sm:text-xl">{sec.icon}</span>
+                      <h2 className="text-base sm:text-lg font-bold text-[var(--color-text-heading)] tracking-wide">{sec.title}</h2>
                     </div>
-                    <p className="text-xs md:text-[13px] lg:text-sm xl:text-base text-[var(--color-text-muted)] leading-relaxed">{sec.subtitle}</p>
+                    <p className={`${typography.body} text-xs sm:text-sm md:text-[13px] lg:text-sm xl:text-base`}>{sec.subtitle}</p>
                   </div>
 
-                  {/* Mobile — horizontal scroll */}
                   <div className="relative md:hidden">
                     <div className="pointer-events-none absolute inset-y-0 right-0 w-10 z-10 bg-gradient-to-l from-[var(--color-bg)] to-transparent" />
                     <div className="flex gap-3 overflow-x-auto pb-3 [scrollbar-width:thin] [scrollbar-color:var(--color-border)_transparent]">
                       {list.map((item) => (
-                        <SampleCard key={item.pdfUrl} item={item} className="flex-none w-36" />
+                        <SampleCard key={item.pdfUrl} item={item} className="flex-none w-32 sm:w-36" />
                       ))}
                     </div>
                   </div>
 
-                  {/* Desktop — auto-fit grid */}
-                  <div className="hidden md:grid grid-cols-[repeat(auto-fit,minmax(140px,200px))] justify-center gap-4 xl:gap-5">
+                  <div className="hidden md:grid grid-cols-[repeat(auto-fit,minmax(140px,200px))] 3xl:grid-cols-[repeat(auto-fit,minmax(160px,220px))] justify-center gap-4 xl:gap-5 3xl:gap-6">
                     {list.map((item) => (
                       <SampleCard key={item.pdfUrl} item={item} className="w-full" />
                     ))}
@@ -74,7 +74,7 @@ export default function SamplesClient() {
               );
             })}
           </div>
-        </div>
+        </Container>
       </section>
     </div>
   );

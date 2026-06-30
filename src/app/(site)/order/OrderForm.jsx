@@ -55,11 +55,12 @@ export default function OrderForm() {
 
           {/* Contact Type Toggle + Input */}
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-1 p-1 bg-white/[0.03] border border-[var(--color-border)] rounded-xl w-fit">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <div className="flex items-center gap-1 p-1 bg-white/[0.03] border border-[var(--color-border)] rounded-xl w-full sm:w-fit">
               <button
                 type="button"
                 onClick={() => setContactType('whatsapp')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   formData.contactType === 'whatsapp'
                     ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 shadow-sm'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] border border-transparent'
@@ -71,7 +72,7 @@ export default function OrderForm() {
               <button
                 type="button"
                 onClick={() => setContactType('email')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   formData.contactType === 'email'
                     ? 'bg-blue-500/15 text-blue-400 border border-blue-500/25 shadow-sm'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] border border-transparent'
@@ -80,6 +81,7 @@ export default function OrderForm() {
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                 Email
               </button>
+            </div>
             </div>
 
             {formData.contactType === 'whatsapp' ? (
