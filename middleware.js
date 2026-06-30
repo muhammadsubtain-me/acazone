@@ -21,15 +21,14 @@ export async function middleware(request) {
     }
   );
 
-  const { data: { session } } = await supabase.auth.getSession();
+  // Validate JWT with Supabase auth server — same as admin page.jsx.
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // Protect /admin (but not /admin/login)
-  if (pathname === '/admin' && !session) {
+  if (pathname === '/admin' && !user) {
     return NextResponse.redirect(new URL('/admin/login', request.url));
   }
 
-  // If already logged in, redirect away from login page
-  if (pathname === '/admin/login' && session) {
+  if (pathname === '/admin/login' && user) {
     return NextResponse.redirect(new URL('/admin', request.url));
   }
 

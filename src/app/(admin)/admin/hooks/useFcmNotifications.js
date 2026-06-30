@@ -9,7 +9,7 @@ import {
   isMessagingSupported,
 } from '@/lib/firebase';
 import { logError } from '@/lib/logger';
-import { requestNotificationPermission } from '../lib/fcm';
+import { requestNotificationPermission, markFcmPromptHandledThisSession, wasFcmPromptHandledThisSession } from '../lib/fcm';
 
 const VAPID_KEY = process.env.NEXT_PUBLIC_FCM_VAPID_KEY;
 
@@ -49,8 +49,10 @@ export function useFcmNotifications(userEmail) {
       }
 
       // Fallback when landing on /admin already signed in (skipped login form).
-      if (Notification.permission === 'default') {
+      // Skip if login flow already prompted this session to avoid a double popup.
+      if (Notification.permission === 'default' && !wasFcmPromptHandledThisSession()) {
         const result = await requestNotificationPermission();
+        markFcmPromptHandledThisSession();
         if (result === 'granted') {
           registerToken().catch((err) => logError('fcm:register', err));
         }

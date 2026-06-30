@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
-import { requestNotificationPermission } from '../lib/fcm';
+import { requestNotificationPermission, markFcmPromptHandledThisSession, wasFcmPromptHandledThisSession } from '../lib/fcm';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 /* ─── Inline Acezon Logo ─────────────────────────────────────────────────── */
@@ -66,6 +66,7 @@ export default function LoginGateClient() {
     // Show the browser notification dialog when permission is still "default"
     // (re-shown after revoke/reset). Skipped when already granted or denied.
     await requestNotificationPermission();
+    markFcmPromptHandledThisSession();
     router.push('/admin');
     router.refresh();
   };
