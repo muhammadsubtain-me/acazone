@@ -10,3 +10,4 @@ export * from './navigation';
 export * from './site';
 export * from './about';
 export * from './countries';
+export * from './team';

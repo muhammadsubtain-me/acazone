@@ -3,7 +3,7 @@ import { ArrowRight, BadgeCheck, Phone, Target, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { hireExpertBenefits } from '@/lib/data';
+import { hireExpertBenefits, hireExpertCopy } from '@/lib/data';
 
 const BENEFIT_ICONS = {
   target: Target,
@@ -23,12 +23,9 @@ export default function HireExpertCTA() {
             <h2 className="font-display text-2xl md:text-3xl lg:text-4xl xl:text-5xl 3xl:text-6xl font-bold mb-5 leading-tight text-[var(--color-text-heading)]">
               Hire an Expert Right Now
             </h2>
-            <p className="text-[var(--color-text-muted)] leading-[1.7] mb-5">
-              Find excellent quality homework help from our subject experts for your assignments! Acezon wants to build a solid foundation that supports students as they take off into the success sky.
-            </p>
-            <p className="text-[var(--color-text-muted)] leading-[1.7] mb-8">
-              We understand that you might not always have access to homework assistance. This is why we give students step-by-step solutions from competent tutors with immediate, dependable support.
-            </p>
+            {hireExpertCopy.map((para, i) => (
+              <p key={i} className="text-[var(--color-text-muted)] leading-[1.7] mb-5 last:mb-8">{para}</p>
+            ))}
             <Button asChild>
               <Link href="/order" className="inline-flex items-center gap-2">
                 Hire Expert Now <ArrowRight className="w-4 h-4" />

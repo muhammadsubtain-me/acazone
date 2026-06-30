@@ -1,5 +1,9 @@
 User-agent: *
+# Block admin routes from all crawlers
 Disallow: /admin
 Disallow: /admin/
+Disallow: /admin/login
+
+Allow: /
 
 Sitemap: https://www.acezon.app/sitemap.xml

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { services, domains } from '@/lib/data';
+import { TEAM_AVATARS, EMAIL_TO_NAME } from '@/lib/data/team';
 import Logo from '@/components/Logo';
 import { supabase } from '@/lib/supabase';
 import ChatPanel from './ChatPanel';
@@ -16,17 +17,7 @@ import { getFirebaseMessaging, getToken, onMessage } from '@/lib/firebase';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const TEAM_AVATARS = {
-  Zain:    { initials: 'Z', color: 'from-violet-500 to-purple-600' },
-  Hasnain: { initials: 'H', color: 'from-blue-500 to-cyan-600' },
-  Sibtain: { initials: 'S', color: 'from-emerald-500 to-teal-600' },
-};
-
-const EMAIL_TO_NAME = {
-  'admsibtain@acezon.app': 'Sibtain',
-  'admzain@acezon.app':    'Zain',
-  'admhasnain@acezon.app': 'Hasnain',
-};
+// TEAM_AVATARS and EMAIL_TO_NAME imported from '@/lib/data/team' — edit members there.
 
 const STATUS_META = {
   new:         { label: 'New',         dot: 'bg-blue-400',    badge: 'text-blue-400 bg-blue-400/10 border-blue-400/20'     },
@@ -119,11 +110,34 @@ function mergeRealtimeInquiry(rows, payload) {
   return sortInquiries(nextRows);
 }
 
-// ─── Download helper ──────────────────────────────────────────────────────────
+// ─── Attachment helpers ───────────────────────────────────────────────────────
+// The inquiry-files bucket is PRIVATE. Stored values are either:
+//   - A plain file path (new format): "1718234567-abc.pdf"
+//   - A full https:// URL (legacy, pre-private-bucket): used as-is
+//
+// For new-format paths we generate a 1-hour signed URL via the admin's
+// authenticated Supabase session before downloading or opening.
 
-async function downloadAttachment(url, fileName, setDownloading) {
+const STORAGE_BUCKET = 'inquiry-files';
+const SIGNED_URL_EXPIRY_SECONDS = 3600; // 1 hour
+
+function isStoredPath(value) {
+  return !value.startsWith('http');
+}
+
+async function resolveAttachmentUrl(supabaseClient, value) {
+  if (!isStoredPath(value)) return value; // legacy full URL — use directly
+  const { data, error } = await supabaseClient.storage
+    .from(STORAGE_BUCKET)
+    .createSignedUrl(value, SIGNED_URL_EXPIRY_SECONDS);
+  if (error) throw error;
+  return data.signedUrl;
+}
+
+async function downloadAttachment(supabaseClient, value, fileName, setDownloading) {
   try {
     setDownloading(true);
+    const url = await resolveAttachmentUrl(supabaseClient, value);
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const blob = await res.blob();
@@ -164,16 +178,17 @@ function StatusBadge({ status }) {
   );
 }
 
-function AttachmentItem({ url }) {
+function AttachmentItem({ value, supabaseClient }) {
   const [downloading, setDownloading] = useState(false);
-  const fileName = decodeURIComponent(url.split('/').pop());
-  const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+  // Derive a human-readable filename from path or URL
+  const fileName = decodeURIComponent(value.split('/').pop());
+  const isImage  = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
 
   return (
     <button
       type="button"
       disabled={downloading}
-      onClick={() => downloadAttachment(url, fileName, setDownloading)}
+      onClick={() => downloadAttachment(supabaseClient, value, fileName, setDownloading)}
       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.12] active:scale-[0.98] transition-all group disabled:opacity-60 disabled:cursor-not-allowed text-left"
     >
       {isImage
@@ -528,7 +543,7 @@ function DetailRow({ label, value, mono = false }) {
   );
 }
 
-function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatusChange, readOnly = false }) {
+function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatusChange, onSaveNotes, readOnly = false }) {
   const isMyInquiry = inquiry.claimed_by === userName;
   const canClaim = !readOnly && inquiry.status === 'new';
   const canAct = !readOnly && isMyInquiry;
@@ -608,8 +623,8 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
             <section>
               <SectionLabel icon={Paperclip} label={`Attachments (${inquiry.attachments.length})`} />
               <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 flex flex-col gap-2">
-                {inquiry.attachments.map((url, idx) => (
-                  <AttachmentItem key={idx} url={url} />
+                {inquiry.attachments.map((value) => (
+                  <AttachmentItem key={value} value={value} supabaseClient={supabase} />
                 ))}
               </div>
             </section>
@@ -638,7 +653,7 @@ function DetailDrawer({ inquiry, userName, onClose, onClaim, onRelease, onStatus
             <textarea
               value={notes}
               onChange={e => setNotes(e.target.value)}
-              onBlur={() => { if (!readOnly) onStatusChange(inquiry.id, inquiry.status, notes); }}
+              onBlur={() => { if (!readOnly) onSaveNotes(inquiry.id, notes); }}
               placeholder="Add internal notes about this inquiry..."
               rows={3}
               readOnly={readOnly}
@@ -733,9 +748,9 @@ export default function AdminDashboard({ initialEmail }) {
           return;
         }
 
-        // Get FCM token
+        // Get FCM token — VAPID key loaded from env var (NEXT_PUBLIC_FCM_VAPID_KEY)
         const token = await getToken(messaging, {
-          vapidKey: 'BDITDKRKvyqA5wZO7Pu62NWC6POwHuOrO_1y6EGU7ojV3Y7cR2fHHbkKAjR300t7mNEPUUJpkvgfEBdnIF0jUEY',
+          vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
           serviceWorkerRegistration: registration,
         });
 
@@ -941,11 +956,10 @@ export default function AdminDashboard({ initialEmail }) {
     }
   }, [userName, fetchInquiries]);
 
-  const handleStatusChange = useCallback(async (id, newStatus, newNotes) => {
+  const handleStatusChange = useCallback(async (id, newStatus) => {
     setActionError('');
     try {
       const updates = { status: newStatus };
-      if (newNotes !== undefined) updates.notes = newNotes;
       if (newStatus === 'completed') updates.completed_at = new Date().toISOString();
       if (newStatus !== 'completed') updates.completed_at = null;
       const { error } = await supabase
@@ -958,6 +972,22 @@ export default function AdminDashboard({ initialEmail }) {
     } catch (err) {
       console.error('handleStatusChange:', err);
       setActionError('Failed to update inquiry status. Please try again.');
+    }
+  }, [userName, fetchInquiries]);
+
+  // ─── Save internal notes (separate from status transitions) ──────────────────
+  const handleSaveNotes = useCallback(async (id, notes) => {
+    try {
+      const { error } = await supabase
+        .from('inquiries')
+        .update({ notes })
+        .eq('id', id)
+        .eq('claimed_by', userName);
+      if (error) throw error;
+      fetchInquiries();
+    } catch (err) {
+      console.error('handleSaveNotes:', err);
+      setActionError('Failed to save notes. Please try again.');
     }
   }, [userName, fetchInquiries]);
 
@@ -1120,6 +1150,7 @@ export default function AdminDashboard({ initialEmail }) {
           onClaim={handleClaim}
           onRelease={handleRelease}
           onStatusChange={handleStatusChange}
+          onSaveNotes={handleSaveNotes}
           readOnly={isTeamView}
         />
       )}

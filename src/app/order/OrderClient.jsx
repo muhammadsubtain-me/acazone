@@ -165,33 +165,41 @@ function OrderForm() {
           .from('inquiry-files')
           .upload(filePath, file, { cacheControl: '3600', upsert: false });
         if (uploadError) throw uploadError;
-        const { data: urlData } = supabase.storage
-          .from('inquiry-files')
-          .getPublicUrl(filePath);
-        uploadedUrls.push(urlData.publicUrl);
+        // Store the file PATH (not a public URL) — the bucket is private.
+        // Signed URLs are generated on-demand in the admin dashboard.
+        uploadedUrls.push(filePath);
       }
 
-      // 2. Insert inquiry with attachment URLs
-      const { error } = await supabase.from('inquiries').insert({
-        submitted_at:   new Date().toISOString(),
-        name:           formData.name.trim(),
-        phone:          formData.phone.trim(),
-        country_dial:   selectedCountry.dial,
-        country_iso:    formData.countryIso,
-        country_name:   selectedCountry.name,
-        domain_id:      formData.domainId,
-        service_id:     formData.serviceId,
-        custom_service: formData.customService.trim(),
-        subject:        formData.subject.trim(),
-        description:    formData.description.trim(),
-        status:         'new',
-        claimed_by:     null,
-        claimed_at:     null,
-        completed_at:   null,
-        notes:          '',
-        attachments:    uploadedUrls,
+      // 2. Submit inquiry through rate-limited API route (server-side validated)
+      const res = await fetch('/api/submit-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          submitted_at:   new Date().toISOString(),
+          name:           formData.name.trim(),
+          phone:          formData.phone.trim(),
+          country_dial:   selectedCountry.dial,
+          country_iso:    formData.countryIso,
+          country_name:   selectedCountry.name,
+          domain_id:      formData.domainId,
+          service_id:     formData.serviceId,
+          custom_service: formData.customService.trim(),
+          subject:        formData.subject.trim(),
+          description:    formData.description.trim(),
+          attachments:    uploadedUrls,
+        }),
       });
-      if (error) throw error;
+
+      if (res.status === 429) {
+        const data = await res.json();
+        setSubmitError(data.error || 'Too many submissions. Please try again later.');
+        return;
+      }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Submission failed.');
+      }
+
       setIsSubmitted(true);
       setAttachments([]);
     } catch (err) {
@@ -464,7 +472,7 @@ function OrderForm() {
               <ul className="flex flex-col gap-1.5 mt-1">
                 {attachments.map((file, idx) => (
                   <li
-                    key={idx}
+                    key={`${file.name}-${idx}`}
                     className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 bg-white/[0.03] border border-white/[0.06] text-sm"
                   >
                     <div className="flex items-center gap-2 min-w-0">

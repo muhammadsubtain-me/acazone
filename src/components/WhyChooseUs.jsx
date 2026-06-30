@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { features } from '@/lib/data';
+import { features, whyChooseUsCopy } from '@/lib/data';
 
 export default function WhyChooseUs() {
   return (
@@ -16,12 +16,9 @@ export default function WhyChooseUs() {
               Acezon –{' '}
               <span className="text-[var(--color-accent-muted)]">Place of Experts</span>
             </h2>
-            <p className="text-[var(--color-text-muted)] leading-[1.7] mb-5">
-              Our world-class academic advisers enable professionals and students to succeed by offering top-quality academic solutions. Our experienced team members are skilled tutors who use their expertise to produce a fantastic paper for you.
-            </p>
-            <p className="text-[var(--color-text-muted)] leading-[1.7] mb-8">
-              Acezon provides the best in coursework, dissertation, lab tasks, exam preparations, programming assignments and essays. There are no restrictions on what we may offer — bring any assignment and our professional academic tutors will do their best to assist you.
-            </p>
+            {whyChooseUsCopy.map((para, i) => (
+              <p key={i} className="text-[var(--color-text-muted)] leading-[1.7] mb-5 last:mb-8">{para}</p>
+            ))}
             <Button asChild>
               <Link href="/about" className="inline-flex items-center gap-2">
                 About Us <ArrowRight className="w-4 h-4" />

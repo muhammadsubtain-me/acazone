@@ -3,14 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { X, Send, MessageSquare, Loader2 } from 'lucide-react';
+import { TEAM_AVATARS } from '@/lib/data/team';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const TEAM_AVATARS = {
-  Zain:    { initials: 'Z', color: 'from-violet-500 to-purple-600' },
-  Hasnain: { initials: 'H', color: 'from-blue-500 to-cyan-600' },
-  Sibtain: { initials: 'S', color: 'from-emerald-500 to-teal-600' },
-};
+// TEAM_AVATARS imported from '@/lib/data/team' — edit members there.
 
 function getColor(name) {
   return TEAM_AVATARS[name]?.color || 'from-slate-500 to-slate-600';
