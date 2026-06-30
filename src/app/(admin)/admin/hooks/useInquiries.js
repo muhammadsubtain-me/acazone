@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { mergeRealtimeInquiry } from '../lib/inquiries';
+import { logError } from '@/lib/logger';
 
 // Owns the inquiries list: initial fetch, realtime subscription, polling
 // fallback, focus refresh, and the claim/release/status/notes mutations.
@@ -23,7 +24,7 @@ export function useInquiries(userName) {
       if (error) throw error;
       setInquiries(data ?? []);
     } catch (err) {
-      console.error('fetchInquiries:', err);
+      logError('inquiries:fetch', err);
       setFetchError('Failed to load inquiries. Check your connection and try again.');
     } finally {
       setLoading(false);
@@ -47,7 +48,7 @@ export function useInquiries(userName) {
         setInquiries(current => mergeRealtimeInquiry(current, payload));
       })
       .subscribe((status, error) => {
-        if (error) console.error('inquiries realtime subscription:', error);
+        if (error) logError('inquiries:realtime', error);
         if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') fetchInquiries();
       });
 
@@ -70,7 +71,7 @@ export function useInquiries(userName) {
     try {
       await supabase.auth.signOut();
     } catch (err) {
-      console.error('signOut error:', err);
+      logError('inquiries:signOut', err);
       window.location.href = '/admin/login';
     }
   }, []);
@@ -89,7 +90,7 @@ export function useInquiries(userName) {
       if (!data?.length) setActionError('This inquiry was already claimed by another admin.');
       fetchInquiries();
     } catch (err) {
-      console.error('handleClaim:', err);
+      logError('inquiries:claim', err);
       setActionError('Failed to claim inquiry. Please try again.');
     }
   }, [userName, fetchInquiries]);
@@ -105,7 +106,7 @@ export function useInquiries(userName) {
       if (error) throw error;
       fetchInquiries();
     } catch (err) {
-      console.error('handleRelease:', err);
+      logError('inquiries:release', err);
       setActionError('Failed to release inquiry. Please try again.');
     }
   }, [userName, fetchInquiries]);
@@ -124,7 +125,7 @@ export function useInquiries(userName) {
       if (error) throw error;
       fetchInquiries();
     } catch (err) {
-      console.error('handleStatusChange:', err);
+      logError('inquiries:status', err);
       setActionError('Failed to update inquiry status. Please try again.');
     }
   }, [userName, fetchInquiries]);
@@ -140,7 +141,7 @@ export function useInquiries(userName) {
       if (error) throw error;
       fetchInquiries();
     } catch (err) {
-      console.error('handleSaveNotes:', err);
+      logError('inquiries:notes', err);
       setActionError('Failed to save notes. Please try again.');
     }
   }, [userName, fetchInquiries]);

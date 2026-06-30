@@ -3,13 +3,14 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { logError } from '@/lib/logger';
 
 // Route-level error boundary. Catches render/runtime errors in any page below
 // the root layout and shows a branded fallback instead of a blank crash.
 export default function Error({ error, reset }) {
   useEffect(() => {
     // Surface the error for debugging / future monitoring hook-up.
-    console.error('Route error:', error);
+    logError('route-error', error);
   }, [error]);
 
   return (

@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect } from 'react';
+import { logError } from '@/lib/logger';
 
 // Last-resort boundary for errors thrown in the root layout itself. It replaces
 // the entire document, so it ships its own <html>/<body> and uses inline styles
 // (globals.css may not be available at this point).
 export default function GlobalError({ error, reset }) {
   useEffect(() => {
-    console.error('Global error:', error);
+    logError('global-error', error);
   }, [error]);
 
   return (

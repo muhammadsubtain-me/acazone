@@ -31,7 +31,7 @@ export default function AdminDashboard({ initialEmail }) {
     handleStatusChange, handleSaveNotes,
   } = useInquiries(userName);
 
-  const { permission: notifPermission, enableNotifications } = useFcmNotifications(initialEmail);
+  useFcmNotifications(initialEmail);
 
   const [search,     setSearch]     = useState('');
   const [activeTab,  setActiveTab]  = useState('inbox');
@@ -99,8 +99,6 @@ export default function AdminDashboard({ initialEmail }) {
         userName={userName}
         inquiries={inquiries}
         onLogout={handleLogout}
-        notifPermission={notifPermission}
-        onEnableNotifications={enableNotifications}
       />
 
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-6">

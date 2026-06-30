@@ -6,6 +6,8 @@
 // For new-format paths we generate a 1-hour signed URL via the admin's
 // authenticated Supabase session before downloading or opening.
 
+import { logError } from '@/lib/logger';
+
 export const STORAGE_BUCKET = 'inquiry-files';
 export const SIGNED_URL_EXPIRY_SECONDS = 3600; // 1 hour
 
@@ -38,7 +40,7 @@ export async function downloadAttachment(supabaseClient, value, fileName, setDow
     document.body.removeChild(a);
     URL.revokeObjectURL(objectUrl);
   } catch (err) {
-    console.error('Download failed:', err);
+    logError('attachment-download', err);
     alert('Download failed. Please try again.');
   } finally {
     setDownloading(false);

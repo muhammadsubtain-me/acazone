@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { maxFiles, acceptedFileExtensions } from '@/lib/config/order';
+import { logError } from '@/lib/logger';
 
 // Allowed upload extensions, derived from the shared client config so the two
 // stay in sync. The browser uploads files straight to Storage and only sends
@@ -135,7 +136,7 @@ export async function POST(request) {
   });
 
   if (error) {
-    console.error('[submit-order] Supabase insert error:', error);
+    logError('submit-order', error);
     return NextResponse.json(
       { error: 'Failed to submit your order. Please try again.' },
       { status: 500 }

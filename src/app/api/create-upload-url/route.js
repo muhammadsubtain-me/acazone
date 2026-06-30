@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { allowedFileTypes, maxFiles, maxFileSize } from '@/lib/config/order';
+import { logError } from '@/lib/logger';
 
 // ─── POST /api/create-upload-url ──────────────────────────────────────────────
 // Gates file uploads behind the server: validates + rate-limits the request,
@@ -108,7 +109,7 @@ export async function POST(request) {
     }
     return NextResponse.json({ uploads }, { status: 200 });
   } catch (err) {
-    console.error('[create-upload-url] Signed URL error:', err);
+    logError('create-upload-url', err);
     return NextResponse.json(
       { error: 'Could not prepare file upload. Please try again.' },
       { status: 500 }
