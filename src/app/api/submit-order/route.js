@@ -89,16 +89,24 @@ export async function POST(request) {
 
   const {
     submitted_at, name, phone, country_dial, country_iso, country_name,
+    contact_type, contact,
     domain_id, service_id, custom_service, subject, description,
     attachments,
   } = body;
+
+  const isEmail = contact_type === 'email';
 
   // 4. Server-side validation (defense against clients bypassing frontend checks)
   const errs = [];
   if (!name?.trim() || name.trim().length < 2)
     errs.push('Name must be at least 2 characters.');
-  if (!phone?.trim() || phone.replace(/\D/g, '').length < 6)
-    errs.push('Invalid phone number.');
+  if (isEmail) {
+    if (!contact?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.trim()))
+      errs.push('A valid email address is required.');
+  } else {
+    if (!phone?.trim() || phone.replace(/\D/g, '').length < 6)
+      errs.push('Invalid phone number.');
+  }
   if (!domain_id?.trim())
     errs.push('Academic domain is required.');
   if (!service_id?.trim())
@@ -118,10 +126,12 @@ export async function POST(request) {
   const { error } = await supabase.from('inquiries').insert({
     submitted_at:   submitted_at || new Date().toISOString(),
     name:           name.trim(),
-    phone:          phone.trim(),
-    country_dial:   country_dial?.trim() || '',
-    country_iso:    country_iso?.trim() || '',
-    country_name:   country_name?.trim() || '',
+    phone:          isEmail ? '' : phone.trim(),
+    country_dial:   isEmail ? '' : (country_dial?.trim() || ''),
+    country_iso:    isEmail ? '' : (country_iso?.trim() || ''),
+    country_name:   isEmail ? '' : (country_name?.trim() || ''),
+    contact_type:   isEmail ? 'email' : 'whatsapp',
+    contact:        isEmail ? contact.trim() : null,
     domain_id:      domain_id.trim(),
     service_id:     service_id.trim(),
     custom_service: custom_service?.trim() || '',

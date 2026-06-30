@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import {
   getFirebaseMessaging,
@@ -16,26 +16,39 @@ const VAPID_KEY = process.env.NEXT_PUBLIC_FCM_VAPID_KEY;
 // Manages the FCM lifecycle for the admin dashboard: service-worker registration,
 // token persistence, and notification permission tied to browser state.
 export function useFcmNotifications(userEmail) {
+  const [fcmError, setFcmError] = useState('');
+  const [foregroundNotification, setForegroundNotification] = useState(null);
+
   const registerToken = useCallback(async () => {
-    const supported = await isMessagingSupported();
-    const messaging = supported ? getFirebaseMessaging() : null;
-    if (!messaging) return;
+    try {
+      setFcmError('');
+      const supported = await isMessagingSupported();
+      const messaging = supported ? getFirebaseMessaging() : null;
+      if (!messaging) return;
 
-    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-    await navigator.serviceWorker.ready;
+      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      await navigator.serviceWorker.ready;
 
-    const token = await getToken(messaging, {
-      vapidKey: VAPID_KEY,
-      serviceWorkerRegistration: registration,
-    });
-    if (!token) return;
+      const token = await getToken(messaging, {
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration,
+      });
+      if (!token) return;
 
-    await supabase.from('fcm_tokens').upsert(
-      { user_email: userEmail, token, updated_at: new Date().toISOString() },
-      { onConflict: 'user_email' }
-    );
+      await supabase.from('fcm_tokens').upsert(
+        { user_email: userEmail, token, updated_at: new Date().toISOString() },
+        { onConflict: 'user_email' }
+      );
 
-    onMessage(messaging, () => {});
+      onMessage(messaging, (payload) => {
+        if (payload.data) {
+          setForegroundNotification(payload.data);
+        }
+      });
+    } catch (err) {
+      logError('fcm:register', err);
+      setFcmError('Failed to enable push notifications.');
+    }
   }, [userEmail]);
 
   useEffect(() => {
@@ -54,11 +67,30 @@ export function useFcmNotifications(userEmail) {
         const result = await requestNotificationPermission();
         markFcmPromptHandledThisSession();
         if (result === 'granted') {
-          registerToken().catch((err) => logError('fcm:register', err));
+          registerToken();
+        } else if (result === 'denied') {
+          setFcmError('Notifications blocked. Please enable them in browser settings.');
         }
       }
     };
 
-    run().catch((err) => logError('fcm:setup', err));
+    run().catch((err) => {
+      logError('fcm:setup', err);
+      setFcmError('Push notification setup failed.');
+    });
+
+    // Handle token rotation (refresh token every 24 hours to keep it active)
+    const refreshInterval = setInterval(() => {
+      registerToken();
+    }, 24 * 60 * 60 * 1000);
+
+    return () => clearInterval(refreshInterval);
   }, [userEmail, registerToken]);
+
+  return {
+    fcmError,
+    setFcmError,
+    foregroundNotification,
+    setForegroundNotification,
+  };
 }

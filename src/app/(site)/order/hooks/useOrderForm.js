@@ -9,10 +9,12 @@ import { logError } from '@/lib/logger';
 import { filterValidFiles } from '../lib/files';
 
 const INITIAL_FORM = {
-  name: '', countryIso: 'pk', phone: '',
+  name: '', contactType: 'whatsapp', countryIso: 'pk', phone: '', email: '',
   domainId: '', serviceId: '', customService: '',
   subject: '', description: '',
 };
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const STORAGE_BUCKET = 'inquiry-files';
 
@@ -58,6 +60,12 @@ export function useOrderForm() {
 
   const setCountryIso = (iso) => setFormData(prev => ({ ...prev, countryIso: iso }));
 
+  const setContactType = (type) => {
+    setFormData(prev => ({ ...prev, contactType: type }));
+    // Clear errors for the other contact method when toggling
+    setErrors(prev => ({ ...prev, phone: null, email: null }));
+  };
+
   const setServiceId = (value) => {
     setFormData(prev => ({ ...prev, serviceId: value, customService: '' }));
     if (errors.serviceId) setErrors(prev => ({ ...prev, serviceId: null, customService: null }));
@@ -92,8 +100,13 @@ export function useOrderForm() {
     const errs = {};
     if (!formData.name.trim() || formData.name.trim().length < 2)
       errs.name = 'Name must be at least 2 characters.';
-    if (!formData.phone.trim() || formData.phone.replace(/\D/g, '').length < 6)
-      errs.phone = 'Please enter a valid phone / WhatsApp number.';
+    if (formData.contactType === 'whatsapp') {
+      if (!formData.phone.trim() || formData.phone.replace(/\D/g, '').length < 6)
+        errs.phone = 'Please enter a valid phone / WhatsApp number.';
+    } else {
+      if (!formData.email.trim() || !EMAIL_REGEX.test(formData.email.trim()))
+        errs.email = 'Please enter a valid email address.';
+    }
     if (!formData.domainId)
       errs.domainId = 'Please select your academic domain.';
     if (!formData.serviceId) {
@@ -156,16 +169,19 @@ export function useOrderForm() {
       const { paths, rateLimited } = await uploadAttachments();
       if (rateLimited) return;
 
+      const isEmail = formData.contactType === 'email';
       const res = await fetch('/api/submit-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           submitted_at:   new Date().toISOString(),
           name:           formData.name.trim(),
-          phone:          formData.phone.trim(),
-          country_dial:   selectedCountry.dial,
-          country_iso:    formData.countryIso,
-          country_name:   selectedCountry.name,
+          phone:          isEmail ? '' : formData.phone.trim(),
+          country_dial:   isEmail ? '' : selectedCountry.dial,
+          country_iso:    isEmail ? '' : formData.countryIso,
+          country_name:   isEmail ? '' : selectedCountry.name,
+          contact_type:   formData.contactType,
+          contact:        isEmail ? formData.email.trim() : null,
           domain_id:      formData.domainId,
           service_id:     formData.serviceId,
           custom_service: formData.customService.trim(),
@@ -209,6 +225,7 @@ export function useOrderForm() {
     errors,
     updateField,
     setCountryIso,
+    setContactType,
     setServiceId,
     selectedCountry,
     attachments,

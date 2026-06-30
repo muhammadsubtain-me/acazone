@@ -31,7 +31,10 @@ export default function AdminDashboard({ initialEmail }) {
     handleStatusChange, handleSaveNotes,
   } = useInquiries(userName);
 
-  useFcmNotifications(initialEmail);
+  const {
+    fcmError, setFcmError,
+    foregroundNotification, setForegroundNotification,
+  } = useFcmNotifications(initialEmail);
 
   const [search,     setSearch]     = useState('');
   const [activeTab,  setActiveTab]  = useState('inbox');
@@ -112,6 +115,28 @@ export default function AdminDashboard({ initialEmail }) {
             <AlertCircle className="w-4 h-4 shrink-0" />
             {actionError}
             <button onClick={() => setActionError('')} className="ml-auto text-red-400/60 hover:text-red-400 transition-colors">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
+        {fcmError && (
+          <div className="flex items-center gap-2.5 mb-4 px-4 py-3 rounded-xl bg-amber-400/10 border border-amber-400/20 text-sm text-amber-400">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            {fcmError}
+            <button onClick={() => setFcmError('')} className="ml-auto text-amber-400/60 hover:text-amber-400 transition-colors">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
+        {foregroundNotification && (
+          <div className="flex items-center gap-2.5 mb-4 px-4 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-sm text-blue-400 shadow-lg animate-in fade-in slide-in-from-top-4">
+            <div className="flex flex-col flex-1">
+              <span className="font-semibold text-white">{foregroundNotification.title || 'New Order'}</span>
+              <span className="text-blue-300">{foregroundNotification.body}</span>
+            </div>
+            <button onClick={() => setForegroundNotification(null)} className="ml-auto text-blue-400/60 hover:text-blue-400 transition-colors self-start">
               <X className="w-3.5 h-3.5" />
             </button>
           </div>

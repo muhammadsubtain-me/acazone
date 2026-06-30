@@ -2,7 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const FIREBASE_PROJECT_ID = 'acezon';
+const FIREBASE_PROJECT_ID = Deno.env.get('FIREBASE_PROJECT_ID')!;
 
 async function getAccessToken(serviceAccount: Record<string, string>): Promise<string> {
   const now = Math.floor(Date.now() / 1000);

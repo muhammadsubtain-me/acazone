@@ -23,8 +23,8 @@ export function buildFirebaseMessagingSwScript({
     appId,
   };
 
-  return `importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
+  return `importScripts('https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/12.15.0/firebase-messaging-compat.js');
 
 firebase.initializeApp(${JSON.stringify(firebaseConfig)});
 
