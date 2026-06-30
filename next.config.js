@@ -24,7 +24,9 @@ const securityHeaders = [
 // External origins used by this app:
 //   • gstatic.com          — Firebase service worker script imports
 //   • *.supabase.co        — Supabase HTTP API + Realtime WebSocket (wss://)
-//   • fcm.googleapis.com   — Firebase Cloud Messaging token registration
+//   • fcmregistrations.googleapis.com     — FCM token subscribe/unsubscribe (web SDK v10+)
+//   • firebaseinstallations.googleapis.com — Firebase Installations (installation ID)
+//   • fcm.googleapis.com   — Firebase Cloud Messaging
 //   • firebase.googleapis.com / www.googleapis.com — FCM auth calls
 //   • flagcdn.com          — Country flag images in the order form
 //
@@ -44,7 +46,7 @@ const cspDirectives = [
   "script-src 'self' 'unsafe-inline' https://www.gstatic.com",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
-  `connect-src 'self' ${SUPABASE_URL} ${SUPABASE_WSS} https://fcm.googleapis.com https://firebase.googleapis.com https://www.googleapis.com`,
+  `connect-src 'self' ${SUPABASE_URL} ${SUPABASE_WSS} https://fcm.googleapis.com https://fcmregistrations.googleapis.com https://firebaseinstallations.googleapis.com https://firebase.googleapis.com https://www.googleapis.com`,
   `img-src 'self' data: blob: https://flagcdn.com ${SUPABASE_URL}`,
   "media-src 'self'",
   "object-src 'none'",
