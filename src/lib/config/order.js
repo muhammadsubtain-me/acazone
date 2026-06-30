@@ -16,5 +16,6 @@ export const allowedFileTypes = [
 
 export const maxFileSize = 10 * 1024 * 1024;
 export const maxFiles = 5;
+// Order submissions may include 0..maxFiles attachments (empty array is valid).
 export const acceptedFileExtensions =
   '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.txt,.csv';

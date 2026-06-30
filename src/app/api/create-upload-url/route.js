@@ -61,25 +61,27 @@ export async function POST(request) {
     || request.headers.get('x-real-ip')
     || '127.0.0.1';
 
-  // 2. Rate limit
-  const { success, limit, remaining, reset } = await ratelimit.limit(ip);
-  if (!success) {
-    const minutesLeft = Math.ceil((reset - Date.now()) / 60000);
-    return NextResponse.json(
-      {
-        error: `Too many upload attempts. Please try again in ${minutesLeft} minute${minutesLeft !== 1 ? 's' : ''}.`,
-        retryAfter: reset,
-      },
-      {
-        status: 429,
-        headers: {
-          'X-RateLimit-Limit':     String(limit),
-          'X-RateLimit-Remaining': String(remaining),
-          'X-RateLimit-Reset':     String(reset),
-          'Retry-After':           String(Math.ceil((reset - Date.now()) / 1000)),
+  // 2. Rate limit (set DISABLE_RATE_LIMIT=true in .env.local to skip)
+  if (process.env.DISABLE_RATE_LIMIT !== 'true') {
+    const { success, limit, remaining, reset } = await ratelimit.limit(ip);
+    if (!success) {
+      const minutesLeft = Math.ceil((reset - Date.now()) / 60000);
+      return NextResponse.json(
+        {
+          error: `Too many upload attempts. Please try again in ${minutesLeft} minute${minutesLeft !== 1 ? 's' : ''}.`,
+          retryAfter: reset,
         },
-      }
-    );
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit':     String(limit),
+            'X-RateLimit-Remaining': String(remaining),
+            'X-RateLimit-Reset':     String(reset),
+            'Retry-After':           String(Math.ceil((reset - Date.now()) / 1000)),
+          },
+        }
+      );
+    }
   }
 
   // 3. Parse + validate

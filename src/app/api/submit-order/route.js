@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { maxFiles, acceptedFileExtensions } from '@/lib/config/order';
+import { isEmailContactType, toInquiryDbContactType } from '@/lib/config/inquiries';
 import { logError } from '@/lib/logger';
 
 // Allowed upload extensions, derived from the shared client config so the two
@@ -16,6 +17,8 @@ const ALLOWED_EXTENSIONS = new Set(
 
 function attachmentsAreValid(attachments) {
   if (!Array.isArray(attachments)) return false;
+  // Attachments are optional — an empty array is valid.
+  if (attachments.length === 0) return true;
   if (attachments.length > maxFiles) return false;
   return attachments.every((path) => {
     if (typeof path !== 'string') return false;
@@ -56,27 +59,29 @@ export async function POST(request) {
     || request.headers.get('x-real-ip')
     || '127.0.0.1';
 
-  // 2. Check rate limit
-  const { success, limit, remaining, reset } = await ratelimit.limit(ip);
+  // 2. Check rate limit (set DISABLE_RATE_LIMIT=true in .env.local to skip)
+  if (process.env.DISABLE_RATE_LIMIT !== 'true') {
+    const { success, limit, remaining, reset } = await ratelimit.limit(ip);
 
-  if (!success) {
-    const resetDate = new Date(reset);
-    const minutesLeft = Math.ceil((resetDate - Date.now()) / 60000);
-    return NextResponse.json(
-      {
-        error: `Too many submissions. You have reached the limit of ${limit} orders per hour. Please try again in ${minutesLeft} minute${minutesLeft !== 1 ? 's' : ''}.`,
-        retryAfter: reset,
-      },
-      {
-        status: 429,
-        headers: {
-          'X-RateLimit-Limit':     String(limit),
-          'X-RateLimit-Remaining': String(remaining),
-          'X-RateLimit-Reset':     String(reset),
-          'Retry-After':           String(Math.ceil((reset - Date.now()) / 1000)),
+    if (!success) {
+      const resetDate = new Date(reset);
+      const minutesLeft = Math.ceil((resetDate - Date.now()) / 60000);
+      return NextResponse.json(
+        {
+          error: `Too many submissions. You have reached the limit of ${limit} orders per hour. Please try again in ${minutesLeft} minute${minutesLeft !== 1 ? 's' : ''}.`,
+          retryAfter: reset,
         },
-      }
-    );
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit':     String(limit),
+            'X-RateLimit-Remaining': String(remaining),
+            'X-RateLimit-Reset':     String(reset),
+            'Retry-After':           String(Math.ceil((reset - Date.now()) / 1000)),
+          },
+        }
+      );
+    }
   }
 
   // 3. Parse request body
@@ -94,7 +99,7 @@ export async function POST(request) {
     attachments,
   } = body;
 
-  const isEmail = contact_type === 'email';
+  const isEmail = isEmailContactType(contact_type);
 
   // 4. Server-side validation (defense against clients bypassing frontend checks)
   const errs = [];
@@ -130,7 +135,7 @@ export async function POST(request) {
     country_dial:   isEmail ? '' : (country_dial?.trim() || ''),
     country_iso:    isEmail ? '' : (country_iso?.trim() || ''),
     country_name:   isEmail ? '' : (country_name?.trim() || ''),
-    contact_type:   isEmail ? 'email' : 'whatsapp',
+    contact_type:   toInquiryDbContactType(contact_type),
     contact:        isEmail ? contact.trim() : null,
     domain_id:      domain_id.trim(),
     service_id:     service_id.trim(),

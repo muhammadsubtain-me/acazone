@@ -18,7 +18,7 @@ const cspDirectives = [
   "script-src 'self' 'unsafe-inline' https://www.gstatic.com",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
-  `connect-src 'self' ${SUPABASE_URL} ${SUPABASE_WSS} https://fcm.googleapis.com https://fcmregistrations.googleapis.com https://firebaseinstallations.googleapis.com https://firebase.googleapis.com https://www.googleapis.com`.trim(),
+  `connect-src 'self' ${SUPABASE_URL} ${SUPABASE_WSS} https://fcm.googleapis.com https://fcmregistrations.googleapis.com https://firebaseinstallations.googleapis.com https://firebase.googleapis.com https://www.googleapis.com https://*.ingest.sentry.io`.trim(),
   `img-src 'self' data: blob: https://flagcdn.com ${SUPABASE_URL}`.trim(),
   "media-src 'self'",
   "object-src 'none'",

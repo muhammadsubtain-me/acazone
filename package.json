@@ -15,6 +15,7 @@
     "@radix-ui/react-avatar": "^1.1.12",
     "@radix-ui/react-separator": "^1.1.9",
     "@radix-ui/react-slot": "^1.2.5",
+    "@sentry/nextjs": "^10.62.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.108.2",
     "@upstash/ratelimit": "^2.0.8",
