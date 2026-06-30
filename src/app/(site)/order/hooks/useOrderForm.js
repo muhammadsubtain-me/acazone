@@ -166,6 +166,32 @@ export function useOrderForm() {
     setIsSubmitting(true);
     setSubmitError('');
     try {
+      if (formData.contactType === 'whatsapp') {
+        const valRes = await fetch('/api/validate-whatsapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: formData.phone.trim(),
+            country_dial: selectedCountry.dial,
+          }),
+        });
+
+        if (valRes.status === 429) {
+          const data = await valRes.json().catch(() => ({}));
+          setSubmitError(data.error || 'Too many verification attempts. Please try again later.');
+          return;
+        }
+
+        const valData = await valRes.json().catch(() => ({}));
+        if (!valRes.ok) {
+          if (valRes.status === 400 && valData.error) {
+            setErrors(prev => ({ ...prev, phone: valData.error }));
+            return;
+          }
+          throw new Error(valData.error || 'Could not verify WhatsApp number.');
+        }
+      }
+
       const { paths, rateLimited } = await uploadAttachments();
       if (rateLimited) return;
 
@@ -198,14 +224,19 @@ export function useOrderForm() {
       }
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Submission failed.');
+        const message = data.error || 'Submission failed.';
+        if (res.status === 400 && !isEmail && data.error) {
+          setErrors(prev => ({ ...prev, phone: data.error }));
+          return;
+        }
+        throw new Error(message);
       }
 
       setIsSubmitted(true);
       setAttachments([]);
     } catch (err) {
       logError('order-submit', err);
-      setSubmitError('Something went wrong while submitting your request. Please check your connection and try again.');
+      setSubmitError(err.message || 'Something went wrong while submitting your request. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }

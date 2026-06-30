@@ -3,7 +3,7 @@ export const siteInfo = {
   url: 'https://www.acezon.app',
   tagline:
     'Expert academic assistance to help students achieve the grades they deserve. Available 24/7.',
-  address: 'Atomic Energy Colony Chashma, District Mianwali, Pakistan',
+  address: 'Islamabad, Pakistan',
   supportEmail: 'support@acezon.com',
   supportPhones: ['+92 310 7459732', '+92 304 2335382'],
   // Numeric-only format required for wa.me links (no spaces or + sign)

@@ -5,6 +5,7 @@ import { Redis } from '@upstash/redis';
 import { maxFiles, acceptedFileExtensions } from '@/lib/config/order';
 import { isEmailContactType, toInquiryDbContactType } from '@/lib/config/inquiries';
 import { logError } from '@/lib/logger';
+import { checkWhatsAppNumber, toWhapiContact } from '@/lib/whapi';
 
 // Allowed upload extensions, derived from the shared client config so the two
 // stay in sync. The browser uploads files straight to Storage and only sends
@@ -125,6 +126,18 @@ export async function POST(request) {
 
   if (errs.length > 0) {
     return NextResponse.json({ error: errs[0] }, { status: 400 });
+  }
+
+  // WhatsApp registration check (skipped when WHAPI_TOKEN is unset)
+  if (!isEmail) {
+    const contact = toWhapiContact(country_dial, phone);
+    const whapi = await checkWhatsAppNumber(contact);
+    if (whapi.configured && !whapi.valid) {
+      return NextResponse.json(
+        { error: whapi.error || 'This number is not registered on WhatsApp.' },
+        { status: whapi.serviceError ? 502 : 400 }
+      );
+    }
   }
 
   // 5. Insert into Supabase
