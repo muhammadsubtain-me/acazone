@@ -2,6 +2,30 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import { maxFiles, acceptedFileExtensions } from '@/lib/config/order';
+
+// Allowed upload extensions, derived from the shared client config so the two
+// stay in sync. The browser uploads files straight to Storage and only sends
+// us the resulting flat path strings, so here we validate count, extension, and
+// guard against path traversal — true byte/size/MIME enforcement lives in the
+// Supabase Storage bucket policy.
+const ALLOWED_EXTENSIONS = new Set(
+  acceptedFileExtensions.split(',').map((e) => e.trim().replace(/^\./, '').toLowerCase())
+);
+
+function attachmentsAreValid(attachments) {
+  if (!Array.isArray(attachments)) return false;
+  if (attachments.length > maxFiles) return false;
+  return attachments.every((path) => {
+    if (typeof path !== 'string') return false;
+    const trimmed = path.trim();
+    if (!trimmed || trimmed.length > 256) return false;
+    // Stored files are flat names; reject nested paths / traversal attempts.
+    if (/[\\/]/.test(trimmed) || trimmed.includes('..')) return false;
+    const ext = trimmed.split('.').pop()?.toLowerCase();
+    return Boolean(ext) && ALLOWED_EXTENSIONS.has(ext);
+  });
+}
 
 // ─── Supabase server-side client ──────────────────────────────────────────────
 // Uses the publishable (anon) key — same permissions as the browser client.
@@ -82,8 +106,8 @@ export async function POST(request) {
     errs.push('Subject / course is required.');
   if (!description?.trim() || description.trim().length < 10)
     errs.push('Description must be at least 10 characters.');
-  if (!Array.isArray(attachments))
-    errs.push('Invalid attachments format.');
+  if (!attachmentsAreValid(attachments))
+    errs.push('Invalid or unsupported attachments.');
 
   if (errs.length > 0) {
     return NextResponse.json({ error: errs[0] }, { status: 400 });

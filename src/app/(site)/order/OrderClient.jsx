@@ -156,18 +156,40 @@ function OrderForm() {
     setIsSubmitting(true);
     setSubmitError('');
     try {
-      // 1. Upload attachments to Supabase storage
+      // 1. Request server-authorized signed upload URLs (rate-limited + validated
+      //    server-side), then upload each file to its one-time URL. Files are no
+      //    longer written to Storage directly — every upload goes through our API.
       const uploadedUrls = [];
-      for (const file of attachments) {
-        const ext      = file.name.split('.').pop();
-        const filePath = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from('inquiry-files')
-          .upload(filePath, file, { cacheControl: '3600', upsert: false });
-        if (uploadError) throw uploadError;
-        // Store the file PATH (not a public URL) — the bucket is private.
-        // Signed URLs are generated on-demand in the admin dashboard.
-        uploadedUrls.push(filePath);
+      if (attachments.length > 0) {
+        const urlRes = await fetch('/api/create-upload-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            files: attachments.map(f => ({ name: f.name, size: f.size, type: f.type })),
+          }),
+        });
+
+        if (urlRes.status === 429) {
+          const data = await urlRes.json().catch(() => ({}));
+          setSubmitError(data.error || 'Too many upload attempts. Please try again later.');
+          return;
+        }
+        if (!urlRes.ok) {
+          const data = await urlRes.json().catch(() => ({}));
+          throw new Error(data.error || 'Could not prepare file upload.');
+        }
+
+        const { uploads } = await urlRes.json();
+        for (let i = 0; i < attachments.length; i++) {
+          const { path, token } = uploads[i];
+          const { error: uploadError } = await supabase.storage
+            .from('inquiry-files')
+            .uploadToSignedUrl(path, token, attachments[i]);
+          if (uploadError) throw uploadError;
+          // Store the file PATH (not a public URL) — the bucket is private.
+          // Signed URLs are generated on-demand in the admin dashboard.
+          uploadedUrls.push(path);
+        }
       }
 
       // 2. Submit inquiry through rate-limited API route (server-side validated)
