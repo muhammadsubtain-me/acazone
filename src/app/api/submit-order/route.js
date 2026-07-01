@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
 import { maxFiles, acceptedFileExtensions } from '@/lib/config/order';
 import { isEmailContactType, toInquiryDbContactType } from '@/lib/config/inquiries';
 import { logError } from '@/lib/logger';
+import { buildSubmitContactKey, enforceSubmitRateLimits } from '@/lib/rate-limit';
 import { checkEmailAddress } from '@/lib/zerobounce';
 import { checkWhatsAppNumber, toWhapiContact } from '@/lib/whapi';
 
@@ -41,52 +40,10 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 );
 
-// ─── Rate limiter ─────────────────────────────────────────────────────────────
-// Sliding window: max 5 order submissions per unique IP per hour.
-// A real student submitting multiple assignments can still get through.
-// A bot hammering the endpoint gets blocked after the 5th request.
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, '1 h'),
-  analytics: true,          // tracks usage in Upstash dashboard
-  prefix: 'acezon:order',   // namespaced key in Redis
-});
-
 // ─── POST /api/submit-order ───────────────────────────────────────────────────
 export async function POST(request) {
 
-  // 1. Identify the client IP (Vercel sets x-forwarded-for)
-  const forwarded = request.headers.get('x-forwarded-for');
-  const ip = forwarded?.split(',')[0]?.trim()
-    || request.headers.get('x-real-ip')
-    || '127.0.0.1';
-
-  // 2. Check rate limit (set DISABLE_RATE_LIMIT=true in .env.local to skip)
-  if (process.env.DISABLE_RATE_LIMIT !== 'true') {
-    const { success, limit, remaining, reset } = await ratelimit.limit(ip);
-
-    if (!success) {
-      const resetDate = new Date(reset);
-      const minutesLeft = Math.ceil((resetDate - Date.now()) / 60000);
-      return NextResponse.json(
-        {
-          error: `Too many submissions. You have reached the limit of ${limit} orders per hour. Please try again in ${minutesLeft} minute${minutesLeft !== 1 ? 's' : ''}.`,
-          retryAfter: reset,
-        },
-        {
-          status: 429,
-          headers: {
-            'X-RateLimit-Limit':     String(limit),
-            'X-RateLimit-Remaining': String(remaining),
-            'X-RateLimit-Reset':     String(reset),
-            'Retry-After':           String(Math.ceil((reset - Date.now()) / 1000)),
-          },
-        }
-      );
-    }
-  }
-
-  // 3. Parse request body
+  // 1. Parse request body
   let body;
   try {
     body = await request.json();
@@ -103,7 +60,7 @@ export async function POST(request) {
 
   const isEmail = isEmailContactType(contact_type);
 
-  // 4. Server-side validation (defense against clients bypassing frontend checks)
+  // 2. Server-side validation (defense against clients bypassing frontend checks)
   const errs = [];
   if (!name?.trim() || name.trim().length < 2)
     errs.push('Name must be at least 2 characters.');
@@ -129,7 +86,11 @@ export async function POST(request) {
     return NextResponse.json({ error: errs[0] }, { status: 400 });
   }
 
-  // WhatsApp registration check (skipped when WHAPI_TOKEN is unset)
+  // 3. Layer 1 rate limits — per contact, then per IP (shared campus networks)
+  const rateLimited = await enforceSubmitRateLimits(request, buildSubmitContactKey(body));
+  if (rateLimited) return rateLimited;
+
+  // 4. WhatsApp registration check (skipped when WHAPI_TOKEN is unset)
   if (!isEmail) {
     const whapiContact = toWhapiContact(country_dial, phone);
     const whapi = await checkWhatsAppNumber(whapiContact);

@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
 import { allowedFileTypes, maxFiles, maxFileSize } from '@/lib/config/order';
 import { logError } from '@/lib/logger';
+import { enforceUploadRateLimits, withSessionCookie } from '@/lib/rate-limit';
 
 // ─── POST /api/create-upload-url ──────────────────────────────────────────────
 // Gates file uploads behind the server: validates + rate-limits the request,
@@ -22,15 +21,9 @@ const supabaseAdmin = createClient(
   { auth: { persistSession: false, autoRefreshToken: false } }
 );
 
-// Sliding window: max 15 upload-authorization requests per IP per hour. Higher
-// than the 5 orders/hour cap so multi-file uploads + retries aren't blocked —
-// the actual order count stays limited by /api/submit-order.
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(15, '1 h'),
-  analytics: true,
-  prefix: 'acezon:upload',
-});
+function respond(body, init, sessionId, isNew) {
+  return withSessionCookie(NextResponse.json(body, init), sessionId, isNew);
+}
 
 // Validates the client-reported file metadata. Note: byte size / MIME are also
 // enforced by the Storage bucket itself on the real upload, so a client lying
@@ -55,50 +48,22 @@ function buildStoragePath(fileName) {
 }
 
 export async function POST(request) {
-  // 1. Identify the client IP (Vercel sets x-forwarded-for)
-  const forwarded = request.headers.get('x-forwarded-for');
-  const ip = forwarded?.split(',')[0]?.trim()
-    || request.headers.get('x-real-ip')
-    || '127.0.0.1';
+  const { blocked, sessionId, isNew } = await enforceUploadRateLimits(request);
+  if (blocked) return withSessionCookie(blocked, sessionId, isNew);
 
-  // 2. Rate limit (set DISABLE_RATE_LIMIT=true in .env.local to skip)
-  if (process.env.DISABLE_RATE_LIMIT !== 'true') {
-    const { success, limit, remaining, reset } = await ratelimit.limit(ip);
-    if (!success) {
-      const minutesLeft = Math.ceil((reset - Date.now()) / 60000);
-      return NextResponse.json(
-        {
-          error: `Too many upload attempts. Please try again in ${minutesLeft} minute${minutesLeft !== 1 ? 's' : ''}.`,
-          retryAfter: reset,
-        },
-        {
-          status: 429,
-          headers: {
-            'X-RateLimit-Limit':     String(limit),
-            'X-RateLimit-Remaining': String(remaining),
-            'X-RateLimit-Reset':     String(reset),
-            'Retry-After':           String(Math.ceil((reset - Date.now()) / 1000)),
-          },
-        }
-      );
-    }
-  }
-
-  // 3. Parse + validate
   let body;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+    return respond({ error: 'Invalid request body.' }, { status: 400 }, sessionId, isNew);
   }
 
   const { files } = body;
   const validationError = validateFiles(files);
   if (validationError) {
-    return NextResponse.json({ error: validationError }, { status: 400 });
+    return respond({ error: validationError }, { status: 400 }, sessionId, isNew);
   }
 
-  // 4. Mint a one-time signed upload URL per file
   try {
     const uploads = [];
     for (const file of files) {
@@ -109,12 +74,14 @@ export async function POST(request) {
       if (error) throw error;
       uploads.push({ path: data.path, token: data.token });
     }
-    return NextResponse.json({ uploads }, { status: 200 });
+    return respond({ uploads }, { status: 200 }, sessionId, isNew);
   } catch (err) {
     logError('create-upload-url', err);
-    return NextResponse.json(
+    return respond(
       { error: 'Could not prepare file upload. Please try again.' },
-      { status: 500 }
+      { status: 500 },
+      sessionId,
+      isNew,
     );
   }
 }
