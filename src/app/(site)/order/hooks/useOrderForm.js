@@ -15,8 +15,41 @@ const INITIAL_FORM = {
 };
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DEBOUNCE_MS = 600;
+const MIN_PHONE_DIGITS = 6;
 
 const STORAGE_BUCKET = 'inquiry-files';
+
+function phoneDigits(phone) {
+  return (phone || '').replace(/\D/g, '');
+}
+
+function isEmailComplete(email) {
+  const trimmed = email.trim();
+  return trimmed.includes('@') && trimmed.includes('.') && EMAIL_REGEX.test(trimmed);
+}
+
+async function fetchValidateEmail(email, signal) {
+  const res = await fetch('/api/validate-email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email.trim() }),
+    signal,
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
+async function fetchValidateWhatsApp(phone, countryDial, signal) {
+  const res = await fetch('/api/validate-whatsapp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone: phone.trim(), country_dial: countryDial }),
+    signal,
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
 
 // Owns the entire order form: field state, attachment handling, validation, and
 // the signed-URL upload → submit-order orchestration. The form components are
@@ -33,9 +66,15 @@ export function useOrderForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted,  setIsSubmitted]  = useState(false);
   const [submitError,  setSubmitError]  = useState('');
-  const [errors,       setErrors]       = useState({});
+  const [errors,          setErrors]          = useState({});
+  const [contactChecking, setContactChecking] = useState(false);
+  const [contactValid,    setContactValid]    = useState({ email: false, phone: false });
 
   const fileInputRef = useRef(null);
+  const emailTouchedRef = useRef(false);
+  const phoneTouchedRef = useRef(false);
+  const emailAbortRef = useRef(null);
+  const phoneAbortRef = useRef(null);
 
   const selectedCountry = countryCodes.find(c => c.iso === formData.countryIso) ?? countryCodes[0];
 
@@ -51,19 +90,202 @@ export function useOrderForm() {
     }
   }, [serviceQuery, domainQuery]);
 
+  // ─── Debounced contact verification (email + WhatsApp) ──────────────────────
+
+  useEffect(() => {
+    if (formData.contactType !== 'email') return;
+
+    const email = formData.email.trim();
+
+    if (!email) {
+      setContactValid(prev => ({ ...prev, email: false }));
+      return;
+    }
+
+    if (!email.includes('@')) return;
+
+    if (!isEmailComplete(email)) {
+      if (emailTouchedRef.current) {
+        setErrors(prev => ({ ...prev, email: 'Please enter a valid email address.' }));
+      }
+      setContactValid(prev => ({ ...prev, email: false }));
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      emailAbortRef.current?.abort();
+      const controller = new AbortController();
+      emailAbortRef.current = controller;
+
+      setContactChecking(true);
+      try {
+        const { ok, status, data } = await fetchValidateEmail(email, controller.signal);
+        if (controller.signal.aborted) return;
+
+        if (status === 429) {
+          setErrors(prev => ({
+            ...prev,
+            email: data.error || 'Too many verification attempts. Please try again later.',
+          }));
+          setContactValid(prev => ({ ...prev, email: false }));
+          return;
+        }
+
+        if (ok) {
+          setErrors(prev => ({ ...prev, email: null }));
+          setContactValid(prev => ({ ...prev, email: true }));
+          return;
+        }
+
+        if (status === 400 && data.error) {
+          setErrors(prev => ({ ...prev, email: data.error }));
+          setContactValid(prev => ({ ...prev, email: false }));
+          return;
+        }
+
+        if (emailTouchedRef.current) {
+          setErrors(prev => ({
+            ...prev,
+            email: data.error || 'Could not verify email address. Please try again in a moment.',
+          }));
+        }
+        setContactValid(prev => ({ ...prev, email: false }));
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        logError('order-email-verify', err);
+        if (emailTouchedRef.current) {
+          setErrors(prev => ({
+            ...prev,
+            email: 'Could not verify email address. Please try again.',
+          }));
+        }
+        setContactValid(prev => ({ ...prev, email: false }));
+      } finally {
+        if (!controller.signal.aborted) setContactChecking(false);
+      }
+    }, DEBOUNCE_MS);
+
+    return () => clearTimeout(timer);
+  }, [formData.email, formData.contactType]);
+
+  useEffect(() => {
+    if (formData.contactType !== 'whatsapp') return;
+
+    const phone = formData.phone.trim();
+    const digits = phoneDigits(phone);
+
+    if (digits.length < MIN_PHONE_DIGITS) {
+      if (phoneTouchedRef.current && phone) {
+        setErrors(prev => ({
+          ...prev,
+          phone: 'Please enter a valid phone / WhatsApp number.',
+        }));
+      }
+      setContactValid(prev => ({ ...prev, phone: false }));
+      return;
+    }
+
+    const dial = selectedCountry.dial;
+
+    const timer = setTimeout(async () => {
+      phoneAbortRef.current?.abort();
+      const controller = new AbortController();
+      phoneAbortRef.current = controller;
+
+      setContactChecking(true);
+      try {
+        const { ok, status, data } = await fetchValidateWhatsApp(phone, dial, controller.signal);
+        if (controller.signal.aborted) return;
+
+        if (status === 429) {
+          setErrors(prev => ({
+            ...prev,
+            phone: data.error || 'Too many verification attempts. Please try again later.',
+          }));
+          setContactValid(prev => ({ ...prev, phone: false }));
+          return;
+        }
+
+        if (ok) {
+          setErrors(prev => ({ ...prev, phone: null }));
+          setContactValid(prev => ({ ...prev, phone: true }));
+          return;
+        }
+
+        if (status === 400 && data.error) {
+          setErrors(prev => ({ ...prev, phone: data.error }));
+          setContactValid(prev => ({ ...prev, phone: false }));
+          return;
+        }
+
+        if (phoneTouchedRef.current) {
+          setErrors(prev => ({
+            ...prev,
+            phone: data.error || 'Could not verify WhatsApp number. Please try again in a moment.',
+          }));
+        }
+        setContactValid(prev => ({ ...prev, phone: false }));
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        logError('order-phone-verify', err);
+        if (phoneTouchedRef.current) {
+          setErrors(prev => ({
+            ...prev,
+            phone: 'Could not verify WhatsApp number. Please try again.',
+          }));
+        }
+        setContactValid(prev => ({ ...prev, phone: false }));
+      } finally {
+        if (!controller.signal.aborted) setContactChecking(false);
+      }
+    }, DEBOUNCE_MS);
+
+    return () => clearTimeout(timer);
+  }, [formData.phone, formData.countryIso, formData.contactType, selectedCountry.dial]);
+
   // ─── Field helpers ──────────────────────────────────────────────────────────
 
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: null }));
+    if (field === 'email') setContactValid(prev => ({ ...prev, email: false }));
+    if (field === 'phone') setContactValid(prev => ({ ...prev, phone: false }));
   };
 
-  const setCountryIso = (iso) => setFormData(prev => ({ ...prev, countryIso: iso }));
+  const setCountryIso = (iso) => {
+    setFormData(prev => ({ ...prev, countryIso: iso }));
+    if (errors.phone) setErrors(prev => ({ ...prev, phone: null }));
+    setContactValid(prev => ({ ...prev, phone: false }));
+  };
 
   const setContactType = (type) => {
+    emailAbortRef.current?.abort();
+    phoneAbortRef.current?.abort();
     setFormData(prev => ({ ...prev, contactType: type }));
-    // Clear errors for the other contact method when toggling
     setErrors(prev => ({ ...prev, phone: null, email: null }));
+    setContactValid({ email: false, phone: false });
+    setContactChecking(false);
+  };
+
+  const handleEmailBlur = () => {
+    emailTouchedRef.current = true;
+    const email = formData.email.trim();
+    if (!email || !EMAIL_REGEX.test(email)) {
+      setErrors(prev => ({ ...prev, email: 'Please enter a valid email address.' }));
+      setContactValid(prev => ({ ...prev, email: false }));
+    }
+  };
+
+  const handlePhoneBlur = () => {
+    phoneTouchedRef.current = true;
+    const phone = formData.phone.trim();
+    if (!phone || phoneDigits(phone).length < MIN_PHONE_DIGITS) {
+      setErrors(prev => ({
+        ...prev,
+        phone: 'Please enter a valid phone / WhatsApp number.',
+      }));
+      setContactValid(prev => ({ ...prev, phone: false }));
+    }
   };
 
   const setServiceId = (value) => {
@@ -160,37 +382,63 @@ export function useOrderForm() {
     return { paths, rateLimited: false };
   };
 
+  const verifyContactBeforeSubmit = async () => {
+    const isEmail = formData.contactType === 'email';
+
+    if (isEmail) {
+      if (contactValid.email) return true;
+
+      const email = formData.email.trim();
+      const { ok, status, data } = await fetchValidateEmail(email);
+
+      if (status === 429) {
+        setSubmitError(data.error || 'Too many verification attempts. Please try again later.');
+        return false;
+      }
+      if (ok) {
+        setContactValid(prev => ({ ...prev, email: true }));
+        setErrors(prev => ({ ...prev, email: null }));
+        return true;
+      }
+      if (status === 400 && data.error) {
+        setErrors(prev => ({ ...prev, email: data.error }));
+        return false;
+      }
+      throw new Error(data.error || 'Could not verify email address.');
+    }
+
+    if (contactValid.phone) return true;
+
+    const { ok, status, data } = await fetchValidateWhatsApp(
+      formData.phone.trim(),
+      selectedCountry.dial,
+    );
+
+    if (status === 429) {
+      setSubmitError(data.error || 'Too many verification attempts. Please try again later.');
+      return false;
+    }
+    if (ok) {
+      setContactValid(prev => ({ ...prev, phone: true }));
+      setErrors(prev => ({ ...prev, phone: null }));
+      return true;
+    }
+    if (status === 400 && data.error) {
+      setErrors(prev => ({ ...prev, phone: data.error }));
+      return false;
+    }
+    throw new Error(data.error || 'Could not verify WhatsApp number.');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+    if (contactChecking) return;
     setIsSubmitting(true);
     setSubmitError('');
     try {
-      if (formData.contactType === 'whatsapp') {
-        const valRes = await fetch('/api/validate-whatsapp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            phone: formData.phone.trim(),
-            country_dial: selectedCountry.dial,
-          }),
-        });
-
-        if (valRes.status === 429) {
-          const data = await valRes.json().catch(() => ({}));
-          setSubmitError(data.error || 'Too many verification attempts. Please try again later.');
-          return;
-        }
-
-        const valData = await valRes.json().catch(() => ({}));
-        if (!valRes.ok) {
-          if (valRes.status === 400 && valData.error) {
-            setErrors(prev => ({ ...prev, phone: valData.error }));
-            return;
-          }
-          throw new Error(valData.error || 'Could not verify WhatsApp number.');
-        }
-      }
+      const contactOk = await verifyContactBeforeSubmit();
+      if (!contactOk) return;
 
       const { paths, rateLimited } = await uploadAttachments();
       if (rateLimited) return;
@@ -225,8 +473,11 @@ export function useOrderForm() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         const message = data.error || 'Submission failed.';
-        if (res.status === 400 && !isEmail && data.error) {
-          setErrors(prev => ({ ...prev, phone: data.error }));
+        if (res.status === 400 && data.error) {
+          setErrors(prev => ({
+            ...prev,
+            [isEmail ? 'email' : 'phone']: data.error,
+          }));
           return;
         }
         throw new Error(message);
@@ -243,21 +494,31 @@ export function useOrderForm() {
   };
 
   const resetForm = () => {
+    emailAbortRef.current?.abort();
+    phoneAbortRef.current?.abort();
+    emailTouchedRef.current = false;
+    phoneTouchedRef.current = false;
     setIsSubmitted(false);
     setFormData(INITIAL_FORM);
     setAttachments([]);
     setFileError('');
     setSubmitError('');
     setErrors({});
+    setContactValid({ email: false, phone: false });
+    setContactChecking(false);
   };
 
   return {
     formData,
     errors,
+    contactChecking,
+    contactValid,
     updateField,
     setCountryIso,
     setContactType,
     setServiceId,
+    handleEmailBlur,
+    handlePhoneBlur,
     selectedCountry,
     attachments,
     dragOver,

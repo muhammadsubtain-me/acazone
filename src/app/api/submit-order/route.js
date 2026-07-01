@@ -5,6 +5,7 @@ import { Redis } from '@upstash/redis';
 import { maxFiles, acceptedFileExtensions } from '@/lib/config/order';
 import { isEmailContactType, toInquiryDbContactType } from '@/lib/config/inquiries';
 import { logError } from '@/lib/logger';
+import { checkEmailAddress } from '@/lib/zerobounce';
 import { checkWhatsAppNumber, toWhapiContact } from '@/lib/whapi';
 
 // Allowed upload extensions, derived from the shared client config so the two
@@ -130,12 +131,23 @@ export async function POST(request) {
 
   // WhatsApp registration check (skipped when WHAPI_TOKEN is unset)
   if (!isEmail) {
-    const contact = toWhapiContact(country_dial, phone);
-    const whapi = await checkWhatsAppNumber(contact);
+    const whapiContact = toWhapiContact(country_dial, phone);
+    const whapi = await checkWhatsAppNumber(whapiContact);
     if (whapi.configured && !whapi.valid) {
       return NextResponse.json(
         { error: whapi.error || 'This number is not registered on WhatsApp.' },
         { status: whapi.serviceError ? 502 : 400 }
+      );
+    }
+  }
+
+  // Email deliverability check (skipped when NO_BOUNCE_EMAIL_KEY is unset)
+  if (isEmail) {
+    const emailCheck = await checkEmailAddress(contact);
+    if (emailCheck.configured && !emailCheck.valid) {
+      return NextResponse.json(
+        { error: emailCheck.error || 'This email address could not be verified.' },
+        { status: emailCheck.serviceError ? 502 : 400 }
       );
     }
   }

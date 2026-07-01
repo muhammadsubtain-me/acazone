@@ -13,7 +13,9 @@ import OrderSuccess from './components/OrderSuccess';
 
 export default function OrderForm() {
   const {
-    formData, errors, updateField, setCountryIso, setContactType, setServiceId,
+    formData, errors, contactChecking, contactValid,
+    updateField, setCountryIso, setContactType, setServiceId,
+    handleEmailBlur, handlePhoneBlur,
     selectedCountry,
     attachments, dragOver, setDragOver, fileError, fileInputRef,
     handleFileInput, handleDrop, removeFile,
@@ -87,7 +89,11 @@ export default function OrderForm() {
             {formData.contactType === 'whatsapp' ? (
               <div className="flex flex-col gap-1.5">
                 <div className={`flex rounded-xl border transition-all overflow-visible ${
-                  errors.phone ? 'border-red-500/50' : 'border-[var(--color-border)] focus-within:border-[var(--color-border-focus)]'
+                  errors.phone
+                    ? 'border-red-500/50'
+                    : contactValid.phone
+                      ? 'border-emerald-500/40 focus-within:border-emerald-500/50'
+                      : 'border-[var(--color-border)] focus-within:border-[var(--color-border-focus)]'
                 }`}>
                   <CountryDialSelect value={formData.countryIso} onChange={setCountryIso} />
                   <input
@@ -96,9 +102,13 @@ export default function OrderForm() {
                     placeholder="WhatsApp / Phone Number"
                     value={formData.phone}
                     onChange={(e) => updateField('phone', e.target.value)}
+                    onBlur={handlePhoneBlur}
                     className="flex-1 min-w-0 bg-[var(--color-surface-2)] px-3 py-3 text-sm text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-faint)] rounded-r-xl"
                   />
                 </div>
+                {contactChecking && !errors.phone && (
+                  <span className="text-xs text-[var(--color-text-muted)] pl-1">Checking WhatsApp number...</span>
+                )}
                 {errors.phone && <span className="text-xs text-red-400 pl-1">{errors.phone}</span>}
               </div>
             ) : (
@@ -109,8 +119,18 @@ export default function OrderForm() {
                   placeholder="Email Address"
                   value={formData.email}
                   onChange={(e) => updateField('email', e.target.value)}
-                  className={errors.email ? 'border-red-500/50 focus:border-red-500' : ''}
+                  onBlur={handleEmailBlur}
+                  className={
+                    errors.email
+                      ? 'border-red-500/50 focus:border-red-500'
+                      : contactValid.email
+                        ? 'border-emerald-500/40 focus:border-emerald-500/50'
+                        : ''
+                  }
                 />
+                {contactChecking && !errors.email && (
+                  <span className="text-xs text-[var(--color-text-muted)] pl-1">Checking email address...</span>
+                )}
                 {errors.email && <span className="text-xs text-red-400 pl-1">{errors.email}</span>}
               </div>
             )}

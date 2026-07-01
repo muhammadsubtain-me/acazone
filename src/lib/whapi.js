@@ -2,6 +2,23 @@ import { logError, logWarn } from '@/lib/logger';
 
 const WHAPI_CONTACTS_URL = 'https://gate.whapi.cloud/contacts';
 
+const validationCache = new Map();
+const CACHE_TTL_MS = 60_000;
+
+function getCachedResult(contact) {
+  const hit = validationCache.get(contact);
+  if (!hit || Date.now() > hit.expiresAt) {
+    validationCache.delete(contact);
+    return null;
+  }
+  return hit.result;
+}
+
+function setCachedResult(contact, result) {
+  if (result.serviceError) return;
+  validationCache.set(contact, { result, expiresAt: Date.now() + CACHE_TTL_MS });
+}
+
 /** Build international digits (no +) for Whapi from dial code + local number. */
 export function toWhapiContact(dial, phone) {
   const dialDigits = (dial || '').replace(/\D/g, '');
@@ -25,6 +42,9 @@ export async function checkWhatsAppNumber(contact) {
   if (!contact) {
     return { configured: true, valid: false, error: 'Invalid phone number.' };
   }
+
+  const cached = getCachedResult(contact);
+  if (cached) return cached;
 
   try {
     const res = await fetch(WHAPI_CONTACTS_URL, {
@@ -57,15 +77,19 @@ export async function checkWhatsAppNumber(contact) {
     const status = result?.status;
 
     if (status === 'valid') {
-      return { configured: true, valid: true };
+      const result = { configured: true, valid: true };
+      setCachedResult(contact, result);
+      return result;
     }
 
     if (status === 'invalid') {
-      return {
+      const result = {
         configured: true,
         valid: false,
         error: 'This number is not registered on WhatsApp. Please check the number or use email instead.',
       };
+      setCachedResult(contact, result);
+      return result;
     }
 
     logError('whapi', 'Unexpected response', data);
